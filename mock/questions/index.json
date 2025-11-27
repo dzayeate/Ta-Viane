@@ -1,0 +1,36 @@
+[
+    {
+        "prompt": "Buatkan satu soal fisika tingkat SMA tentang gerak lurus beraturan",
+        "difficulty": "c1",
+        "type": "multipleChoice",
+        "title": "Ciri Gerak Lurus Beraturan",
+        "description": "KD Kinematika Kelas X. Sebuah mobil sedang bergerak dengan Gerak Lurus Beraturan (GLB) di jalan tol. Manakah pernyataan berikut yang paling tepat menggambarkan ciri utama dari gerak mobil tersebut? Tingkat kognitif: C1 (Mengingat).\n\nA. Mobil mengalami percepatan yang konstan dan tidak nol.\nB. Kecepatan mobil berubah secara beraturan.\nC. Posisi mobil selalu tetap.\nD. Kecepatan mobil bernilai konstan dan lintasannya lurus.\nE. Gaya bersih yang bekerja pada mobil tidak sama dengan nol.",
+        "answer": "Langkah penyelesaian:\n1. Prinsip Fisika yang digunakan adalah definisi Gerak Lurus Beraturan (GLB).\n2. Gerak Lurus Beraturan (GLB) didefinisikan sebagai gerak suatu benda pada lintasan yang lurus dengan kecepatan yang konstan.\n3. Kecepatan konstan berarti besar kecepatan dan arah kecepatan tidak berubah sepanjang waktu.\n4. Karena kecepatan konstan, maka percepatan benda dalam GLB adalah nol.\n5. Pilihan D secara tepat menyatakan kedua karakteristik utama GLB: kecepatan konstan dan lintasan lurus.\n\nJawaban benar: D. Kecepatan mobil bernilai konstan dan lintasannya lurus.",
+        "topic": "Kinematika Kelas X",
+        "grade": "X",
+        "savedAt": "2025-11-27T11:16:13.226Z",
+        "metadata": null,
+        "author": {
+            "name": "Viane Pindhi, S.Pd",
+            "nupkt": "vianepindhi@gmail.com"
+        },
+        "id": "1764242173350v06sgz9d7"
+    },
+    {
+        "prompt": "Buatkan satu soal fisika tingkat SMA tentang gerak lurus beraturan",
+        "difficulty": "c1",
+        "type": "essay",
+        "title": "Gerak Lurus Bus TransJakarta",
+        "description": "KD Kinematika Kelas X. Sebuah bus TransJakarta bergerak dengan kelajuan konstan $40\\ \\text{km/jam}$ selama $2\\ \\text{jam}$. Berapakah jarak yang ditempuh oleh bus tersebut? Tingkat kognitif: C1 (Mengingat).",
+        "answer": "Langkah penyelesaian:\n1.  Identifikasi jenis gerak: Gerak Lurus Beraturan (GLB) karena kelajuan konstan.\n2.  Gunakan rumus jarak dalam GLB: $$s = v \\times t$$\n3.  Konversi satuan ke SI:\n    *   Kelajuan $v = 40\\ \\text{km/jam} = 40 \\times \\frac{1000\\ \\text{m}}{3600\\ \\text{s}} = \\frac{100}{9}\\ \\text{m/s}$\n    *   Waktu $t = 2\\ \\text{jam} = 2 \\times 3600\\ \\text{s} = 7200\\ \\text{s}$\n4.  Hitung jarak:\n    $$s = \\left(\\frac{100}{9}\\ \\text{m/s}\\right) \\times (7200\\ \\text{s})$$\n    $$s = 100 \\times 800\\ \\text{m}$$\n    $$s = 80000\\ \\text{m}$$\n5.  Konversi kembali ke kilometer untuk konteks: $s = 80\\ \\text{km}$.\n\nHasil akhir: Jarak yang ditempuh bus adalah $80000\\ \\text{m}$ atau $80\\ \\text{km}$.",
+        "topic": "Kinematika Kelas X",
+        "grade": "X",
+        "savedAt": "2025-11-27T11:58:28.253Z",
+        "metadata": null,
+        "author": {
+            "name": "Viane Pindhi, S.Pd",
+            "nupkt": "vianepindhi@gmail.com"
+        },
+        "id": "1764244708487htlf3qlpr"
+    }
+]

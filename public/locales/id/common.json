@@ -1,0 +1,178 @@
+{
+  "modal": {
+    "title": "Membuat Perintah Soal AI Otomatis",
+    "prompt": "Perintah:",
+    "topic": "Topik",
+    "topicPlaceholder": "Contoh: Dinamika, Optik, Listrik, dll",
+    "grade": "Kelas",
+    "gradePlaceholder": "Pilih kelas",
+    "difficulty": "Tingkat Kesulitan",
+    "type": "Jenis Soal",
+    "total": "Jumlah Soal",
+    "reference": "Referensi",
+    "generate": "Generate",
+    "cancel": "Batal",
+    "uploading": "Mengunggah...",
+    "generating": "Membuat...",
+    "uploadPdf": "Unggah PDF"
+  },
+  "difficulties": {
+    "random": "Acak",
+    "easy": "Mudah",
+    "medium": "Sedang",
+    "hard": "Sulit"
+  },
+  "types": {
+    "random": "Acak",
+    "multipleChoice": "Pilihan Ganda",
+    "essay": "Essay"
+  },
+  "suggestions": {
+    "simple": {
+      "label": "Soal Sederhana",
+      "value": "Buatkan satu soal fisika tingkat SMA tentang [...]."
+    },
+    "illustrated": {
+      "label": "Soal Bergambar",
+      "value": "Buatkan satu soal fisika tingkat SMA tentang [...], sertakan diagram gaya bebas, rangkaian listrik, atau ilustrasi pendukung lainnya."
+    },
+    "examModel": {
+      "label": "Soal Bermodel",
+      "value": "Buat satu soal latihan ujian fisika model [OSN/UTBK/IB] untuk tingkat SMA dengan topik [...]. Gunakan gaya bahasa dan struktur soal yang mirip dengan ujian asli. Sertakan opsi jawaban (jika ada) dan pembahasannya."
+    },
+    "hots": {
+      "label": "Soal HOTS",
+      "value": "Buatkan soal fisika tingkat SMA yang menuntut keterampilan berpikir tingkat tinggi (HOTS), seperti analisis, sintesis, atau evaluasi, dengan topik [...]. Sertakan soal, jawaban, dan alasan mengapa soal tersebut termasuk kategori HOTS."
+    },
+    "shortAnswer": {
+      "label": "Soal Singkat",
+      "value": "Buatkan satu soal fisika isian singkat untuk siswa SMA tentang [...]. Jawaban akhir harus berupa besaran fisika dengan satuan yang tepat. Sertakan kunci jawaban dan langkah-langkah penyelesaiannya."
+    },
+    "story": {
+      "label": "Soal Cerita",
+      "value": "Buat satu soal cerita kontekstual fisika tingkat SMA yang berkaitan dengan kehidupan sehari-hari, dengan topik [...]. Sertakan jawaban lengkap beserta pembahasannya."
+    },
+    "quadratic": {
+      "label": "Soal Kinematika",
+      "value": "Buat soal mengenai gerak lurus yang melibatkan interpretasi grafik posisi-waktu atau kecepatan-waktu, menentukan percepatan, dan mengaitkan persamaan gerak dengan fenomena nyata."
+    },
+    "limit": {
+      "label": "Soal Rangkaian Listrik",
+      "value": "Kembangkan soal tentang rangkaian seri-paralel, hukum Ohm, serta perhitungan daya. Sertakan penjelasan penyederhanaan rangkaian dan langkah perhitungan besaran yang diminta."
+    },
+    "derivative": {
+      "label": "Soal Gaya dan Gerak",
+      "value": "Buat soal bertahap yang menerapkan Hukum Newton untuk menganalisis gaya, diagram gaya bebas, dan percepatan yang terjadi. Sertakan penjelasan dan langkah penyelesaian."
+    },
+    "integral": {
+      "label": "Soal Usaha dan Energi",
+      "value": "Rancang soal yang menghubungkan usaha, energi kinetik, energi potensial, dan kekekalan energi dalam situasi nyata. Sertakan langkah perhitungan yang lengkap."
+    },
+    "statistics": {
+      "label": "Soal Gelombang dan Osilasi",
+      "value": "Buat soal mengenai getaran harmonik sederhana atau gelombang, misalnya menentukan periode, fase, panjang gelombang, atau kondisi resonansi berdasarkan data."
+    },
+    "algebra": {
+      "label": "Mekanik Klasik",
+      "value": "Buat soal yang menguji pemahaman siswa tentang kinematika, dinamika, momentum, dan impuls."
+    },
+    "trigonometry": {
+      "label": "Optik dan Cahaya",
+      "value": "Buat soal yang melatih siswa menganalisis pemantulan, pembiasan, sistem lensa, atau pola interferensi cahaya."
+    },
+    "calculus": {
+      "label": "Listrik dan Magnet",
+      "value": "Rancang soal yang mencakup medan listrik, arus, gaya magnet, atau induksi elektromagnetik."
+    },
+    "geometry": {
+      "label": "Fisika Modern",
+      "value": "Buat soal yang mengeksplorasi relativitas, konsep kuantum, atau struktur atom untuk tingkat SMA."
+    },
+    "probability": {
+      "label": "Termodinamika dan Kalor",
+      "value": "Buat soal tentang perpindahan kalor, hukum gas ideal, entropi, atau efisiensi termal dalam konteks sehari-hari."
+    },
+    "numberTheory": {
+      "label": "Mekanika Fluida",
+      "value": "Rancang soal yang membahas tekanan, gaya apung, kontinuitas, atau prinsip Bernoulli."
+    },
+    "linearAlgebra": {
+      "label": "Fisika Nuklir dan Partikel",
+      "value": "Buat soal yang menguji pemahaman tentang radioaktivitas, reaksi nuklir, atau partikel elementer."
+    },
+    "discreteMath": {
+      "label": "Astronomi dan Antariksa",
+      "value": "Kembangkan soal mengenai gerak planet, satelit, atau fenomena astronomi lainnya."
+    },
+    "mathLogic": {
+      "label": "Pengukuran dan Instrumentasi",
+      "value": "Buat soal yang menilai pemahaman tentang ketidakpastian pengukuran, angka penting, serta penggunaan alat laboratorium."
+    }
+  },
+  "login": {
+    "title": "Masuk untuk Guru",
+    "nuptk": "NUPTK atau Email",
+    "nuptkPlaceholder": "Nomor Unik Pendidik dan Tenaga Kependidikan",
+    "password": "Kata Sandi",
+    "passwordPlaceholder": "••••••••",
+    "loginButton": "Masuk",
+    "success": {
+      "title": "Login Berhasil!",
+      "welcomeMale": "Selamat Datang, Bapak {{name}}!",
+      "welcomeFemale": "Selamat Datang, Ibu {{name}}!"
+    },
+    "error": {
+      "title": "Login Gagal",
+      "message": "NUPTK atau Password Salah",
+      "tryAgain": "Coba Lagi"
+    }
+  },
+  "main": {
+    "title": "Auto Physics",
+    "subtitle": "Pembuatan soal fisika tingkat SMA otomatis menggunakan AI",
+    "developedBy": "Dikembangkan oleh",
+    "command": "Perintah:",
+    "commandPlaceholder": "Masukan perintah untuk membuat soal",
+    "cognitiveLevel": "Tingkat Kognitif:",
+    "questionType": "Tipe Soal:",
+    "question": "Pertanyaan",
+    "createQuestion": "Buat Soal",
+    "creating": "Membuat...",
+    "title_field": "Judul:",
+    "description": "Deskripsi",
+    "answer": "Jawaban",
+    "branch": "Bidang Fisika:",
+    "feedback": "Tanggapan",
+    "logout": "Keluar",
+    "addQuestion": "Tambah Soal",
+    "generate": "Buat Otomatis",
+    "cognitive": {
+      "c1": "C1 (Mengingat)",
+      "c2": "C2 (Memahami)",
+      "c3": "C3 (Menerapkan)",
+      "c4": "C4 (Menganalisis)",
+      "c5": "C5 (Mengevaluasi)",
+      "c6": "C6 (Mencipta)"
+    }
+  },
+  "language": {
+    "en": "EN",
+    "id": "ID",
+    "switch": "Ganti bahasa"
+  },
+  "streaming": {
+    "generatingQuestions": "Membuat Soal...",
+    "completed": "selesai",
+    "waitingInQueue": "Menunggu dalam antrian ({{current}} dari {{total}})",
+    "generatingQuestion": "Membuat soal...",
+    "questionsReady": "soal siap",
+    "cancel": "Batalkan",
+    "chunk": "Grup",
+    "processingChunk": "Memproses grup {{chunkIndex}}/{{totalChunks}}... (Soal {{start}}-{{end}})",
+    "chunkError": "Grup {{chunkIndex}}: {{message}}",
+    "failedToStartStreaming": "Gagal memulai streaming untuk grup {{chunkIndex}}",
+    "generationCancelled": "Pembuatan soal dibatalkan oleh pengguna",
+    "allChunksCompleted": "Semua grup berhasil diselesaikan",
+    "failedToParsePdf": "Gagal memproses PDF"
+  }
+}

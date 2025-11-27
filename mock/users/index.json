@@ -1,0 +1,38 @@
+[
+    {
+        "NUPTK": "213040057",
+        "Nama": "Muahamad Jamaludin",
+        "Password": "Jamjam123",
+        "pria": true
+    },
+    {
+        "NUPTK": "1395741642200013",
+        "Nama": "Ir. Matnur, B.E.E, S.Tr.Pd",
+        "Password": "123",
+        "pria": true
+    },
+    {
+        "NUPTK": "dianing.anugerah@gmail.com",
+        "Nama": "Dianing Anugerah, S.Pd",
+        "Password": "Lulus2025",
+        "pria": false
+    },
+    {
+        "NUPTK": "alifaazmilf1999@gmail.com",
+        "Nama": "Alifa Azmil Fauziah, S.Pd",
+        "Password": "Lulus2025",
+        "pria": false
+    },
+    {
+        "NUPTK": "gitaanandap1510@gmail.com",
+        "Nama": "Gita Ananda Putri, S.Pd",
+        "Password": "Lulus2025",
+        "pria": false
+    },
+    {
+        "NUPTK": "vianepindhi@gmail.com",
+        "Nama": "Viane Pindhi, S.Pd",
+        "Password": "Lulus2025",
+        "pria": false
+    }
+]

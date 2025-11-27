@@ -1,0 +1,172 @@
+{
+  "modal": {
+    "title": "Create AI Automated Question Instructions",
+    "prompt": "Instruction:",
+    "difficulty": "Difficulty",
+    "type": "Type",
+    "total": "Total Questions",
+    "reference": "Reference",
+    "generate": "Generate",
+    "cancel": "Cancel",
+    "uploading": "Uploading...",
+    "generating": "Generating",
+    "uploadPdf": "Upload PDF"
+  },
+  "difficulties": {
+    "random": "Random",
+    "easy": "Easy",
+    "medium": "Medium",
+    "hard": "Hard"
+  },
+  "types": {
+    "random": "Random",
+    "multipleChoice": "Multiple Choice",
+    "essay": "Essay"
+  },
+  "suggestions": {
+    "simple": {
+      "label": "Simple Question",
+      "value": "Create a simple high school physics question about [...]."
+    },
+    "illustrated": {
+      "label": "Illustrated Question",
+      "value": "Create a high school physics question about [...] that includes diagrams, free-body sketches, or circuit drawings to support the problem."
+    },
+    "examModel": {
+      "label": "Exam-Style Question",
+      "value": "Create a practice physics question in the style of [IB/AP/OSN] exams for high school level on the topic of [...]. Use language and structure similar to actual exam questions. Include answer choices (if applicable) and detailed explanations."
+    },
+    "hots": {
+      "label": "HOTS Question",
+      "value": "Create a high school physics question that requires higher-order thinking skills (HOTS), such as analysis, synthesis, or evaluation, on the topic of [...]. Include the question, answer, and an explanation of why it qualifies as a HOTS question."
+    },
+    "shortAnswer": {
+      "label": "Short Answer Question",
+      "value": "Create a short-answer physics question for high school students about [...]. The response should be a physical quantity with correct units. Include the answer key and step-by-step solution."
+    },
+    "story": {
+      "label": "Word Problem",
+      "value": "Create a contextual word problem for high school physics related to real-life situations, focusing on [...]. Provide the complete answer with detailed explanation."
+    },
+    "quadratic": {
+      "label": "Kinematics Graph Question",
+      "value": "Create a question about one-dimensional motion that covers interpreting position-time or velocity-time graphs, determining acceleration, and connecting motion equations to real phenomena."
+    },
+    "limit": {
+      "label": "Electric Circuit Problem",
+      "value": "Develop a question involving series-parallel circuits, Ohm's law, and power calculations. Include the reasoning required to simplify the circuit and compute requested quantities."
+    },
+    "derivative": {
+      "label": "Force and Motion Analysis",
+      "value": "Create a multi-step problem that applies Newton's laws to analyze forces, free-body diagrams, and resulting accelerations. Include explanations and solution steps."
+    },
+    "integral": {
+      "label": "Work and Energy Question",
+      "value": "Design a question that connects work, kinetic energy, potential energy, and energy conservation in practical situations. Include thorough calculation steps."
+    },
+    "statistics": {
+      "label": "Wave and Oscillation Question",
+      "value": "Create a question related to simple harmonic motion or wave phenomena, such as determining period, phase, wavelength, or resonance behavior using real-world data."
+    },
+    "algebra": {
+      "label": "Classical Mechanics",
+      "value": "Create questions that test students' understanding of kinematics, dynamics, momentum, and impulse."
+    },
+    "trigonometry": {
+      "label": "Optics and Light",
+      "value": "Create questions that train students to analyze reflection, refraction, lens systems, or wave interference patterns."
+    },
+    "calculus": {
+      "label": "Electricity and Magnetism",
+      "value": "Design questions covering electric fields, circuits, magnetic forces, or electromagnetic induction."
+    },
+    "geometry": {
+      "label": "Modern Physics",
+      "value": "Create questions that explore relativity, quantum concepts, or atomic structure for high school learners."
+    },
+    "probability": {
+      "label": "Thermodynamics and Heat",
+      "value": "Create questions about heat transfer, gas laws, entropy, or thermal efficiency in daily-life contexts."
+    },
+    "numberTheory": {
+      "label": "Fluid Mechanics",
+      "value": "Design questions involving pressure, buoyancy, continuity, or Bernoulli's principle."
+    },
+    "linearAlgebra": {
+      "label": "Nuclear and Particle Physics",
+      "value": "Create questions that test understanding of radioactivity, nuclear reactions, or particle interactions."
+    },
+    "discreteMath": {
+      "label": "Astronomy and Space Science",
+      "value": "Develop questions about planetary motion, satellites, or observational astronomy phenomena."
+    },
+    "mathLogic": {
+      "label": "Measurement and Instrumentation",
+      "value": "Create questions assessing understanding of measurement uncertainty, significant figures, and laboratory instrumentation."
+    }
+  },
+  "login": {
+    "title": "Teacher Login",
+    "nuptk": "NUPTK or Email",
+    "nuptkPlaceholder": "Unique Number for Educators and Education Personnel",
+    "password": "Password",
+    "passwordPlaceholder": "••••••••",
+    "loginButton": "Sign In",
+    "success": {
+      "title": "Login Successful!",
+      "welcomeMale": "Welcome, Mr. {{name}}!",
+      "welcomeFemale": "Welcome, Mrs. {{name}}!"
+    },
+    "error": {
+      "title": "Login Failed",
+      "message": "NUPTK or Password is incorrect",
+      "tryAgain": "Try Again"
+    }
+  },
+  "main": {
+    "title": "Auto Physics",
+    "subtitle": "AI-powered automatic physics question generation for high school level",
+    "developedBy": "Developed by",
+    "command": "Instruction:",
+    "commandPlaceholder": "Enter your instruction to generate questions",
+    "cognitiveLevel": "Cognitive Level:",
+    "questionType": "Question Type:",
+    "question": "Question",
+    "createQuestion": "Generate",
+    "creating": "Generating",
+    "title_field": "Title:",
+    "description": "Description",
+    "answer": "Answer",
+    "branch": "Physics Domain:",
+    "feedback": "Feedback",
+    "logout": "Sign Out",
+    "addQuestion": "Add Question",
+    "generate": "Auto Generate",
+    "cognitive": {
+      "c1": "C1 (Remember)",
+      "c2": "C2 (Understand)",
+      "c3": "C3 (Apply)",
+      "c4": "C4 (Analyze)",
+      "c5": "C5 (Evaluate)",
+      "c6": "C6 (Create)"
+    }
+  },
+  "language": {
+    "en": "EN",
+    "id": "ID",
+    "switch": "Switch language"
+  },
+  "streaming": {
+    "generatingQuestions": "Generating Questions...",
+    "completed": "completed",
+    "waitingInQueue": "Waiting in queue ({{current}} of {{total}})",
+    "generatingQuestion": "Generating question...",
+    "questionsReady": "questions ready",
+    "processingChunk": "Processing chunk {{chunkIndex}}/{{totalChunks}}... (Questions {{start}}-{{end}})",
+    "chunkError": "Chunk {{chunkIndex}}: {{message}}",
+    "failedToStartStreaming": "Failed to start streaming for chunk {{chunkIndex}}",
+    "generationCancelled": "Generation cancelled by user",
+    "allChunksCompleted": "All chunks completed successfully",
+    "failedToParsePdf": "Failed to parse PDF"
+  }
+} 
