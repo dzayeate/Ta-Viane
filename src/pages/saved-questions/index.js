@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useTranslation } from 'next-i18next';
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
-import Navbar from '../../components/layout/navbar';
+import Navbar from '@/components/navbar';
 import { useRouter } from 'next/router';
 import { HiArrowLeft, HiTrash, HiPencil, HiDocumentText } from 'react-icons/hi2';
 

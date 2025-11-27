@@ -1,16 +1,16 @@
 import { useState, useEffect, useRef } from 'react';
 import { useTranslation } from 'next-i18next';
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
-import ModalPrompt from '../components/common/modal-prompt';
-import Login from '../components/features/login';
-import users from '../mock/users/index.json';
-import Navbar from '../components/layout/navbar';
-import QuestionEditor from '../components/features/question-editor';
-import QuestionSkeleton from '../components/common/question-skeleton';
-import SuggestionList from '../components/common/suggestion-list';
-import BottomNavigation from '../components/layout/bottom-navigation';
-import Footer from '../components/layout/footer';
-import QuestionReview from '../components/features/question-review';
+import ModalPrompt from '@/components/modal-prompt';
+import Login from '@/modules/auth';
+import users from '@/mock/users/index.json';
+import Navbar from '@/components/navbar';
+import QuestionEditor from '@/modules/question-editor';
+import QuestionSkeleton from '@/components/question-skeleton';
+import SuggestionList from '@/components/suggestion-list';
+import BottomNavigation from '@/components/bottom-navigation';
+import Footer from '@/components/footer';
+import QuestionReview from '@/modules/question-review';
 
 export default function Home() {
   const { t, ready, i18n } = useTranslation('common');

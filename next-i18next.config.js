@@ -3,7 +3,7 @@ module.exports = {
   i18n: {
     defaultLocale: 'id',
     locales: ['id', 'en'],
-    localePath: './public/locales',
+    localePath: './src/locales',
   },
   
   // Opsi tambahan

@@ -1,6 +1,6 @@
 import React from 'react';
 import { useTranslation } from 'next-i18next';
-import LanguageSwitcher from '../../common/language-switcher';
+import LanguageSwitcher from '@/components/language-switcher';
 import { useRouter } from 'next/router';
 import { HiArrowRightOnRectangle, HiBolt, HiDocumentText } from 'react-icons/hi2';
 import { HiSparkles } from 'react-icons/hi';

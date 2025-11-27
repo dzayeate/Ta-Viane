@@ -1,44 +1,52 @@
-# OpenAI API Quickstart - Node.js example app
+# Auto Physics
 
-This is an example pet name generator app used in the OpenAI API [quickstart tutorial](https://platform.openai.com/docs/quickstart). It uses the [Next.js](https://nextjs.org/) framework with [React](https://reactjs.org/). Check out the tutorial or follow the instructions below to get set up.
+Auto Physics is an AI-powered platform designed to help teachers generate physics problems, experiments, and worksheets quickly and easily.
 
-![Text box that says name my pet with an icon of a dog](https://user-images.githubusercontent.com/10623307/213887080-b2bc4645-7fdb-4dbd-ae42-efce00d0dc29.png)
+## Features
 
+- **AI Question Generation**: Generate physics questions based on Bloom's Taxonomy levels (C1-C6).
+- **Modular Architecture**: Built with a clean, modular structure for scalability.
+- **Multi-language Support**: Supports Indonesian and English (via i18n).
+- **PDF Parsing**: Upload PDF materials to generate questions from.
+- **Question Bank**: Save and manage generated questions.
 
-## Setup
+## Tech Stack
 
-1. If you don’t have Node.js installed, [install it from here](https://nodejs.org/en/) (Node.js version >= 14.6.0 required)
+- **Framework**: Next.js (Pages Router)
+- **Styling**: Tailwind CSS
+- **AI**: Google Gemini
+- **State Management**: React Hooks
+- **Internationalization**: next-i18next
 
-2. Clone this repository
+## Project Structure
 
-3. Navigate into the project directory
+```
+.
+├── public/                 # Static assets
+├── src/
+│   ├── components/         # Shared UI components
+│   ├── modules/            # Feature modules (Auth, Question Editor, etc.)
+│   ├── libs/               # Library configurations (Gemini, etc.)
+│   ├── locales/            # i18n translation files
+│   ├── styles/             # Global styles
+│   ├── pages/              # Next.js Pages
+│   └── utils/              # Utility functions
+└── ...
+```
 
-   ```bash
-   $ cd openai-quickstart-node
-   ```
+## Getting Started
 
-4. Install the requirements
+1.  Install dependencies:
+    ```bash
+    npm install
+    ```
 
-   ```bash
-   $ npm install
-   ```
+2.  Set up environment variables:
+    Copy `.env.example` to `.env` and add your `NEXT_PUBLIC_GEMINI_API_KEY`.
 
-5. Make a copy of the example environment variables file
+3.  Run the development server:
+    ```bash
+    npm run dev
+    ```
 
-   On Linux systems: 
-   ```bash
-   $ cp .env.example .env
-   ```
-   On Windows:
-   ```powershell
-   $ copy .env.example .env
-   ```
-6. Add your [API key](https://platform.openai.com/account/api-keys) to the newly created `.env` file
-
-7. Run the app
-
-   ```bash
-   $ npm run dev
-   ```
-
-You should now be able to access the app at [http://localhost:8000](http://localhost:8000)! For the full context behind this example app, check out the [tutorial](https://platform.openai.com/docs/quickstart).
+4.  Open [http://localhost:8000](http://localhost:8000) in your browser.

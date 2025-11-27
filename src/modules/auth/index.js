@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import { useTranslation } from 'next-i18next';
-import users from '../../../mock/users/index.json';
+import users from '@/mock/users/index.json';
 import Swal from 'sweetalert2';
-import Navbar from '../../layout/navbar';
+import Navbar from '@/components/navbar';
 import { HiKey, HiUser, HiLockClosed, HiSparkles, HiBolt } from 'react-icons/hi2';
 import { HiAcademicCap } from 'react-icons/hi';
 

@@ -3,7 +3,7 @@ import { IoIosArrowDown } from 'react-icons/io';
 import { IoClose } from 'react-icons/io5';
 import { HiSparkles, HiDocumentText, HiAcademicCap, HiTag } from 'react-icons/hi2';
 import { HiLightBulb } from 'react-icons/hi';
-import Editor from '../editor';
+import Editor from '@/components/editor';
 
 export default function QuestionEditor({
   index,
