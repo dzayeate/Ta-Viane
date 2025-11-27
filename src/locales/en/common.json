@@ -124,6 +124,7 @@
     }
   },
   "main": {
+    "home": "Home",
     "title": "Auto Physics",
     "subtitle": "AI-powered automatic physics question generation for high school level",
     "developedBy": "Developed by",

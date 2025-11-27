@@ -2,7 +2,7 @@ import fs from 'fs';
 import path from 'path';
 
 export default function handler(req, res) {
-    const filePath = path.join(process.cwd(), 'mock', 'questions', 'index.json');
+    const filePath = path.join(process.cwd(), 'src', 'mock', 'questions', 'index.json');
 
     if (req.method === 'GET') {
         try {

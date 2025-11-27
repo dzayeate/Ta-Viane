@@ -10,88 +10,88 @@ module.exports = {
   theme: {
     extend: {
       colors: {
-        // New vibrant color palette
+        // Education Theme Palette: Trustworthy, Clean, Accessible
         brand: {
-          50: '#f0f4ff',
-          100: '#e0e9ff',
-          200: '#c7d7fe',
-          300: '#a4bafe',
-          400: '#8195fc',
-          500: '#6366f1', // Main brand color - Indigo
-          600: '#4f46e5',
-          700: '#4338ca',
-          800: '#3730a3',
-          900: '#312e81',
-          950: '#1e1b4b',
+          50: '#f0f9ff', // Sky 50
+          100: '#e0f2fe', // Sky 100
+          200: '#bae6fd', // Sky 200
+          300: '#7dd3fc', // Sky 300
+          400: '#38bdf8', // Sky 400
+          500: '#0ea5e9', // Sky 500 (Primary Brand)
+          600: '#0284c7', // Sky 600
+          700: '#0369a1', // Sky 700
+          800: '#075985', // Sky 800
+          900: '#0c4a6e', // Sky 900
+          950: '#082f49',
         },
         accent: {
-          50: '#fef3f2',
-          100: '#fee4e2',
-          200: '#fecdca',
-          300: '#fda4af',
-          400: '#fb7185',
-          500: '#f43f5e', // Accent - Rose
-          600: '#e11d48',
-          700: '#be123c',
-          800: '#9f1239',
-          900: '#881337',
+          50: '#fff7ed', // Orange 50
+          100: '#ffedd5', // Orange 100
+          200: '#fed7aa', // Orange 200
+          300: '#fdba74', // Orange 300
+          400: '#fb923c', // Orange 400
+          500: '#f97316', // Orange 500 (Secondary Action)
+          600: '#ea580c', // Orange 600
+          700: '#c2410c', // Orange 700
+          800: '#9a3412', // Orange 800
+          900: '#7c2d12', // Orange 900
         },
         neutral: {
-          50: '#fafafa',
-          100: '#f5f5f5',
-          200: '#e5e5e5',
-          300: '#d4d4d4',
-          400: '#a3a3a3',
-          500: '#737373',
-          600: '#525252',
-          700: '#404040',
-          800: '#262626',
-          900: '#171717',
+          50: '#f8fafc', // Slate 50
+          100: '#f1f5f9', // Slate 100
+          200: '#e2e8f0', // Slate 200
+          300: '#cbd5e1', // Slate 300
+          400: '#94a3b8', // Slate 400
+          500: '#64748b', // Slate 500
+          600: '#475569', // Slate 600
+          700: '#334155', // Slate 700
+          800: '#1e293b', // Slate 800
+          900: '#0f172a', // Slate 900
         },
         success: {
-          50: '#f0fdf4',
-          100: '#dcfce7',
-          200: '#bbf7d0',
-          300: '#86efac',
-          400: '#4ade80',
-          500: '#22c55e',
-          600: '#16a34a',
-          700: '#15803d',
-          800: '#166534',
-          900: '#14532d',
+          50: '#f0fdfa', // Teal 50
+          100: '#ccfbf1', // Teal 100
+          200: '#99f6e4', // Teal 200
+          300: '#5eead4', // Teal 300
+          400: '#2dd4bf', // Teal 400
+          500: '#14b8a6', // Teal 500
+          600: '#0d9488', // Teal 600
+          700: '#0f766e', // Teal 700
+          800: '#115e59', // Teal 800
+          900: '#134e4a', // Teal 900
         },
         warning: {
-          50: '#fffbeb',
-          100: '#fef3c7',
-          200: '#fde68a',
-          300: '#fcd34d',
-          400: '#fbbf24',
-          500: '#f59e0b',
-          600: '#d97706',
-          700: '#b45309',
-          800: '#92400e',
-          900: '#78350f',
+          50: '#fffbeb', // Amber 50
+          100: '#fef3c7', // Amber 100
+          200: '#fde68a', // Amber 200
+          300: '#fcd34d', // Amber 300
+          400: '#fbbf24', // Amber 400
+          500: '#f59e0b', // Amber 500
+          600: '#d97706', // Amber 600
+          700: '#b45309', // Amber 700
+          800: '#92400e', // Amber 800
+          900: '#78350f', // Amber 900
         },
         danger: {
-          50: '#fef2f2',
-          100: '#fee2e2',
-          200: '#fecaca',
-          300: '#fca5a5',
-          400: '#f87171',
-          500: '#ef4444',
-          600: '#dc2626',
-          700: '#b91c1c',
-          800: '#991b1b',
-          900: '#7f1d1d',
+          50: '#fef2f2', // Red 50
+          100: '#fee2e2', // Red 100
+          200: '#fecaca', // Red 200
+          300: '#fca5a5', // Red 300
+          400: '#f87171', // Red 400
+          500: '#ef4444', // Red 500
+          600: '#dc2626', // Red 600
+          700: '#b91c1c', // Red 700
+          800: '#991b1b', // Red 800
+          900: '#7f1d1d', // Red 900
         },
-        // Cognitive level colors
+        // Cognitive level colors (Bloom's Taxonomy)
         cognitive: {
-          c1: '#3b82f6', // Blue - Remember
-          c2: '#10b981', // Green - Understand
-          c3: '#f59e0b', // Amber - Apply
-          c4: '#f97316', // Orange - Analyze
-          c5: '#ef4444', // Red - Evaluate
-          c6: '#8b5cf6', // Purple - Create
+          c1: '#0ea5e9', // Remember (Blue)
+          c2: '#14b8a6', // Understand (Teal)
+          c3: '#f59e0b', // Apply (Amber)
+          c4: '#f97316', // Analyze (Orange)
+          c5: '#ef4444', // Evaluate (Red)
+          c6: '#8b5cf6', // Create (Purple)
         },
       },
       fontFamily: {
@@ -124,19 +124,14 @@ module.exports = {
         '5xl': '2.5rem',
       },
       animation: {
-        'fade-in': 'fadeIn 0.3s ease-in-out',
-        'fade-out': 'fadeOut 0.3s ease-in-out',
-        'slide-up': 'slideUp 0.4s cubic-bezier(0.16, 1, 0.3, 1)',
-        'slide-down': 'slideDown 0.4s cubic-bezier(0.16, 1, 0.3, 1)',
-        'slide-left': 'slideLeft 0.4s cubic-bezier(0.16, 1, 0.3, 1)',
-        'slide-right': 'slideRight 0.4s cubic-bezier(0.16, 1, 0.3, 1)',
-        'scale-in': 'scaleIn 0.2s cubic-bezier(0.16, 1, 0.3, 1)',
-        'scale-out': 'scaleOut 0.2s cubic-bezier(0.16, 1, 0.3, 1)',
-        'bounce-slow': 'bounce 3s infinite',
-        'pulse-slow': 'pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite',
-        'shimmer': 'shimmer 2s linear infinite',
-        'gradient': 'gradient 8s ease infinite',
-        'float': 'float 3s ease-in-out infinite',
+        'fade-in': 'fadeIn 0.4s ease-out',
+        'fade-out': 'fadeOut 0.3s ease-in',
+        'slide-up': 'slideUp 0.5s cubic-bezier(0.16, 1, 0.3, 1)',
+        'slide-down': 'slideDown 0.5s cubic-bezier(0.16, 1, 0.3, 1)',
+        'scale-in': 'scaleIn 0.3s cubic-bezier(0.16, 1, 0.3, 1)',
+        'float': 'float 6s ease-in-out infinite',
+        'pulse-slow': 'pulse 4s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+        'shimmer': 'shimmer 2.5s linear infinite',
       },
       keyframes: {
         fadeIn: {
@@ -155,49 +150,29 @@ module.exports = {
           '0%': { transform: 'translateY(-20px)', opacity: '0' },
           '100%': { transform: 'translateY(0)', opacity: '1' },
         },
-        slideLeft: {
-          '0%': { transform: 'translateX(20px)', opacity: '0' },
-          '100%': { transform: 'translateX(0)', opacity: '1' },
-        },
-        slideRight: {
-          '0%': { transform: 'translateX(-20px)', opacity: '0' },
-          '100%': { transform: 'translateX(0)', opacity: '1' },
-        },
         scaleIn: {
           '0%': { transform: 'scale(0.95)', opacity: '0' },
           '100%': { transform: 'scale(1)', opacity: '1' },
-        },
-        scaleOut: {
-          '0%': { transform: 'scale(1)', opacity: '1' },
-          '100%': { transform: 'scale(0.95)', opacity: '0' },
-        },
-        shimmer: {
-          '0%': { backgroundPosition: '-1000px 0' },
-          '100%': { backgroundPosition: '1000px 0' },
-        },
-        gradient: {
-          '0%, 100%': { backgroundPosition: '0% 50%' },
-          '50%': { backgroundPosition: '100% 50%' },
         },
         float: {
           '0%, 100%': { transform: 'translateY(0px)' },
           '50%': { transform: 'translateY(-10px)' },
         },
+        shimmer: {
+          '0%': { backgroundPosition: '-1000px 0' },
+          '100%': { backgroundPosition: '1000px 0' },
+        },
       },
       boxShadow: {
         'xs': '0 1px 2px 0 rgba(0, 0, 0, 0.05)',
         'sm': '0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px -1px rgba(0, 0, 0, 0.1)',
-        'DEFAULT': '0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px -1px rgba(0, 0, 0, 0.1)',
+        'DEFAULT': '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.1)',
         'md': '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.1)',
         'lg': '0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -4px rgba(0, 0, 0, 0.1)',
         'xl': '0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1)',
         '2xl': '0 25px 50px -12px rgba(0, 0, 0, 0.25)',
-        'inner': 'inset 0 2px 4px 0 rgba(0, 0, 0, 0.05)',
-        'soft': '0 2px 8px rgba(0, 0, 0, 0.04)',
-        'medium': '0 4px 16px rgba(0, 0, 0, 0.08)',
-        'large': '0 8px 32px rgba(0, 0, 0, 0.12)',
-        'glow': '0 0 20px rgba(99, 102, 241, 0.4)',
-        'glow-lg': '0 0 40px rgba(99, 102, 241, 0.3)',
+        'soft': '0 2px 15px -3px rgba(0, 0, 0, 0.07), 0 10px 20px -2px rgba(0, 0, 0, 0.04)',
+        'glow': '0 0 15px rgba(14, 165, 233, 0.3)',
       },
       backdropBlur: {
         xs: '2px',

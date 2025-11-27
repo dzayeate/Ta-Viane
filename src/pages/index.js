@@ -1,23 +1,21 @@
 import { useState, useEffect, useRef } from 'react';
 import { useTranslation } from 'next-i18next';
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
-import ModalPrompt from '@/components/modal-prompt';
 import Login from '@/modules/auth';
 import users from '@/mock/users/index.json';
-import Navbar from '@/components/navbar';
+import Sidebar from '@/components/sidebar';
 import QuestionEditor from '@/modules/question-editor';
 import QuestionSkeleton from '@/components/question-skeleton';
 import SuggestionList from '@/components/suggestion-list';
-import BottomNavigation from '@/components/bottom-navigation';
-import Footer from '@/components/footer';
 import QuestionReview from '@/modules/question-review';
+import { useRouter } from 'next/router';
 
 export default function Home() {
   const { t, ready, i18n } = useTranslation('common');
+  const router = useRouter();
   const [isGenerating, setIsGenerating] = useState([]);
   const [isShow, setIsShow] = useState([]);
   const [questions, setQuestions] = useState([]);
-  const [isModalOpen, setIsModalOpen] = useState(false);
   const [isReviewOpen, setIsReviewOpen] = useState(false);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [streamingState, setStreamingState] = useState({
@@ -28,6 +26,10 @@ export default function Home() {
   const [reviewQuestions, setReviewQuestions] = useState([]);
   const [generationMetadata, setGenerationMetadata] = useState(null);
   const [savedQuestions, setSavedQuestions] = useState([]);
+
+  // Refs for streaming
+  const abortControllerRef = useRef(null);
+  const collectedQuestionsRef = useRef([]);
 
   // Check if user is logged in on component mount
   useEffect(() => {
@@ -49,10 +51,6 @@ export default function Home() {
   const [suggestionQuery, setSuggestionQuery] = useState('');
   const [generateClickCount, setGenerateClickCount] = useState(0);
 
-
-  const openModal = () => setIsModalOpen(true);
-  const closeModal = () => setIsModalOpen(false);
-
   useEffect(() => {
     // Logika login
     const storedNupkt = localStorage.getItem('nupkt');
@@ -73,6 +71,24 @@ export default function Home() {
     document.body.appendChild(script);
     setIsLoading(false);
   }, []); // Run only once on mount
+
+  // Check for auto-generation config from Create Question page
+  useEffect(() => {
+    if (ready && isLoggedIn) {
+      const configStr = sessionStorage.getItem('auto_generate_config');
+      if (configStr) {
+        try {
+          const config = JSON.parse(configStr);
+          sessionStorage.removeItem('auto_generate_config');
+          
+          // Start generation
+          onGenerateStreaming(config);
+        } catch (e) {
+          console.error('Error parsing auto generate config:', e);
+        }
+      }
+    }
+  }, [ready, isLoggedIn]);
 
   // Handle language changes
   useEffect(() => {
@@ -235,6 +251,276 @@ export default function Home() {
     };
   }, []);
 
+  // Streaming generation function (Moved from ModalPrompt)
+  async function onGenerateStreaming(formData) {
+    const { prompt, difficulty, type, total, reference } = formData;
+
+    // Prepare skeleton data for immediate submission
+    const skeletonQuestions = Array.from({ length: parseInt(total) }, (_, index) => ({
+      prompt: prompt,
+      difficulty: difficulty === 'random' ? "c1" : difficulty,
+      type: type === 'random' ? "essay" : type,
+      title: "",
+      description: "",
+      answer: "",
+      topic: "",
+      isLoading: true,
+      loadingIndex: index
+    }));
+
+    // Prepare metadata
+    const metadata = {
+      topic: formData.topic || formData.prompt,
+      grade: formData.grade,
+      difficulty: difficulty === 'random' ? 'Acak' : difficulty,
+      type: type === 'random' ? 'Acak' : type,
+      total: parseInt(total),
+      prompt: formData.prompt
+    };
+
+    // Submit skeleton questions immediately
+    handleModalSubmit(skeletonQuestions, {
+      isStreaming: true,
+      total: parseInt(total),
+      metadata: metadata
+    });
+
+    setStreamingQuestions([]);
+    collectedQuestionsRef.current = [];
+
+    // Create AbortController for cancellation
+    abortControllerRef.current = new AbortController();
+    let isCancelled = false;
+
+    try {
+      const totalQuestions = parseInt(total);
+
+      // Split into chunks of 5
+      const chunkSize = 5;
+      const chunks = [];
+      let startIndex = 1;
+
+      while (startIndex <= totalQuestions) {
+        const endIndex = Math.min(startIndex + chunkSize - 1, totalQuestions);
+        const currentChunkSize = endIndex - startIndex + 1;
+        chunks.push({
+          start: startIndex,
+          end: endIndex,
+          size: currentChunkSize
+        });
+        startIndex = endIndex + 1;
+      }
+
+      let totalCompleted = 0;
+
+      // Send initial status
+      window.dispatchEvent(new CustomEvent('streamingStatus', {
+        detail: {
+          type: 'status',
+          message: 'Starting generation...',
+          total: totalQuestions,
+          completed: 0,
+          chunks: chunks.length
+        }
+      }));
+
+      // Process each chunk
+      for (let chunkIndex = 0; chunkIndex < chunks.length; chunkIndex++) {
+        // Check if cancelled
+        if (abortControllerRef.current?.signal.aborted) {
+          isCancelled = true;
+          break;
+        }
+
+        const chunk = chunks[chunkIndex];
+
+        // Send chunk progress
+        window.dispatchEvent(new CustomEvent('streamingStatus', {
+          detail: {
+            type: 'progress',
+            message: t('streaming.processingChunk', {
+              chunkIndex: chunkIndex + 1,
+              totalChunks: chunks.length,
+              start: chunk.start,
+              end: chunk.end
+            }),
+            total: totalQuestions,
+            completed: totalCompleted,
+            currentChunk: chunkIndex + 1,
+            totalChunks: chunks.length
+          }
+        }));
+
+        try {
+          // Create a POST request to initiate streaming for this chunk
+          const response = await fetch('/api/generate', {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              prompt,
+              type,
+              difficulty,
+              reference,
+              mode: "list",
+              total: chunk.size,
+              range: { start: chunk.start, end: chunk.end },
+              lang: i18n.language,
+              stream: true
+            }),
+            signal: abortControllerRef.current.signal
+          });
+
+          if (!response.ok) {
+            throw new Error(t('streaming.failedToStartStreaming', { chunkIndex: chunkIndex + 1 }));
+          }
+
+          const reader = response.body.getReader();
+          const decoder = new TextDecoder();
+          let chunkCompleted = 0;
+
+          while (true) {
+            // Check if cancelled
+            if (abortControllerRef.current?.signal.aborted) {
+              isCancelled = true;
+              reader.cancel();
+              break;
+            }
+
+            const { done, value } = await reader.read();
+            if (done) break;
+
+            const chunkData = decoder.decode(value);
+            const lines = chunkData.split('\n');
+
+            for (const line of lines) {
+              if (line.startsWith('data: ')) {
+                try {
+                  const data = JSON.parse(line.slice(6));
+
+                  if (data.type === 'question') {
+                    // Calculate correct global index based on chunk position
+                    const globalIndex = chunk.start + chunkCompleted - 1;
+
+                    // Adjust question index for global position
+                    const adjustedQuestion = {
+                      ...data.data,
+                      index: globalIndex,
+                      questionNumber: chunk.start + chunkCompleted, // Add question number for display
+                      chunkIndex: chunkIndex,
+                      chunkPosition: chunkCompleted + 1
+                    };
+
+                    collectedQuestionsRef.current.push(adjustedQuestion);
+                    setStreamingQuestions(prev => [...prev, adjustedQuestion]);
+                    chunkCompleted++;
+
+                    // Send update to parent via window event
+                    window.dispatchEvent(new CustomEvent('streamingQuestionReady', {
+                      detail: {
+                        question: adjustedQuestion,
+                        completed: totalCompleted + chunkCompleted,
+                        total: totalQuestions,
+                        chunkIndex: chunkIndex,
+                        chunkCompleted: chunkCompleted,
+                        chunkTotal: chunk.size,
+                        globalIndex: globalIndex
+                      }
+                    }));
+                  } else if (data.type === 'complete') {
+                    // Chunk completed
+                    totalCompleted += chunkCompleted;
+                    break;
+                  } else if (data.type === 'error') {
+                    console.error('Streaming error:', data.message);
+
+                    // Send error event to parent
+                    window.dispatchEvent(new CustomEvent('streamingError', {
+                      detail: {
+                        message: t('streaming.chunkError', { chunkIndex: chunkIndex + 1, message: data.message }),
+                        completed: totalCompleted + chunkCompleted,
+                        total: totalQuestions,
+                        chunkIndex: chunkIndex
+                      }
+                    }));
+                  }
+                } catch (e) {
+                  console.error('Error parsing streaming data:', e);
+                }
+              }
+            }
+          }
+
+          // If cancelled during this chunk, break
+          if (isCancelled) {
+            break;
+          }
+
+        } catch (error) {
+          if (error.name === 'AbortError') {
+            isCancelled = true;
+            break;
+          }
+
+          console.error(`Error in chunk ${chunkIndex + 1}:`, error);
+
+          // Send error event to parent
+          window.dispatchEvent(new CustomEvent('streamingError', {
+            detail: {
+              message: t('streaming.chunkError', { chunkIndex: chunkIndex + 1, message: error.message }),
+              completed: totalCompleted,
+              total: totalQuestions,
+              chunkIndex: chunkIndex
+            }
+          }));
+        }
+      }
+
+      // Send final status
+      if (isCancelled) {
+        window.dispatchEvent(new CustomEvent('streamingCancelled', {
+          detail: {
+            completed: totalCompleted,
+            total: totalQuestions,
+            message: t('streaming.generationCancelled')
+          }
+        }));
+      } else {
+        window.dispatchEvent(new CustomEvent('streamingComplete', {
+          detail: {
+            completed: totalCompleted,
+            total: totalQuestions,
+            message: t('streaming.allChunksCompleted')
+          }
+        }));
+      }
+
+    } catch (error) {
+      if (error.name === 'AbortError') {
+        console.log('Generation cancelled by user');
+      } else {
+        console.error('Streaming error:', error);
+        window.dispatchEvent(new CustomEvent('streamingError', {
+          detail: {
+            message: error.message,
+            completed: 0,
+            total: parseInt(total)
+          }
+        }));
+      }
+    } finally {
+      collectedQuestionsRef.current = [];
+      abortControllerRef.current = null;
+    }
+  }
+
+  // Helper to set streaming questions (used by onGenerateStreaming)
+  const setStreamingQuestions = (updater) => {
+    // This is just a placeholder since we don't use this state directly in Home
+    // The real state update happens via window events
+  };
+
   const handleModalSubmit = (data, options = {}) => {
     // Simpan metadata untuk review
     if (options.metadata) {
@@ -317,12 +603,14 @@ export default function Home() {
   let generateQueue = Promise.resolve();
 
   function addToQueue(task) {
-    generateQueue = generateQueue
-      .then(() => task())
-      .catch((err) => {
-        console.error('Error di queue:', err);
-      });
-    return generateQueue;
+    // Create a promise for this specific task
+    const taskPromise = generateQueue.then(() => task());
+    
+    // Update the queue to wait for this task, but catch errors so the queue doesn't break
+    generateQueue = taskPromise.catch(() => {});
+    
+    // Return the task promise so the caller can await IT specifically
+    return taskPromise;
   }
 
   async function onGenerate(event, index) {
@@ -334,60 +622,65 @@ export default function Home() {
       return newIsGenerating;
     });
 
-    await addToQueue(async () => {
-      const { prompt, difficulty, type, topic, grade } = questions[index];
-      let retryCount = 0;
-      const maxRetries = 3;
+    try {
+      await addToQueue(async () => {
+        const { prompt, difficulty, type, topic, grade } = questions[index];
+        let retryCount = 0;
+        const maxRetries = 3;
 
-      while (retryCount < maxRetries) {
-        try {
-          const result = await fetch('/api/generate', {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify({ prompt, type, difficulty, topic, grade, mode: "detail", lang: i18n.language }),
-          });
-
-          const response = await result.json();
-          const data = response?.result || "";
-
-          const [title = "", description = "", answer = "", generatedTopic = ""] = data
-            .split("|->")
-            .map(item => item.trim());
-
-          if ((title && description && answer && generatedTopic) || retryCount >= maxRetries) {
-            setQuestions((prevQuestions) => {
-              const newQuestions = [...prevQuestions];
-              newQuestions[index] = {
-                ...newQuestions[index],
-                title,
-                description,
-                answer,
-                topic: generatedTopic,
-              };
-              return newQuestions;
+        while (retryCount < maxRetries) {
+          try {
+            const result = await fetch('/api/generate', {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify({ prompt, type, difficulty, topic, grade, mode: "detail", lang: i18n.language }),
             });
-            setIsShow((prev) => [...prev, index]);
-            break;
-          } else {
+
+            const response = await result.json();
+            const data = response?.result || "";
+
+            const [title = "", description = "", answer = "", generatedTopic = ""] = data
+              .split("|->")
+              .map(item => item.trim());
+
+            if ((title && description && answer && generatedTopic) || retryCount >= maxRetries) {
+              setQuestions((prevQuestions) => {
+                const newQuestions = [...prevQuestions];
+                newQuestions[index] = {
+                  ...newQuestions[index],
+                  title,
+                  description,
+                  answer,
+                  topic: generatedTopic,
+                };
+                return newQuestions;
+              });
+              setIsShow((prev) => [...prev, index]);
+              break;
+            } else {
+              retryCount++;
+            }
+          } catch (error) {
+            console.error(error);
             retryCount++;
-          }
-        } catch (error) {
-          console.error(error);
-          retryCount++;
-          if (retryCount >= maxRetries) {
-            alert(error.message);
+            if (retryCount >= maxRetries) {
+              alert(error.message);
+            }
           }
         }
-      }
-    });
-
-    setIsGenerating((prev) => {
-      const newIsGenerating = [...prev];
-      newIsGenerating[index] = false;
-      return newIsGenerating;
-    });
+      });
+    } catch (error) {
+      console.error("Queue task failed:", error);
+      alert("Terjadi kesalahan saat memproses permintaan Anda.");
+    } finally {
+      setIsGenerating((prev) => {
+        const newIsGenerating = [...prev];
+        newIsGenerating[index] = false;
+        return newIsGenerating;
+      });
+    }
 
     setGenerateClickCount((prevCount) => {
       const newCount = prevCount + 1;
@@ -574,21 +867,26 @@ export default function Home() {
           <Login />
         ) :
           (
-            <div className='flex flex-col min-h-screen'>
-              {/* Navbar */}
-              <Navbar showLogout={isLoggedIn} onLogout={handleLogout} />
+            <div className='flex min-h-screen'>
+              {/* Sidebar - NEW NAVIGATION */}
+              <Sidebar 
+                t={t}
+                user={{ nama, nuptk }}
+                onLogout={handleLogout}
+                onOpenModal={() => router.push('/create-question')}
+                onAddQuestion={addQuestion}
+                onOpenReview={handleOpenReview}
+                questionCount={completedQuestionsCount}
+              />
 
               {/* Main Content Area - NEW LAYOUT */}
-              <main className="flex-1 pt-20 pb-28">
+              <main className="flex-1 pt-20 lg:pt-8 pb-12 px-4 lg:px-8 overflow-x-hidden">
                 {/* Background Pattern */}
                 <div className="fixed inset-0 -z-10 overflow-hidden pointer-events-none">
                   <div className="absolute top-0 left-0 w-full h-full bg-[linear-gradient(to_right,#80808012_1px,transparent_1px),linear-gradient(to_bottom,#80808012_1px,transparent_1px)] bg-[size:24px_24px]"></div>
                   <div className="absolute top-1/4 right-0 w-96 h-96 bg-brand-200/20 rounded-full blur-3xl"></div>
                   <div className="absolute bottom-1/4 left-0 w-96 h-96 bg-accent-200/20 rounded-full blur-3xl"></div>
                 </div>
-
-                {/* Modal */}
-                <ModalPrompt isOpen={isModalOpen} onClose={closeModal} onSubmit={handleModalSubmit} />
 
                 {/* Review Modal - STEP D & E */}
                 {isReviewOpen && (
@@ -602,12 +900,12 @@ export default function Home() {
                 )}
 
                 {/* Content Container - NEW STRUCTURE */}
-                <div className="container-content relative">
+                <div className="max-w-5xl mx-auto relative">
                   {/* Page Header */}
                   <div className="mb-8 animate-slide-down">
                     <div className="flex items-center justify-between mb-2">
                       <div>
-                        <h1 className="text-4xl font-display font-bold text-neutral-900 mb-2">
+                        <h1 className="text-3xl lg:text-4xl font-display font-bold text-neutral-900 mb-2">
                           {t('main.title')}
                         </h1>
                         <p className="text-neutral-600 text-lg">
@@ -724,7 +1022,7 @@ export default function Home() {
                             Klik tombol di bawah untuk membuat soal otomatis atau tambahkan soal baru
                           </p>
                           <div className="flex gap-3 justify-center">
-                            <button onClick={openModal} className="btn btn-primary btn-lg">
+                            <button onClick={() => router.push('/create-question')} className="btn btn-primary btn-lg">
                               Buat Otomatis
                             </button>
                             <button onClick={addQuestion} className="btn btn-outline btn-lg">
@@ -776,20 +1074,6 @@ export default function Home() {
                   query={suggestionQuery}
                 />
               )}
-
-              {/* Bottom Navigation - NEW POSITION */}
-              <BottomNavigation
-                nuptk={nuptk}
-                nama={nama}
-                onOpenModal={openModal}
-                onAddQuestion={addQuestion}
-                onOpenReview={handleOpenReview}
-                questionCount={completedQuestionsCount}
-                t={t}
-              />
-
-              {/* Footer */}
-              <Footer t={t} />
             </div>
           )}
     </div>

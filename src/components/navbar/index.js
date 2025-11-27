@@ -20,56 +20,53 @@ const Navbar = ({ showLogout = false, onLogout }) => {
   };
 
   return (
-    <nav className="fixed top-0 left-0 right-0 z-50 glass-strong border-b border-neutral-200/50 backdrop-blur-2xl shadow-md">
+    <nav className="fixed top-0 left-0 right-0 z-40 glass-strong border-b border-neutral-200/50 backdrop-blur-lg shadow-sm transition-all duration-300">
       <div className="container-app">
-        <div className="flex justify-between items-center h-20">
+        <div className="flex justify-between items-center h-16 md:h-20">
           {/* Logo & Brand */}
-          <div className="flex items-center gap-4 group">
+          <div className="flex items-center gap-3 group cursor-pointer" onClick={() => router.push('/')}>
             <div className="relative">
-              <div className="absolute inset-0 bg-gradient-brand rounded-2xl blur-md opacity-50 group-hover:opacity-75 transition-opacity"></div>
-              <div className="relative p-2.5 bg-white rounded-2xl shadow-md border border-neutral-200 group-hover:shadow-lg transition-all">
+              <div className="absolute inset-0 bg-brand-200 rounded-xl blur opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+              <div className="relative p-2 bg-white rounded-xl shadow-sm border border-neutral-200 group-hover:border-brand-200 transition-colors">
                 <img
                   src="/math.png"
                   alt="Auto Physics Logo"
-                  className="w-10 h-10 transition-transform duration-300 group-hover:scale-110 group-hover:rotate-3"
+                  className="w-8 h-8 md:w-9 md:h-9 object-contain"
                 />
-                <div className="absolute -top-1 -right-1 w-4 h-4 bg-accent-500 rounded-full border-2 border-white animate-pulse shadow-lg"></div>
               </div>
             </div>
             <div className="flex flex-col">
               <div className="flex items-center gap-2">
-                <span className="font-display font-bold text-xl text-neutral-900">{t('main.title')}</span>
-                <HiBolt className="w-5 h-5 text-brand-500 animate-pulse" />
+                <span className="font-display font-bold text-lg md:text-xl text-neutral-900 tracking-tight">{t('main.title')}</span>
+                <span className="px-1.5 py-0.5 rounded text-[10px] font-bold bg-brand-100 text-brand-700 border border-brand-200 uppercase tracking-wider">Beta</span>
               </div>
-              <span className="text-xs text-neutral-500 hidden sm:block font-medium">
-                AI-Powered Question Generator
-              </span>
             </div>
           </div>
 
           {/* Actions */}
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-2 md:gap-3">
             {showLogout && (
               <button
                 type="button"
                 onClick={() => router.push('/saved-questions')}
-                className="btn btn-ghost gap-2 group hover:bg-neutral-100"
+                className="btn btn-ghost btn-sm md:btn-md gap-2 group"
                 title="Bank Soal"
               >
-                <HiDocumentText className="text-xl text-brand-600" />
-                <span className="hidden sm:inline font-semibold text-brand-600">Bank Soal</span>
+                <HiDocumentText className="text-lg text-neutral-500 group-hover:text-brand-600 transition-colors" />
+                <span className="hidden sm:inline font-medium text-neutral-600 group-hover:text-brand-700">Bank Soal</span>
               </button>
             )}
+            <div className="h-6 w-px bg-neutral-200 mx-1 hidden sm:block"></div>
             <LanguageSwitcher />
             {showLogout && (
               <button
                 type="button"
                 onClick={handleLogout}
-                className="btn btn-ghost gap-2 group hover:bg-neutral-100"
+                className="btn btn-ghost btn-sm md:btn-md gap-2 group text-danger-600 hover:bg-danger-50 hover:text-danger-700"
                 title={t('main.logout')}
               >
-                <HiArrowRightOnRectangle className="text-xl transition-transform duration-200 group-hover:translate-x-0.5" />
-                <span className="hidden sm:inline font-semibold">{t('main.logout')}</span>
+                <HiArrowRightOnRectangle className="text-lg" />
+                <span className="hidden sm:inline font-medium">{t('main.logout')}</span>
               </button>
             )}
           </div>

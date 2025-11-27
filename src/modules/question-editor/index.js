@@ -23,124 +23,122 @@ export default function QuestionEditor({
   // Get difficulty badge color
   const getDifficultyColor = (difficulty) => {
     const colors = {
-      c1: 'bg-blue-100 text-blue-700 border-blue-200',
-      c2: 'bg-green-100 text-green-700 border-green-200',
-      c3: 'bg-yellow-100 text-yellow-700 border-yellow-200',
-      c4: 'bg-orange-100 text-orange-700 border-orange-200',
-      c5: 'bg-red-100 text-red-700 border-red-200',
-      c6: 'bg-purple-100 text-purple-700 border-purple-200',
+      c1: 'bg-blue-50 text-blue-700 border-blue-100',
+      c2: 'bg-teal-50 text-teal-700 border-teal-100',
+      c3: 'bg-amber-50 text-amber-700 border-amber-100',
+      c4: 'bg-orange-50 text-orange-700 border-orange-100',
+      c5: 'bg-red-50 text-red-700 border-red-100',
+      c6: 'bg-purple-50 text-purple-700 border-purple-100',
     };
     return colors[difficulty] || colors.c1;
   };
 
   return (
-    <div key={index} className="card card-hover animate-fade-in">
+    <div key={index} className="card card-hover animate-fade-in group border-l-4 border-l-brand-500">
       {/* Header Section */}
-      <div className="p-5 md:p-6 border-b border-neutral-200 bg-gradient-to-r from-neutral-50 to-white">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <div className="flex items-center gap-2">
-              <div className="p-2 bg-brand-100 rounded-xl shadow-sm">
-                <HiDocumentText className="text-brand-600 text-xl" />
-              </div>
-              <div>
-                <h3 className="text-lg font-display font-bold text-neutral-900">
-                  {t('main.question')}
-                </h3>
-                <div className="flex items-center gap-2 mt-1">
-                  <span className={`badge badge-primary text-xs`}>
-                    {t(`main.cognitive.${question.difficulty}`)}
-                  </span>
-                  <span className="badge badge-neutral text-xs">
-                    #{index + 1}
-                  </span>
-                </div>
-              </div>
+      <div className="p-4 md:p-5 border-b border-neutral-100 bg-neutral-50/50 flex items-center justify-between">
+        <div className="flex items-center gap-3">
+          <div className="flex items-center justify-center w-10 h-10 rounded-xl bg-white border border-neutral-200 shadow-sm text-brand-600 font-bold font-display text-lg">
+            {index + 1}
+          </div>
+          <div>
+            <h3 className="text-base font-bold text-neutral-900 leading-tight">
+              {t('main.question')} {index + 1}
+            </h3>
+            <div className="flex items-center gap-2 mt-1">
+              <span className={`badge ${getDifficultyColor(question.difficulty)} uppercase tracking-wider text-[10px]`}>
+                {t(`main.cognitive.${question.difficulty}`)}
+              </span>
+              <span className="text-xs text-neutral-400 font-medium">
+                {question.type === 'essay' ? t('types.essay') : t('types.multipleChoice')}
+              </span>
             </div>
           </div>
+        </div>
 
-          <div className="flex items-center gap-2">
+        <div className="flex items-center gap-1">
+          <button
+            type="button"
+            onClick={() => onToggleVisibility(index)}
+            className="btn btn-ghost btn-icon text-neutral-400 hover:text-brand-600"
+            title={isExpanded ? "Sembunyikan detail" : "Tampilkan detail"}
+          >
+            <IoIosArrowDown className={`text-lg transition-transform duration-300 ${isExpanded ? '-rotate-180' : ''}`} />
+          </button>
+
+          {onRemove && (
             <button
               type="button"
-              onClick={() => onToggleVisibility(index)}
-              className="btn btn-ghost p-2 group"
-              title={isExpanded ? "Sembunyikan detail" : "Tampilkan detail"}
+              onClick={() => onRemove(index)}
+              className="btn btn-ghost btn-icon text-neutral-400 hover:text-danger-600 hover:bg-danger-50"
+              title="Hapus soal"
             >
-              <IoIosArrowDown className={`text-xl transition-all duration-300 group-hover:text-primary-600 ${isExpanded ? '-rotate-180' : ''}`} />
+              <IoClose className="text-lg" />
             </button>
-
-            {onRemove && (
-              <button
-                type="button"
-                onClick={() => onRemove(index)}
-                className="btn btn-ghost p-2 text-danger-600 hover:bg-danger-50 group"
-                title="Hapus soal"
-              >
-                <IoClose className="text-xl transition-transform duration-200 group-hover:scale-110" />
-              </button>
-            )}
-          </div>
+          )}
         </div>
       </div>
 
       {/* Form Section */}
-      <div className="p-5 md:p-6">
+      <div className="p-4 md:p-6 bg-white">
         <form onSubmit={(e) => onGenerate(e, index)}>
-          <div className="space-y-5">
+          <div className="space-y-6">
             {/* Prompt Input */}
             <div className="space-y-2">
-              <label htmlFor={`prompt-${index}`} className="block text-sm font-semibold text-neutral-700 flex items-center gap-2">
-                <HiLightBulb className="text-brand-600" />
+              <label htmlFor={`prompt-${index}`} className="text-sm font-semibold text-neutral-700 flex items-center gap-2">
+                <HiLightBulb className="text-brand-500" />
                 {t('main.command')}
               </label>
-              <textarea
-                id={`prompt-${index}`}
-                value={question.prompt}
-                onChange={(e) => onInputChange(index, 'prompt', e.target.value)}
-                onFocus={(e) => onTextareaFocus(index, e)}
-                onBlur={() => {
-                  setTimeout(() => {
-                    if (activeSuggestionIndex === index) {
-                      onTextareaFocus(null, {});
-                    }
-                  }, 200);
-                }}
-                className="input min-h-[120px] resize-y"
-                placeholder={t('main.commandPlaceholder')}
-                required
-                autoComplete="off"
-              />
-              <p className="text-xs text-neutral-500">
-                Jelaskan instruksi soal yang ingin Anda buat dengan jelas dan spesifik
-              </p>
+              <div className="relative">
+                <textarea
+                  id={`prompt-${index}`}
+                  value={question.prompt}
+                  onChange={(e) => onInputChange(index, 'prompt', e.target.value)}
+                  onFocus={(e) => onTextareaFocus(index, e)}
+                  onBlur={() => {
+                    setTimeout(() => {
+                      if (activeSuggestionIndex === index) {
+                        onTextareaFocus(null, {});
+                      }
+                    }, 200);
+                  }}
+                  className="input min-h-[100px] resize-y text-sm leading-relaxed"
+                  placeholder={t('main.commandPlaceholder')}
+                  required
+                  autoComplete="off"
+                />
+                <div className="absolute bottom-3 right-3 text-xs text-neutral-400 pointer-events-none">
+                  AI Prompt
+                </div>
+              </div>
             </div>
 
-            {/* Topic & Grade Row */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div className="space-y-2">
-                <label className="block text-sm font-semibold text-neutral-700 flex items-center gap-2">
-                  <HiTag className="text-brand-600" />
+            {/* Settings Grid */}
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+              <div className="space-y-1.5">
+                <label className="text-xs font-semibold text-neutral-500 uppercase tracking-wider flex items-center gap-1.5">
+                  <HiTag className="text-brand-400" />
                   {t('main.branch')}
                 </label>
                 <input
                   type="text"
                   value={question.topic}
                   onChange={(e) => onInputChange(index, 'topic', e.target.value)}
-                  className="input"
-                  placeholder="Contoh: Dinamika, Optik, Listrik..."
+                  className="input input-sm"
+                  placeholder="Topik..."
                   required
                 />
               </div>
 
-              <div className="space-y-2">
-                <label className="block text-sm font-semibold text-neutral-700 flex items-center gap-2">
-                  <HiAcademicCap className="text-brand-600" />
+              <div className="space-y-1.5">
+                <label className="text-xs font-semibold text-neutral-500 uppercase tracking-wider flex items-center gap-1.5">
+                  <HiAcademicCap className="text-brand-400" />
                   {t('modal.grade')}
                 </label>
                 <select
                   value={question.grade || ""}
                   onChange={(e) => onInputChange(index, 'grade', e.target.value)}
-                  className="input"
+                  className="input input-sm"
                 >
                   <option value="">Pilih Kelas</option>
                   <option value="X">Kelas X</option>
@@ -148,19 +146,16 @@ export default function QuestionEditor({
                   <option value="XII">Kelas XII</option>
                 </select>
               </div>
-            </div>
 
-            {/* Controls Row */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div className="space-y-2">
-                <label className="block text-sm font-semibold text-neutral-700 flex items-center gap-2">
-                  <HiAcademicCap className="text-brand-600" />
-                  {t('main.cognitiveLevel')}
+              <div className="space-y-1.5">
+                <label className="text-xs font-semibold text-neutral-500 uppercase tracking-wider flex items-center gap-1.5">
+                  <HiAcademicCap className="text-brand-400" />
+                  Level
                 </label>
                 <select
                   value={question.difficulty}
                   onChange={(e) => onInputChange(index, 'difficulty', e.target.value)}
-                  className="input"
+                  className="input input-sm"
                 >
                   <option value="c1">{t('main.cognitive.c1')}</option>
                   <option value="c2">{t('main.cognitive.c2')}</option>
@@ -171,14 +166,14 @@ export default function QuestionEditor({
                 </select>
               </div>
 
-              <div className="space-y-2">
-                <label className="block text-sm font-semibold text-gray-700">
-                  {t('main.questionType')}
+              <div className="space-y-1.5">
+                <label className="text-xs font-semibold text-neutral-500 uppercase tracking-wider flex items-center gap-1.5">
+                  Tipe
                 </label>
                 <select
                   value={question.type}
                   onChange={(e) => onInputChange(index, 'type', e.target.value)}
-                  className="input"
+                  className="input input-sm"
                 >
                   <option value="essay">{t('types.essay')}</option>
                   <option value="multipleChoice">{t('types.multipleChoice')}</option>
@@ -191,17 +186,18 @@ export default function QuestionEditor({
               <button
                 type="submit"
                 disabled={isGenerating[index]}
-                className={`btn w-full gap-2 group ${isGenerating[index] ? 'btn-secondary' : 'btn-success'}`}
+                className={`btn w-full gap-2 group relative overflow-hidden ${isGenerating[index] ? 'btn-secondary cursor-wait' : 'btn-primary'}`}
               >
                 {isGenerating[index] ? (
                   <>
-                    <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white"></div>
-                    <span>{t('main.creating')}</span>
+                    <div className="animate-spin rounded-full h-4 w-4 border-2 border-brand-600 border-t-transparent"></div>
+                    <span className="text-brand-600">{t('main.creating')}</span>
                   </>
                 ) : (
                   <>
-                    <HiSparkles className="text-lg transition-transform duration-200 group-hover:rotate-12" />
+                    <HiSparkles className="text-lg transition-transform duration-300 group-hover:rotate-12" />
                     <span>{t('main.createQuestion')}</span>
+                    <div className="absolute inset-0 bg-white/20 transform -skew-x-12 translate-x-full group-hover:translate-x-0 transition-transform duration-500"></div>
                   </>
                 )}
               </button>
@@ -211,45 +207,43 @@ export default function QuestionEditor({
       </div>
 
       {/* Expanded Details Section */}
-      <div className={`transition-all duration-500 ease-in-out overflow-hidden ${isExpanded ? 'max-h-[2000px] opacity-100' : 'max-h-0 opacity-0'}`}>
-        <div className="border-t border-neutral-200 bg-neutral-50/50">
-          <div className="p-5 md:p-6 space-y-6 animate-slide-down">
-            {/* Title Field */}
-            <div className="space-y-2">
-              <label className="block text-sm font-semibold text-neutral-700">
-                {t('main.title_field')}
-              </label>
-              <input
-                type="text"
-                value={question.title}
-                onChange={(e) => onInputChange(index, 'title', e.target.value)}
-                className="input"
-                placeholder="Judul singkat soal..."
-                required
-              />
-            </div>
+      <div className={`transition-all duration-500 ease-in-out overflow-hidden bg-neutral-50/30 ${isExpanded ? 'max-h-[2000px] opacity-100 border-t border-neutral-100' : 'max-h-0 opacity-0'}`}>
+        <div className="p-4 md:p-6 space-y-6">
+          {/* Title Field */}
+          <div className="space-y-2">
+            <label className="text-sm font-semibold text-neutral-700">
+              {t('main.title_field')}
+            </label>
+            <input
+              type="text"
+              value={question.title}
+              onChange={(e) => onInputChange(index, 'title', e.target.value)}
+              className="input"
+              placeholder="Judul singkat soal..."
+              required
+            />
+          </div>
 
-            {/* Description Editor */}
-            <div>
-              <Editor
-                label={t('main.description')}
-                id="description"
-                index={index}
-                value={question.description}
-                onChange={onInputChange}
-              />
-            </div>
+          {/* Description Editor */}
+          <div className="bg-white rounded-xl border border-neutral-200 overflow-hidden shadow-sm">
+            <Editor
+              label={t('main.description')}
+              id="description"
+              index={index}
+              value={question.description}
+              onChange={onInputChange}
+            />
+          </div>
 
-            {/* Answer Editor */}
-            <div>
-              <Editor
-                label={t('main.answer')}
-                id="answer"
-                index={index}
-                value={question.answer}
-                onChange={onInputChange}
-              />
-            </div>
+          {/* Answer Editor */}
+          <div className="bg-white rounded-xl border border-neutral-200 overflow-hidden shadow-sm">
+            <Editor
+              label={t('main.answer')}
+              id="answer"
+              index={index}
+              value={question.answer}
+              onChange={onInputChange}
+            />
           </div>
         </div>
       </div>

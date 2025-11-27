@@ -2,7 +2,6 @@
 import Head from "next/head";
 import { appWithTranslation } from 'next-i18next';
 import { useEffect, useState } from 'react';
-import '@/i18n';
 import '@/styles/globals.css';
 import 'katex/dist/katex.min.css';
 import '@uiw/react-markdown-preview/markdown.css';
@@ -65,4 +64,4 @@ function MyApp({ Component, pageProps }) {
   );
 }
 
-export default MyApp;
+export default appWithTranslation(MyApp);

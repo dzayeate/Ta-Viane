@@ -10,14 +10,14 @@ const nextConfig = {
     return config;
   },
   
-  // Konfigurasi runtime
-  publicRuntimeConfig: {
-    default_timezone: 'Asia/Jakarta',
-  },
-  
   // Konfigurasi gambar
   images: {
-    domains: ['sgp1.vultrobjects.com'],
+    remotePatterns: [
+      {
+        protocol: 'https',
+        hostname: 'sgp1.vultrobjects.com',
+      },
+    ],
   },
   
   // Konfigurasi rewrites
