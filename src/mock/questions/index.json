@@ -108,5 +108,349 @@
       "nupkt": "vianepindhi@gmail.com"
     },
     "id": "1764291219909xq866vh4k"
+  },
+  {
+    "prompt": "1. Dalam praktikum fisika di SMA Negeri 3 Bandung, sekelompok siswa melakukan pengukuran berulang terhadap diameter sebuah kelereng menggunakan mikrometer sekrup. Setelah mengumpulkan data, mereka dihadapkan pada tugas untuk melaporkan hasil pengukuran dengan benar, termasuk menentukan ketidakpastian pengukuran, menuliskan angka penting yang sesuai, serta menganalisis apakah alat ukur yang digunakan sudah optimal. Buatlah soal yang meminta siswa untuk menganalisis data pengukuran yang diberikan (misalnya, data 5 kali pengukuran diameter: 12,34 mm; 12,36 mm; 12,35 mm; 12,33 mm; 12,35 mm), menentukan nilai rata-rata, ketidakpastian mutlak, dan relatif, lalu menuliskan hasil akhir dengan angka penting yang benar. Sertakan pula pertanyaan tentang implikasi penggunaan alat ukur tersebut terhadap akurasi dan presisi hasil.",
+    "difficulty": "random",
+    "type": "Esai",
+    "title": "Analisis Pengukuran Diameter Kelereng",
+    "description": "KD Pengukuran dan Angka Penting Kelas X. Dalam praktikum fisika di SMA Negeri 3 Bandung, sekelompok siswa melakukan pengukuran berulang terhadap diameter sebuah kelereng menggunakan mikrometer sekrup. Berikut adalah data hasil 5 kali pengukuran diameter: 12,34 mm; 12,36 mm; 12,35 mm; 12,33 mm; 12,35 mm.\n\nBerdasarkan data tersebut:\na) Tentukan nilai rata-rata diameter kelereng.\nb) Hitung ketidakpastian mutlak (standard deviation of the mean) pengukuran.\nc) Hitung ketidakpastian relatif pengukuran.\nd) Tuliskan hasil pengukuran akhir dengan format $$(D \\pm \\Delta D)$$ dan jumlah angka penting yang benar.\ne) Analisislah implikasi penggunaan mikrometer sekrup terhadap akurasi dan presisi hasil pengukuran ini. Apakah alat ukur ini optimal untuk tugas tersebut?\n\nTingkat kognitif: C4 (Menganalisis).",
+    "answer": "Langkah penyelesaian:\nDiberikan data pengukuran diameter kelereng ($x_i$): $12{,}34\\ \\text{mm}$, $12{,}36\\ \\text{mm}$, $12{,}35\\ \\text{mm}$, $12{,}33\\ \\text{mm}$, $12{,}35\\ \\text{mm}$. Jumlah pengukuran ($N$) = 5.\n\na) **Nilai rata-rata diameter kelereng ($\\bar{x}$)**:\n$$\\bar{x} = \\frac{\\sum x_i}{N} = \\frac{12{,}34 + 12{,}36 + 12{,}35 + 12{,}33 + 12{,}35}{5} = \\frac{61{,}73}{5} = 12{,}346\\ \\text{mm}$$\n\nb) **Ketidakpastian mutlak ($\\Delta x$)** (menggunakan standard deviation of the mean):\nTerlebih dahulu hitung deviasi dari rata-rata ($x_i - \\bar{x}$) dan kuadrat deviasi ($(x_i - \\bar{x})^2$):\n$$(12{,}34 - 12{,}346)^2 = (-0{,}006)^2 = 0{,}000036$$\n$$(12{,}36 - 12{,}346)^2 = (0{,}014)^2 = 0{,}000196$$\n$$(12{,}35 - 12{,}346)^2 = (0{,}004)^2 = 0{,}000016$$\n$$(12{,}33 - 12{,}346)^2 = (-0{,}016)^2 = 0{,}000256$$\n$$(12{,}35 - 12{,}346)^2 = (0{,}004)^2 = 0{,}000016$$\nJumlah kuadrat deviasi: $$\\sum (x_i - \\bar{x})^2 = 0{,}000036 + 0{,}000196 + 0{,}000016 + 0{,}000256 + 0{,}000016 = 0{,}00052$$\nStandard deviasi sampel ($s$):\n$$s = \\sqrt{\\frac{\\sum (x_i - \\bar{x})^2}{N-1}} = \\sqrt{\\frac{0{,}00052}{5-1}} = \\sqrt{\\frac{0{,}00052}{4}} = \\sqrt{0{,}00013} \\approx 0{,}0114\\ \\text{mm}$$\nKetidakpastian mutlak (standard deviation of the mean):\n$$\\Delta x = \\frac{s}{\\sqrt{N}} = \\frac{0{,}0114}{\\sqrt{5}} = \\frac{0{,}0114}{2{,}236} \\approx 0{,}00509\\ \\text{mm}$$\nDibulatkan ke satu angka penting (atau dua jika digit pertama 1): $\\Delta x \\approx 0{,}005\\ \\text{mm}$.\n\nc) **Ketidakpastian relatif**:\n$$\\text{Ketidakpastian Relatif} = \\frac{\\Delta x}{\\bar{x}} \\times 100\\% = \\frac{0{,}005\\ \\text{mm}}{12{,}346\\ \\text{mm}} \\times 100\\% \\approx 0{,}0405\\% \\approx 0{,}041\\%$$\n\nd) **Hasil pengukuran akhir dengan angka penting yang benar**:\nNilai rata-rata ($\\bar{x} = 12{,}346\\ \\text{mm}$) harus dibulatkan hingga memiliki jumlah desimal yang sama dengan ketidakpastian mutlak ($\\Delta x = 0{,}005\\ \\text{mm}$). Keduanya memiliki tiga angka di belakang koma.\nMaka, hasil pengukuran akhir adalah: $$D = (12{,}346 \\pm 0{,}005)\\ \\text{mm}$$\n\ne) **Analisis implikasi penggunaan mikrometer sekrup terhadap akurasi dan presisi**:\n*   **Presisi**: Mikrometer sekrup memiliki presisi yang sangat tinggi, umumnya hingga 0,01 mm (bahkan 0,001 mm untuk beberapa jenis). Ini berarti alat ini dapat mengukur perbedaan yang sangat kecil antar objek atau dalam pengukuran berulang. Data pengukuran yang diberikan (hingga dua angka di belakang koma) mencerminkan presisi tinggi ini. Pengukuran berulang membantu mengurangi kesalahan acak (random error) yang mungkin timbul dari variasi kecil dalam penempatan objek atau gaya penekanan.\n*   **Akurasi**: Akurasi mengacu pada seberapa dekat nilai terukur dengan nilai sebenarnya. Mikrometer sekrup, jika dikalibrasi dengan benar dan digunakan sesuai prosedur, memiliki akurasi yang tinggi. Namun, akurasi juga bisa dipengaruhi oleh kesalahan sistematis seperti kesalahan nol (zero error) atau kalibrasi yang tidak tepat. Dalam praktikum ini, asumsi adalah mikrometer sekrup sudah terkalibrasi dengan baik.\n*   **Optimalitas Alat Ukur**: Untuk mengukur diameter kelereng yang merupakan objek kecil dan membutuhkan detail tinggi, mikrometer sekrup adalah alat ukur yang sangat optimal. Alat ukur lain seperti jangka sorong (vernier caliper) atau penggaris (ruler) akan memberikan ketidakpastian yang jauh lebih besar (misalnya, jangka sorong biasanya hingga 0,05 mm atau 0,02 mm), yang membuat hasil pengukuran kurang reliabel dan kurang informatif untuk objek seukuran kelereng. Dengan mikrometer sekrup, siswa dapat memperoleh data yang lebih presisi dan akurat, sehingga analisis ketidakpastian menjadi lebih bermakna.\n\nHasil akhir:\na) Rata-rata diameter: $12{,}346\\ \\text{mm}$\nb) Ketidakpastian mutlak: $0{,}005\\ \\text{mm}$\nc) Ketidakpastian relatif: $0{,}041\\%$\nd) Hasil akhir: $(12{,}346 \\pm 0{,}005)\\ \\text{mm}$\ne) Analisis seperti di atas.",
+    "topic": "Pengukuran dan Ketidakpastian Kelas X",
+    "grade": "XII",
+    "isLoading": false,
+    "questionNumber": 1,
+    "globalIndex": 0,
+    "savedAt": "2025-11-28T05:44:56.719Z",
+    "metadata": {
+      "topic": "-",
+      "grade": "XII",
+      "difficulty": "Acak",
+      "type": "Acak",
+      "total": 12,
+      "prompt": "Buat soal yang menilai pemahaman tentang ketidakpastian pengukuran, angka penting, serta penggunaan alat laboratorium."
+    },
+    "author": {
+      "name": "Viane Pindhi, S.Pd",
+      "nupkt": "vianepindhi@gmail.com"
+    },
+    "id": "1764308697321usd29q8va"
+  },
+  {
+    "prompt": "2. Sajikan sebuah skenario pengukuran di laboratorium fisika SMA dengan objek khas Indonesia (misalnya, batu akik atau sampel batik). Minta siswa untuk menentukan besaran turunan (misalnya, luas atau volume) dari hasil pengukuran menggunakan alat ukur berbeda (misalnya, penggaris, jangka sorong, mikrometer sekrup). Soal harus menuntut siswa untuk: 1) Menghitung hasil akhir dengan mempertimbangkan ketidakpastian pengukuran dari setiap alat, 2) Menerapkan aturan angka penting yang benar, dan 3) Menganalisis alasan pemilihan alat ukur untuk mencapai presisi tertentu.",
+    "difficulty": "random",
+    "type": "Esai",
+    "title": "Pengukuran Volume Batu Akik",
+    "description": "KD Pengukuran dan Angka Penting Kelas X. Seorang siswa SMA di Bandung sedang melakukan praktikum fisika untuk menentukan volume sebuah \"batu akik\" berbentuk balok kecil yang ditemukan di daerah Garut. Untuk mendapatkan hasil yang akurat, siswa tersebut menggunakan tiga alat ukur yang berbeda untuk setiap dimensinya:\n*   Panjang (P) diukur menggunakan penggaris dengan skala terkecil 1 mm.\n*   Lebar (L) diukur menggunakan jangka sorong dengan ketelitian 0,05 mm.\n*   Tinggi (T) diukur menggunakan mikrometer sekrup dengan ketelitian 0,005 mm.\n\nHasil pengukuran yang diperoleh adalah sebagai berikut:\n*   Panjang (P) = $3,2 \\text{ cm}$\n*   Lebar (L) = $1,85 \\text{ cm}$\n*   Tinggi (T) = $0,725 \\text{ cm}$\n\nBerdasarkan data tersebut:\na) Hitunglah volume batu akik tersebut beserta ketidakpastiannya, dengan menunjukkan langkah-langkah perhitungan ketidakpastian.\nb) Tuliskan hasil akhir pengukuran volume dengan aturan angka penting yang benar.\nc) Jelaskan mengapa siswa memilih alat ukur yang berbeda untuk setiap dimensi dan bagaimana pemilihan alat tersebut berkontribusi pada presisi pengukuran keseluruhan.\nTingkat kognitif: C4 (Menganalisis).",
+    "answer": "Langkah penyelesaian:\n**a) Perhitungan Volume dan Ketidakpastian:**\n\n*   **Data Pengukuran dan Ketidakpastian Alat:**\n    *   Panjang (P): $3,2 \\text{ cm}$. Ketidakpastian penggaris (skala terkecil 1 mm atau 0,1 cm) adalah $\\Delta P = \\frac{1}{2} \\times 0,1 \\text{ cm} = 0,05 \\text{ cm}$.\n    *   Lebar (L): $1,85 \\text{ cm}$. Ketidakpastian jangka sorong (ketelitian 0,05 mm atau 0,005 cm) adalah $\\Delta L = 0,005 \\text{ cm}$.\n    *   Tinggi (T): $0,725 \\text{ cm}$. Ketidakpastian mikrometer sekrup (ketelitian 0,005 mm atau 0,0005 cm) adalah $\\Delta T = 0,0005 \\text{ cm}$.\n\n*   **Perhitungan Volume (V):**\n    $$V = P \\times L \\times T$$\n    $$V = 3,2 \\text{ cm} \\times 1,85 \\text{ cm} \\times 0,725 \\text{ cm}$$\n    $$V = 4,288 \\text{ cm}^3$$\n\n*   **Perhitungan Ketidakpastian Relatif (Fraksional):**\n    $$\\frac{\\Delta V}{V} = \\sqrt{\\left(\\frac{\\Delta P}{P}\\right)^2 + \\left(\\frac{\\Delta L}{L}\\right)^2 + \\left(\\frac{\\Delta T}{T}\\right)^2}$$\n    $$\\frac{\\Delta V}{V} = \\sqrt{\\left(\\frac{0,05}{3,2}\\right)^2 + \\left(\\frac{0,005}{1,85}\\right)^2 + \\left(\\frac{0,0005}{0,725}\\right)^2}$$\n    $$\\frac{\\Delta V}{V} = \\sqrt{(0,015625)^2 + (0,0027027)^2 + (0,0006896)^2}$$\n    $$\\frac{\\Delta V}{V} = \\sqrt{0,00024414 + 0,00000730 + 0,00000048}$$\n    $$\\frac{\\Delta V}{V} = \\sqrt{0,00025192}$$\n    $$\\frac{\\Delta V}{V} \\approx 0,01587$$\n\n*   **Perhitungan Ketidakpastian Mutlak ($\\Delta V$):**\n    $$\\Delta V = V \\times \\left(\\frac{\\Delta V}{V}\\right)$$\n    $$\\Delta V = 4,288 \\text{ cm}^3 \\times 0,01587$$\n    $$\\Delta V \\approx 0,06806 \\text{ cm}^3$$\n\n**b) Hasil Akhir dengan Aturan Angka Penting:**\n\n*   Ketidakpastian $\\Delta V \\approx 0,06806 \\text{ cm}^3$. Dibulatkan menjadi satu angka penting: $\\Delta V = 0,07 \\text{ cm}^3$.\n*   Volume $V = 4,288 \\text{ cm}^3$. Karena ketidakpastian berada pada dua desimal (perseratusan), maka volume juga dibulatkan hingga dua desimal: $V = 4,29 \\text{ cm}^3$.\n*   Hasil akhir pengukuran volume adalah $(4,29 \\pm 0,07)\\ \\text{cm}^3$.\n\n**c) Analisis Pemilihan Alat Ukur:**\n\n*   **Penggaris (untuk Panjang):** Dipilih untuk mengukur dimensi yang relatif paling besar (panjang). Penggaris memiliki ketelitian yang paling rendah di antara ketiga alat, namun cukup praktis dan memadai untuk pengukuran yang tidak memerlukan presisi ekstrem pada dimensi yang lebih besar. Ketidakpastian relatif 0,05/3,2 $\\approx 1,56\\%$, yang merupakan kontributor terbesar terhadap ketidakpastian total.\n*   **Jangka Sorong (untuk Lebar):** Dipilih untuk mengukur dimensi menengah (lebar). Jangka sorong menawarkan presisi yang lebih tinggi daripada penggaris (ketelitian 0,005 cm), cocok untuk mengukur lebar yang lebih kecil dan membutuhkan akurasi lebih baik. Ketidakpastian relatifnya 0,005/1,85 $\\approx 0,27\\%$.\n*   **Mikrometer Sekrup (untuk Tinggi):** Dipilih untuk mengukur dimensi terkecil (tinggi/ketebalan) yang memerlukan presisi tertinggi. Mikrometer sekrup memiliki ketelitian paling tinggi (0,0005 cm), sangat penting untuk mendapatkan hasil yang paling akurat dari dimensi yang paling kecil. Ketidakpastian relatifnya 0,0005/0,725 $\\approx 0,07\\%$.\n\n*   **Kontribusi Presisi Keseluruhan:** Pemilihan alat ini menunjukkan prinsip bahwa alat dengan presisi yang lebih tinggi digunakan untuk dimensi yang lebih kecil atau yang membutuhkan akurasi lebih tinggi. Meskipun mikrometer sekrup memberikan ketidakpastian mutlak terkecil, kontribusi relatif terhadap ketidakpastian total volume masih sangat dipengaruhi oleh dimensi yang diukur dengan alat berpresisi paling rendah (penggaris). Ini menekankan pentingnya memilih alat yang sesuai untuk setiap pengukuran agar ketidakpastian keseluruhan dapat diminimalisir atau setidaknya dipahami kontribusinya. Dalam kasus ini, ketidakpastian terbesar berasal dari pengukuran panjang dengan penggaris, yang menunjukkan bahwa peningkatan presisi pada pengukuran panjang akan paling efektif dalam mengurangi ketidakpastian volume total.\n\nHasil akhir: $(4,29 \\pm 0,07)\\ \\text{cm}^3$.",
+    "topic": "Pengukuran dan Angka Penting Kelas X",
+    "grade": "XII",
+    "isLoading": false,
+    "questionNumber": 2,
+    "globalIndex": 1,
+    "savedAt": "2025-11-28T05:44:56.719Z",
+    "metadata": {
+      "topic": "-",
+      "grade": "XII",
+      "difficulty": "Acak",
+      "type": "Acak",
+      "total": 12,
+      "prompt": "Buat soal yang menilai pemahaman tentang ketidakpastian pengukuran, angka penting, serta penggunaan alat laboratorium."
+    },
+    "author": {
+      "name": "Viane Pindhi, S.Pd",
+      "nupkt": "vianepindhi@gmail.com"
+    },
+    "id": "17643086973211j95huyyf"
+  },
+  {
+    "prompt": "3. Siswa kelas X di laboratorium fisika SMA di Yogyakarta melakukan serangkaian pengukuran diameter kelereng menggunakan mikrometer sekrup, mendapatkan data: 15,23 mm; 15,25 mm; 15,22 mm; 15,24 mm; dan 15,26 mm. Berdasarkan data ini, analisis dan tentukan nilai rata-rata diameter kelereng, hitung ketidakpastian mutlak dan relatifnya, lalu tuliskan hasil pengukuran akhir dengan memperhatikan aturan angka penting yang benar. Sertakan penjelasan singkat mengenai pentingnya melaporkan ketidakpastian dalam pengukuran.",
+    "difficulty": "random",
+    "type": "Esai",
+    "title": "Analisis Pengukuran Kelereng",
+    "description": "KD Besaran dan Satuan Kelas X. Siswa kelas X di laboratorium fisika SMA di Yogyakarta melakukan serangkaian pengukuran diameter kelereng menggunakan mikrometer sekrup, mendapatkan data: 15,23 mm; 15,25 mm; 15,22 mm; 15,24 mm; dan 15,26 mm. Berdasarkan data ini, analisis dan tentukan nilai rata-rata diameter kelereng, hitung ketidakpastian mutlak dan relatifnya, lalu tuliskan hasil pengukuran akhir dengan memperhatikan aturan angka penting yang benar. Sertakan penjelasan singkat mengenai pentingnya melaporkan ketidakpastian dalam pengukuran. Tingkat kognitif: C4 (Menganalisis).",
+    "answer": "Langkah penyelesaian:\n1.  **Menghitung nilai rata-rata ($\\bar{x}$):**\n    Data pengukuran ($x_i$): $15{,}23\\ \\text{mm}$, $15{,}25\\ \\text{mm}$, $15{,}22\\ \\text{mm}$, $15{,}24\\ \\text{mm}$, $15{,}26\\ \\text{mm}$.\n    Jumlah data ($n$) = 5.\n    $$\\bar{x} = \\frac{\\sum x_i}{n} = \\frac{15{,}23 + 15{,}25 + 15{,}22 + 15{,}24 + 15{,}26}{5} = \\frac{76{,}20}{5} = 15{,}24\\ \\text{mm}$$\n\n2.  **Menghitung ketidakpastian mutlak ($\\Delta x$):**\n    Untuk $n < 30$, ketidakpastian mutlak (simpangan baku rata-rata) dihitung dengan rumus:\n    $$\\Delta x = \\frac{s}{\\sqrt{n}}$$\n    di mana $s$ adalah simpangan baku (standar deviasi) dari data:\n    $$s = \\sqrt{\\frac{\\sum (x_i - \\bar{x})^2}{n-1}}$$\n    *   Selisih kuadrat dari rata-rata $(x_i - \\bar{x})^2$:\n        $(15{,}23 - 15{,}24)^2 = (-0{,}01)^2 = 0{,}0001$\n        $(15{,}25 - 15{,}24)^2 = (0{,}01)^2 = 0{,}0001$\n        $(15{,}22 - 15{,}24)^2 = (-0{,}02)^2 = 0{,}0004$\n        $(15{,}24 - 15{,}24)^2 = (0{,}00)^2 = 0{,}0000$\n        $(15{,}26 - 15{,}24)^2 = (0{,}02)^2 = 0{,}0004$\n    *   Jumlah selisih kuadrat: $\\sum (x_i - \\bar{x})^2 = 0{,}0001 + 0{,}0001 + 0{,}0004 + 0{,}0000 + 0{,}0004 = 0{,}0010$\n    *   Simpangan baku ($s$):\n        $$s = \\sqrt{\\frac{0{,}0010}{5-1}} = \\sqrt{\\frac{0{,}0010}{4}} = \\sqrt{0{,}00025} \\approx 0{,}01581\\ \\text{mm}$$\n    *   Ketidakpastian mutlak ($\\Delta x$):\n        $$\\Delta x = \\frac{0{,}01581}{\\sqrt{5}} = \\frac{0{,}01581}{2{,}236} \\approx 0{,}00707\\ \\text{mm}$$\n    *   Sesuai aturan angka penting, ketidakpastian mutlak dibulatkan menjadi satu angka penting: $\\Delta x = 0{,}007\\ \\text{mm}$.\n\n3.  **Menghitung ketidakpastian relatif:**\n    $$\\text{Ketidakpastian Relatif} = \\left(\\frac{\\Delta x}{\\bar{x}}\\right) \\times 100\\% = \\left(\\frac{0{,}007\\ \\text{mm}}{15{,}24\\ \\text{mm}}\\right) \\times 100\\% \\approx 0{,}0459\\% \\approx 0{,}05\\%$$\n\n4.  **Menuliskan hasil pengukuran akhir:**\n    Hasil pengukuran ditulis dalam bentuk $(\\bar{x} \\pm \\Delta x)$ dengan $\\bar{x}$ dibulatkan hingga memiliki posisi desimal yang sama dengan $\\Delta x$.\n    Karena $\\Delta x = 0{,}007\\ \\text{mm}$ (tiga angka di belakang koma), maka $\\bar{x}$ juga harus ditulis dengan tiga angka di belakang koma: $15{,}240\\ \\text{mm}$.\n    Hasil pengukuran akhir: $$(15{,}240 \\pm 0{,}007)\\ \\text{mm}$$\n\n5.  **Pentingnya melaporkan ketidakpastian dalam pengukuran:**\n    Melaporkan ketidakpastian sangat penting karena:\n    *   **Indikasi Keandalan:** Ketidakpastian memberikan informasi tentang seberapa andal atau presisi suatu pengukuran. Pengukuran tanpa ketidakpastian adalah pengukuran yang tidak lengkap dan tidak bisa dinilai kualitasnya.\n    *   **Perbandingan Hasil:** Memungkinkan perbandingan hasil pengukuran yang dilakukan oleh orang atau metode yang berbeda. Jika rentang ketidakpastian tumpang tindih, hasil pengukuran dianggap konsisten.\n    *   **Evaluasi Akurasi:** Membantu dalam mengevaluasi akurasi pengukuran terhadap nilai sebenarnya (jika diketahui) atau nilai yang diharapkan dari suatu teori.\n    *   **Pengambilan Keputusan:** Dalam sains dan rekayasa, pemahaman tentang ketidakpastian sangat krusial untuk membuat keputusan yang tepat dan merancang eksperimen atau sistem yang lebih baik.\n\nPrinsip yang digunakan: Konsep pengukuran, rata-rata, simpangan baku, dan aturan angka penting.\nSatuan SI: mm (milimeter) adalah satuan turunan dari meter.\n\nHasil akhir:\nRata-rata diameter: $15{,}24\\ \\text{mm}$\nKetidakpastian mutlak: $0{,}007\\ \\text{mm}$\nKetidakpastian relatif: $0{,}05\\%$\nHasil pengukuran akhir: $(15{,}240 \\pm 0{,}007)\\ \\text{mm}$",
+    "topic": "Pengukuran dan Besaran Fisis Kelas X",
+    "grade": "XII",
+    "isLoading": false,
+    "questionNumber": 3,
+    "globalIndex": 2,
+    "savedAt": "2025-11-28T05:44:56.719Z",
+    "metadata": {
+      "topic": "-",
+      "grade": "XII",
+      "difficulty": "Acak",
+      "type": "Acak",
+      "total": 12,
+      "prompt": "Buat soal yang menilai pemahaman tentang ketidakpastian pengukuran, angka penting, serta penggunaan alat laboratorium."
+    },
+    "author": {
+      "name": "Viane Pindhi, S.Pd",
+      "nupkt": "vianepindhi@gmail.com"
+    },
+    "id": "1764308697321arsgd743t"
+  },
+  {
+    "prompt": "4. Bayangkan siswa di laboratorium fisika sedang mengukur dimensi sebuah sampel batu candi untuk proyek restorasi. Mereka menggunakan jangka sorong untuk panjang dan lebar, serta mikrometer sekrup untuk ketebalan. Sediakan data hasil pengukuran fiktif yang tidak presisi (misalnya, angka yang terlalu banyak di belakang koma) dan minta siswa untuk: 1) Menentukan hasil pengukuran dengan angka penting yang benar sesuai alat ukur; 2) Menghitung ketidakpastian relatif dan mutlak dari volume batu; 3) Menjelaskan langkah-langkah penentuan angka penting dan ketidakpastian tersebut.",
+    "difficulty": "random",
+    "type": "Esai",
+    "title": "Pengukuran Dimensi Batu Candi",
+    "description": "KD Pengukuran dan Angka Penting Kelas X. Siswa di laboratorium fisika sedang mengukur dimensi sebuah sampel batu candi yang akan digunakan untuk proyek restorasi. Mereka menggunakan jangka sorong untuk panjang dan lebar, serta mikrometer sekrup untuk ketebalan. Data hasil pengukuran yang tercatat adalah sebagai berikut:\n*   Panjang (P) = $12{,}456\\ \\text{cm}$ (diukur dengan jangka sorong)\n*   Lebar (L) = $8{,}732\\ \\text{cm}$ (diukur dengan jangka sorong)\n*   Ketebalan (T) = $0{,}5127\\ \\text{cm}$ (diukur dengan mikrometer sekrup)\n\nTingkat kognitif: C3 (Mengaplikasikan), C4 (Menganalisis), C5 (Mengevaluasi).\nPertanyaan:\n1.  Tentukan hasil pengukuran panjang, lebar, dan ketebalan dengan angka penting yang benar sesuai ketelitian alat ukur.\n2.  Hitung volume batu candi tersebut beserta ketidakpastian mutlak dan relatifnya.\n3.  Jelaskan langkah-langkah penentuan angka penting dan perhitungan ketidakpastian tersebut secara rinci.",
+    "answer": "Langkah penyelesaian:\n\n**1. Penentuan Hasil Pengukuran dengan Angka Penting yang Benar:**\n*   **Jangka Sorong:** Memiliki ketelitian $0{,}01\\ \\text{cm}$. Oleh karena itu, hasil pengukuran harus ditulis dengan dua angka di belakang koma.\n    *   Panjang (P): $12{,}456\\ \\text{cm} \\rightarrow 12{,}46\\ \\text{cm}$ (dibulatkan ke atas karena angka ketiga di belakang koma adalah 6).\n    *   Lebar (L): $8{,}732\\ \\text{cm} \\rightarrow 8{,}73\\ \\text{cm}$ (dibulatkan ke bawah karena angka ketiga di belakang koma adalah 2).\n*   **Mikrometer Sekrup:** Memiliki ketelitian $0{,}001\\ \\text{cm}$. Oleh karena itu, hasil pengukuran harus ditulis dengan tiga angka di belakang koma.\n    *   Ketebalan (T): $0{,}5127\\ \\text{cm} \\rightarrow 0{,}513\\ \\text{cm}$ (dibulatkan ke atas karena angka keempat di belakang koma adalah 7).\n\n**2. Perhitungan Volume Batu Candi Beserta Ketidakpastian Mutlak dan Relatifnya:**\n\na.  **Nilai Terukur yang Benar:**\n    *   $P = 12{,}46\\ \\text{cm}$\n    *   $L = 8{,}73\\ \\text{cm}$\n    *   $T = 0{,}513\\ \\text{cm}$\n\nb.  **Ketidakpastian Mutlak ($ \\Delta X $):**\n    *   Ketidakpastian mutlak untuk pengukuran tunggal biasanya diambil setengah dari nilai skala terkecil alat ukur.\n    *   Jangka Sorong: $\\Delta P = \\Delta L = \\frac{1}{2} \\times 0{,}01\\ \\text{cm} = 0{,}005\\ \\text{cm}$.\n    *   Mikrometer Sekrup: $\\Delta T = \\frac{1}{2} \\times 0{,}001\\ \\text{cm} = 0{,}0005\\ \\text{cm}$.\n\nc.  **Ketidakpastian Relatif ($ \\frac{\\Delta X}{X} $):**\n    *   $\\frac{\\Delta P}{P} = \\frac{0{,}005\\ \\text{cm}}{12{,}46\\ \\text{cm}} \\approx 0{,}000401$\n    *   $\\frac{\\Delta L}{L} = \\frac{0{,}005\\ \\text{cm}}{8{,}73\\ \\text{cm}} \\approx 0{,}000573$\n    *   $\\frac{\\Delta T}{T} = \\frac{0{,}0005\\ \\text{cm}}{0{,}513\\ \\text{cm}} \\approx 0{,}000975$\n\nd.  **Volume (V):**\n    *   $V = P \\times L \\times T = 12{,}46\\ \\text{cm} \\times 8{,}73\\ \\text{cm} \\times 0{,}513\\ \\text{cm} \\approx 55{,}6987\\ \\text{cm}^3$.\n    *   Berdasarkan aturan angka penting untuk perkalian, hasilnya harus memiliki jumlah angka penting yang sama dengan faktor dengan angka penting paling sedikit. $P$ (4 AP), $L$ (3 AP), $T$ (3 AP). Jadi, volume harus memiliki 3 AP.\n    *   $V \\approx 55{,}7\\ \\text{cm}^3$.\n\ne.  **Ketidakpastian Relatif Total Volume ($ \\frac{\\Delta V}{V} $):**\n    *   Untuk perkalian, ketidakpastian relatif total adalah jumlah ketidakpastian relatif masing-masing besaran.\n    *   $\\frac{\\Delta V}{V} = \\frac{\\Delta P}{P} + \\frac{\\Delta L}{L} + \\frac{\\Delta T}{T}$\n    *   $\\frac{\\Delta V}{V} = 0{,}000401 + 0{,}000573 + 0{,}000975 \\approx 0{,}001949$\n\nf.  **Ketidakpastian Mutlak Volume ($ \\Delta V $):**\n    *   $\\Delta V = V \\times \\left( \\frac{\\Delta V}{V} \\right)$\n    *   $\\Delta V = 55{,}6987\\ \\text{cm}^3 \\times 0{,}001949 \\approx 0{,}1085\\ \\text{cm}^3$\n\ng.  **Penulisan Hasil Akhir Volume:**\n    *   Ketidakpastian mutlak dibulatkan hingga satu angka penting: $\\Delta V \\approx 0{,}1\\ \\text{cm}^3$.\n    *   Hasil pengukuran (volume) dibulatkan hingga posisi desimal yang sama dengan ketidakpastian mutlak. Karena $\\Delta V$ memiliki satu angka di belakang koma, maka $V$ juga dibulatkan ke satu angka di belakang koma: $V \\approx 55{,}7\\ \\text{cm}^3$.\n    *   Jadi, volume batu candi adalah $(55{,}7 \\pm 0{,}1)\\ \\text{cm}^3$.\n\n**3. Penjelasan Langkah-langkah Penentuan Angka Penting dan Ketidakpastian:**\n\na.  **Penentuan Angka Penting:**\n    *   **Definisi:** Angka penting adalah semua angka yang diketahui dengan pasti ditambah satu angka taksiran.\n    *   **Aturan untuk Alat Ukur:** Ketelitian alat ukur menentukan jumlah angka di belakang koma atau jumlah angka penting.\n        *   Jangka sorong memiliki ketelitian $0{,}01\\ \\text{cm}$, artinya hasil pengukurannya dapat dipercaya hingga dua angka di belakang koma. Angka ketiga dan seterusnya adalah taksiran yang tidak signifikan dan harus dibulatkan.\n        *   Mikrometer sekrup memiliki ketelitian $0{,}001\\ \\text{cm}$, artinya hasil pengukurannya dapat dipercaya hingga tiga angka di belakang koma. Angka keempat dan seterusnya adalah taksiran yang tidak signifikan dan harus dibulatkan.\n    *   **Aturan Pembulatan:** Jika angka yang akan dihilangkan adalah 5 atau lebih, angka sebelumnya dibulatkan ke atas. Jika kurang dari 5, angka sebelumnya tetap.\n\nb.  **Penentuan Ketidakpastian Mutlak (Absolute Uncertainty):**\n    *   Untuk pengukuran tunggal, ketidakpastian mutlak sering diasumsikan sebagai setengah dari nilai skala terkecil alat ukur. Ini menunjukkan batas kesalahan maksimum yang mungkin terjadi akibat keterbatasan alat.\n    *   Misalnya, pada jangka sorong dengan skala terkecil $0{,}01\\ \\text{cm}$, ketidakpastiannya adalah $0{,}005\\ \\text{cm}$.\n\nc.  **Penentuan Ketidakpastian Relatif (Relative Uncertainty):**\n    *   Ketidakpastian relatif menunjukkan seberapa besar ketidakpastian dibandingkan dengan nilai pengukuran itu sendiri. Dihitung dengan membagi ketidakpastian mutlak dengan nilai pengukuran.\n    *   Rumus: $\\text{Ketidakpastian Relatif} = \\frac{\\text{Ketidakpastian Mutlak}}{\\text{Nilai Terukur}}$\n    *   Nilai ini sering dinyatakan dalam bentuk desimal atau persentase, dan berguna untuk membandingkan presisi berbagai pengukuran.\n\nd.  **Propagasi Ketidakpastian untuk Perkalian/Pembagian (Volume):**\n    *   Ketika besaran-besaran diukur dikalikan atau dibagi (seperti menghitung volume $V = P \\times L \\times T$), ketidakpastian relatif dari hasil akhir adalah jumlah ketidakpastian relatif dari masing-masing besaran yang diukur.\n    *   Rumus: $\\frac{\\Delta V}{V} = \\frac{\\Delta P}{P} + \\frac{\\Delta L}{L} + \\frac{\\Delta T}{T}$.\n    *   Setelah mendapatkan ketidakpastian relatif total, kita dapat menghitung ketidakpastian mutlak dari volume dengan mengalikan ketidakpastian relatif total dengan nilai volume yang telah dihitung.\n\ne.  **Penulisan Hasil Akhir dengan Ketidakpastian:**\n    *   Hasil pengukuran harus ditulis dalam format $X \\pm \\Delta X$.\n    *   **Pembulatan Ketidakpastian Mutlak:** Ketidakpastian mutlak ($\\Delta X$) biasanya dibulatkan hingga satu angka penting. Ini karena ketidakpastian itu sendiri adalah estimasi, dan memberikan terlalu banyak angka penting akan memberikan kesan presisi yang palsu.\n    *   **Pembulatan Hasil Pengukuran:** Nilai pengukuran ($X$) harus dibulatkan ke posisi desimal yang sama dengan ketidakpastian mutlak ($\\Delta X$). Ini memastikan bahwa presisi yang dilaporkan konsisten dengan tingkat ketidakpastian yang ada.\n\nHasil akhir:\n1.  $P = 12{,}46\\ \\text{cm}$, $L = 8{,}73\\ \\text{cm}$, $T = 0{,}513\\ \\text{cm}$.\n2.  $V = (55{,}7 \\pm 0{,}1)\\ \\text{cm}^3$. Ketidakpastian relatif volume $\\approx 0{,}0019$ atau $0{,}19\\%$.\n3.  Penjelasan rinci mengenai angka penting, ketidakpastian mutlak, ketidakpastian relatif, dan propagasi kesalahan.",
+    "topic": "Pengukuran Kelas X",
+    "grade": "XII",
+    "isLoading": false,
+    "questionNumber": 4,
+    "globalIndex": 3,
+    "savedAt": "2025-11-28T05:44:56.719Z",
+    "metadata": {
+      "topic": "-",
+      "grade": "XII",
+      "difficulty": "Acak",
+      "type": "Acak",
+      "total": 12,
+      "prompt": "Buat soal yang menilai pemahaman tentang ketidakpastian pengukuran, angka penting, serta penggunaan alat laboratorium."
+    },
+    "author": {
+      "name": "Viane Pindhi, S.Pd",
+      "nupkt": "vianepindhi@gmail.com"
+    },
+    "id": "17643086973214go8qbffa"
+  },
+  {
+    "prompt": "5. Seorang siswa di SMA Negeri 1 Jakarta melakukan pengukuran panjang dan lebar sebuah buku fisika menggunakan penggaris dan jangka sorong. Hasil pengukuran panjang dengan penggaris adalah 25,3 cm dan dengan jangka sorong adalah 25,34 cm. Sementara itu, lebar buku diukur dengan penggaris menghasilkan 18,5 cm dan dengan jangka sorong 18,52 cm. Jelaskan perbedaan ketelitian antara kedua alat ukur tersebut, tentukan jumlah angka penting dari setiap hasil pengukuran, dan hitunglah luas permukaan buku berdasarkan pengukuran yang paling teliti dengan memperhatikan aturan angka penting.",
+    "difficulty": "random",
+    "type": "Esai",
+    "title": "Pengukuran dan Angka Penting Buku Fisika",
+    "description": "KD Pengukuran Kelas X. Seorang siswa di SMA Negeri 1 Jakarta melakukan pengukuran panjang dan lebar sebuah buku fisika menggunakan penggaris dan jangka sorong. Hasil pengukuran panjang dengan penggaris adalah $25{,}3\\ \\text{cm}$ dan dengan jangka sorong adalah $25{,}34\\ \\text{cm}$. Sementara itu, lebar buku diukur dengan penggaris menghasilkan $18{,}5\\ \\text{cm}$ dan dengan jangka sorong $18{,}52\\ \\text{cm}$. Jelaskan perbedaan ketelitian antara kedua alat ukur tersebut, tentukan jumlah angka penting dari setiap hasil pengukuran, dan hitunglah luas permukaan buku berdasarkan pengukuran yang paling teliti dengan memperhatikan aturan angka penting. Tingkat kognitif: C2 (Memahami) dan C3 (Mengaplikasikan).",
+    "answer": "Langkah penyelesaian:\n\n**1. Perbedaan Ketelitian Alat Ukur:**\n*   **Penggaris:** Umumnya memiliki skala terkecil $1\\ \\text{mm}$ atau $0{,}1\\ \\text{cm}$. Ketelitian pengukuran dengan penggaris adalah setengah dari skala terkecilnya, yaitu $\\pm 0{,}5\\ \\text{mm}$ atau $\\pm 0{,}05\\ \\text{cm}$. Hasil pengukuran dengan penggaris biasanya ditulis hingga satu angka di belakang koma (satu desimal).\n*   **Jangka Sorong:** Umumnya memiliki skala terkecil $0{,}1\\ \\text{mm}$ atau $0{,}01\\ \\text{cm}$ (untuk skala nonius 10 bagian). Ketelitian pengukuran jangka sorong adalah setengah dari skala terkecilnya, yaitu $\\pm 0{,}05\\ \\text{mm}$ atau $\\pm 0{,}005\\ \\text{cm}$. Hasil pengukuran dengan jangka sorong dapat ditulis hingga dua angka di belakang koma (dua desimal).\n*   **Kesimpulan:** Jangka sorong memiliki tingkat ketelitian yang lebih tinggi dibandingkan penggaris karena dapat mengukur hingga fraksi desimal yang lebih kecil, sehingga menghasilkan lebih banyak angka penting dan ketidakpastian yang lebih rendah.\n\n**2. Jumlah Angka Penting dari Setiap Hasil Pengukuran:**\n*   **Panjang (penggaris):** $25{,}3\\ \\text{cm}$ memiliki **3 angka penting**. (Semua angka bukan nol adalah angka penting).\n*   **Panjang (jangka sorong):** $25{,}34\\ \\text{cm}$ memiliki **4 angka penting**. (Semua angka bukan nol adalah angka penting).\n*   **Lebar (penggaris):** $18{,}5\\ \\text{cm}$ memiliki **3 angka penting**. (Semua angka bukan nol adalah angka penting).\n*   **Lebar (jangka sorong):** $18{,}52\\ \\text{cm}$ memiliki **4 angka penting**. (Semua angka bukan nol adalah angka penting).\n\n**3. Perhitungan Luas Permukaan Buku Berdasarkan Pengukuran Paling Teliti:**\nPengukuran yang paling teliti adalah yang menggunakan jangka sorong.\n*   Panjang ($P$) = $25{,}34\\ \\text{cm}$ (4 angka penting)\n*   Lebar ($L$) = $18{,}52\\ \\text{cm}$ (4 angka penting)\n\nRumus luas permukaan buku adalah $A = P \\times L$.\n$A = 25{,}34\\ \\text{cm} \\times 18{,}52\\ \\text{cm}$\n$A = 469{,}3468\\ \\text{cm}^2$\n\n**Aturan Angka Penting untuk Perkalian:** Hasil perkalian harus memiliki jumlah angka penting yang sama dengan faktor yang memiliki jumlah angka penting paling sedikit. Dalam kasus ini, kedua faktor memiliki 4 angka penting. Oleh karena itu, hasil akhir harus dibulatkan menjadi 4 angka penting.\n\nPembulatan $469{,}3468\\ \\text{cm}^2$ menjadi 4 angka penting:\nAngka kelima adalah 4 (kurang dari 5), jadi angka keempat (3) tetap.\n$A \\approx 469{,}3\\ \\text{cm}^2$.\n\nHasil akhir:\n*   Perbedaan ketelitian: Jangka sorong lebih teliti.\n*   Jumlah angka penting: $25{,}3\\ \\text{cm}$ (3 AP), $25{,}34\\ \\text{cm}$ (4 AP), $18{,}5\\ \\text{cm}$ (3 AP), $18{,}52\\ \\text{cm}$ (4 AP).\n*   Luas permukaan buku: $469{,}3\\ \\text{cm}^2$.",
+    "topic": "Pengukuran dan Angka Penting Kelas X",
+    "grade": "XII",
+    "isLoading": false,
+    "questionNumber": 5,
+    "globalIndex": 4,
+    "savedAt": "2025-11-28T05:44:56.719Z",
+    "metadata": {
+      "topic": "-",
+      "grade": "XII",
+      "difficulty": "Acak",
+      "type": "Acak",
+      "total": 12,
+      "prompt": "Buat soal yang menilai pemahaman tentang ketidakpastian pengukuran, angka penting, serta penggunaan alat laboratorium."
+    },
+    "author": {
+      "name": "Viane Pindhi, S.Pd",
+      "nupkt": "vianepindhi@gmail.com"
+    },
+    "id": "1764308697321hjowed69i"
+  },
+  {
+    "prompt": "6. Seorang siswa di laboratorium fisika ingin mengukur panjang selembar kain batik tulis khas Yogyakarta yang akan digunakan untuk proyek seni. Siswa tersebut menggunakan dua alat ukur yang berbeda: sebuah mistar dengan skala terkecil 1 mm dan sebuah jangka sorong. Jika data hasil pengukuran telah dicatat, susunlah analisis komparatif mengenai hasil pengukuran tersebut, termasuk penentuan ketidakpastian pada setiap alat dan penerapan aturan angka penting. Jelaskan alat mana yang lebih tepat digunakan untuk mendapatkan hasil pengukuran yang lebih akurat dan presisi, serta berikan argumentasi Anda berdasarkan prinsip fisika pengukuran.",
+    "difficulty": "random",
+    "type": "Esai",
+    "title": "Analisis Pengukuran Kain Batik",
+    "description": "KD Pengukuran Kelas X. Seorang siswa di laboratorium fisika ingin mengukur panjang selembar kain batik tulis khas Yogyakarta yang akan digunakan untuk proyek seni. Siswa tersebut menggunakan dua alat ukur yang berbeda: sebuah mistar dengan skala terkecil $1\\ \\text{mm}$ dan sebuah jangka sorong dengan ketelitian $0{,}01\\ \\text{cm}$. Misalkan hasil pengukuran yang diperoleh adalah:\n- Dengan mistar: $25{,}7\\ \\text{cm}$\n- Dengan jangka sorong: $25{,}73\\ \\text{cm}$\n\nSusunlah analisis komparatif mengenai hasil pengukuran tersebut, termasuk penentuan ketidakpastian pada setiap alat dan penerapan aturan angka penting. Jelaskan alat mana yang lebih tepat digunakan untuk mendapatkan hasil pengukuran yang lebih akurat dan presisi untuk proyek seni tersebut, serta berikan argumentasi Anda berdasarkan prinsip fisika pengukuran. Tingkat kognitif: C5 (Mengevaluasi).",
+    "answer": "Langkah penyelesaian:\n\n**1. Analisis Pengukuran dengan Mistar:**\n*   **Skala Terkecil:** $1\\ \\text{mm}$ atau $0{,}1\\ \\text{cm}$.\n*   **Ketidakpastian Absolut ($\\Delta L_m$):** Setengah dari skala terkecil.\n    $$\\Delta L_m = \\frac{1}{2} \\times 0{,}1\\ \\text{cm} = 0{,}05\\ \\text{cm}$$\n*   **Hasil Pengukuran:** $(25{,}7 \\pm 0{,}05)\\ \\text{cm}$.\n*   **Angka Penting:** Hasil pengukuran $25{,}7\\ \\text{cm}$ memiliki 3 angka penting (2, 5, dan 7). Angka terakhir ($7$) adalah taksiran.\n\n**2. Analisis Pengukuran dengan Jangka Sorong:**\n*   **Skala Terkecil (Ketelitian):** $0{,}01\\ \\text{cm}$.\n*   **Ketidakpastian Absolut ($\\Delta L_j$):** Setengah dari skala terkecil.\n    $$\\Delta L_j = \\frac{1}{2} \\times 0{,}01\\ \\text{cm} = 0{,}005\\ \\text{cm}$$\n*   **Hasil Pengukuran:** $(25{,}73 \\pm 0{,}005)\\ \\text{cm}$.\n*   **Angka Penting:** Hasil pengukuran $25{,}73\\ \\text{cm}$ memiliki 4 angka penting (2, 5, 7, dan 3). Angka terakhir ($3$) adalah taksiran.\n\n**3. Analisis Komparatif dan Evaluasi:**\n\n*   **Ketidakpastian:** Jangka sorong memiliki ketidakpastian absolut yang jauh lebih kecil ($0{,}005\\ \\text{cm}$) dibandingkan mistar ($0{,}05\\ \\text{cm}$). Ini berarti jangka sorong dapat mengukur dengan resolusi yang lebih halus.\n*   **Angka Penting:** Jangka sorong memberikan hasil dengan lebih banyak angka penting (4 AP) dibandingkan mistar (3 AP). Lebih banyak angka penting menunjukkan bahwa pengukuran dilakukan dengan alat yang memiliki presisi lebih tinggi.\n*   **Akurasi vs. Presisi:**\n    *   **Presisi** merujuk pada seberapa dekat dua atau lebih pengukuran satu sama lain, atau seberapa halus resolusi alat ukur. Jangka sorong jelas lebih presisi karena memiliki skala terkecil yang lebih kecil, memungkinkan pembacaan hingga dua desimal setelah koma (dalam cm) dibandingkan mistar yang hanya satu desimal.\n    *   **Akurasi** merujuk pada seberapa dekat pengukuran dengan nilai sebenarnya. Meskipun presisi tinggi seringkali berkorelasi dengan akurasi yang lebih baik, akurasi juga bergantung pada kalibrasi alat dan cara penggunaannya. Namun, dengan asumsi penggunaan yang benar dan kalibrasi yang baik, alat yang lebih presisi cenderung memberikan hasil yang lebih akurat karena mengurangi kesalahan pembacaan.\n\n**4. Kesimpulan dan Argumentasi:**\n\nUntuk mengukur panjang selembar kain batik tulis khas Yogyakarta yang akan digunakan untuk proyek seni, **jangka sorong lebih tepat digunakan**.\n\n**Argumentasi:**\n*   **Resolusi dan Presisi Lebih Tinggi:** Jangka sorong memiliki skala terkecil $0{,}01\\ \\text{cm}$ (atau $0{,}1\\ \\text{mm}$), yang 10 kali lebih kecil daripada mistar ($1\\ \\text{mm}$). Ini memungkinkan pengukuran dengan tingkat presisi yang jauh lebih tinggi. Dalam proyek seni, terutama jika melibatkan pemotongan atau penempatan yang sangat detail, perbedaan milimeter atau bahkan sepersepuluh milimeter bisa menjadi krusial.\n*   **Ketidakpastian Lebih Rendah:** Ketidakpastian pengukuran dengan jangka sorong adalah $0{,}005\\ \\text{cm}$, yang jauh lebih kecil dibandingkan mistar ($0{,}05\\ \\text{cm}$). Ketidakpastian yang lebih rendah berarti hasil pengukuran lebih dapat diandalkan dan mendekati nilai sebenarnya dengan margin kesalahan yang lebih kecil.\n*   **Jumlah Angka Penting Lebih Banyak:** Hasil dari jangka sorong memiliki lebih banyak angka penting, yang secara langsung mencerminkan kemampuan alat untuk memberikan informasi yang lebih detail dan presisi tentang besaran yang diukur.\n\nMeskipun kain batik mungkin tidak memerlukan presisi setinggi mengukur diameter kawat, penggunaan jangka sorong memastikan bahwa jika ada kebutuhan untuk detail yang sangat halus dalam proyek seni, data yang tersedia akan memadai. Mistar hanya cocok untuk pengukuran kasar di mana toleransi kesalahan relatif besar.\n\nHasil akhir: Jangka sorong lebih tepat karena presisi dan akurasi yang lebih tinggi, ditunjukkan oleh ketidakpastian yang lebih kecil dan lebih banyak angka penting dalam hasil pengukuran.",
+    "topic": "Pengukuran Kelas X",
+    "grade": "XII",
+    "isLoading": false,
+    "questionNumber": 6,
+    "globalIndex": 5,
+    "savedAt": "2025-11-28T05:44:56.719Z",
+    "metadata": {
+      "topic": "-",
+      "grade": "XII",
+      "difficulty": "Acak",
+      "type": "Acak",
+      "total": 12,
+      "prompt": "Buat soal yang menilai pemahaman tentang ketidakpastian pengukuran, angka penting, serta penggunaan alat laboratorium."
+    },
+    "author": {
+      "name": "Viane Pindhi, S.Pd",
+      "nupkt": "vianepindhi@gmail.com"
+    },
+    "id": "1764308697321vqsfy8cqq"
+  },
+  {
+    "prompt": "7. Sebagai guru fisika, saya ingin menguji pemahaman Anda tentang ketidakpastian pengukuran, angka penting, dan penggunaan alat laboratorium. Bayangkan Anda dan kelompok Anda di laboratorium fisika SMA 'Bumi Pertiwi' sedang mengukur dimensi sebuah balok kayu lokal (misalnya, kayu jati) menggunakan jangka sorong untuk panjang dan lebar, serta mikrometer sekrup untuk ketebalan. Setelah mendapatkan data pengukuran (misalkan: panjang $15,25 \\pm 0,01$ cm, lebar $8,12 \\pm 0,01$ cm, tebal $2,505 \\pm 0,001$ cm), bagaimana Anda akan menghitung volume balok tersebut, menentukan ketidakpastian relatif dan mutlaknya, serta menyajikan hasilnya dengan aturan angka penting yang tepat? Jelaskan secara rinci setiap langkah yang Anda ambil, termasuk mengapa Anda memilih alat ukur tertentu untuk dimensi yang berbeda dan bagaimana Anda menangani propagasi ketidakpastian.",
+    "difficulty": "random",
+    "type": "Esai",
+    "title": "Analisis Pengukuran Balok Kayu Jati",
+    "description": "KD Pengukuran dan Angka Penting Kelas X. Sebagai guru fisika, Anda dan kelompok di laboratorium fisika SMA 'Bumi Pertiwi' mengukur dimensi balok kayu jati menggunakan jangka sorong untuk panjang dan lebar, serta mikrometer sekrup untuk ketebalan. Data pengukuran yang diperoleh adalah:\n*   Panjang ($L$): $15,25 \\pm 0,01\\ \\text{cm}$\n*   Lebar ($W$): $8,12 \\pm 0,01\\ \\text{cm}$\n*   Tebal ($H$): $2,505 \\pm 0,001\\ \\text{cm}$\n\nJelaskan secara rinci bagaimana Anda akan menghitung volume balok tersebut, menentukan ketidakpastian relatif dan mutlaknya, serta menyajikan hasilnya dengan aturan angka penting yang tepat. Sertakan penjelasan mengapa Anda memilih alat ukur tertentu untuk dimensi yang berbeda dan bagaimana Anda menangani propagasi ketidakpastian. Tingkat kognitif: C5 (Mengevaluasi).",
+    "answer": "Langkah penyelesaian:\n\n**1. Pemilihan Alat Ukur:**\n*   **Jangka Sorong untuk Panjang dan Lebar:** Jangka sorong memiliki ketelitian $0,01\\ \\text{cm}$ (atau $0,1\\ \\text{mm}$). Alat ini cocok untuk mengukur dimensi yang relatif lebih besar seperti panjang dan lebar balok ($15,25\\ \\text{cm}$ dan $8,12\\ \\text{cm}$) karena rentang pengukurannya yang luas dan ketelitian yang memadai untuk ukuran tersebut.\n*   **Mikrometer Sekrup untuk Ketebalan:** Mikrometer sekrup memiliki ketelitian $0,001\\ \\text{cm}$ (atau $0,01\\ \\text{mm}$). Alat ini dipilih untuk mengukur ketebalan ($2,505\\ \\text{cm}$) karena memerlukan presisi yang lebih tinggi untuk dimensi yang lebih kecil, memastikan hasil yang lebih akurat pada skala milimeter atau di bawahnya.\n\n**2. Perhitungan Volume Rata-rata ($V$):**\nVolume balok dihitung dengan rumus:\n$$V = L \\times W \\times H$$\nSubstitusi nilai rata-rata pengukuran:\n$$V = 15,25\\ \\text{cm} \\times 8,12\\ \\text{cm} \\times 2,505\\ \\text{cm}$$\n$$V = 310,0761\\ \\text{cm}^3$$\n\n**3. Penentuan Propagasi Ketidakpastian (Metode Ketidakpastian Relatif):**\nUntuk perhitungan perkalian, ketidakpastian relatif total adalah akar kuadrat dari jumlah kuadrat ketidakpastian relatif masing-masing pengukuran.\nRumus propagasi ketidakpastian untuk perkalian adalah:\n$$\\frac{\\Delta V}{V} = \\sqrt{\\left(\\frac{\\Delta L}{L}\\right)^2 + \\left(\\frac{\\Delta W}{W}\\right)^2 + \\left(\\frac{\\Delta H}{H}\\right)^2}$$\n\n*   **Ketidakpastian Relatif Panjang:**\n    $$\\frac{\\Delta L}{L} = \\frac{0,01\\ \\text{cm}}{15,25\\ \\text{cm}} \\approx 0,0006557$$\n*   **Ketidakpastian Relatif Lebar:**\n    $$\\frac{\\Delta W}{W} = \\frac{0,01\\ \\text{cm}}{8,12\\ \\text{cm}} \\approx 0,0012315$$\n*   **Ketidakpastian Relatif Tebal:**\n    $$\\frac{\\Delta H}{H} = \\frac{0,001\\ \\text{cm}}{2,505\\ \\text{cm}} \\approx 0,0003992$$\n\n*   **Ketidakpastian Relatif Total Volume:**\n    $$\\frac{\\Delta V}{V} = \\sqrt{(0,0006557)^2 + (0,0012315)^2 + (0,0003992)^2}$$\n    $$\\frac{\\Delta V}{V} = \\sqrt{0,0000004299 + 0,0000015166 + 0,0000001594}$$\n    $$\\frac{\\Delta V}{V} = \\sqrt{0,0000021059}$$\n    $$\\frac{\\Delta V}{V} \\approx 0,0014511$$\n\n**4. Penentuan Ketidakpastian Mutlak Volume ($\\Delta V$):**\nKetidakpastian mutlak diperoleh dengan mengalikan ketidakpastian relatif total dengan volume rata-rata:\n$$\\Delta V = V \\times \\left(\\frac{\\Delta V}{V}\\right)$$\n$$\\Delta V = 310,0761\\ \\text{cm}^3 \\times 0,0014511$$\n$$\\Delta V \\approx 0,4500\\ \\text{cm}^3$$\n\n**5. Penyajian Hasil dengan Aturan Angka Penting:**\n*   **Pembulatan Ketidakpastian Mutlak:** Ketidakpastian mutlak biasanya dibulatkan menjadi satu angka penting.\n    $$\\Delta V \\approx 0,4500\\ \\text{cm}^3 \\rightarrow 0,5\\ \\text{cm}^3$$\n*   **Pembulatan Volume Rata-rata:** Hasil pengukuran rata-rata harus dibulatkan sedemikian rupa sehingga memiliki posisi desimal yang sama dengan ketidakpastian mutlaknya. Karena $\\Delta V$ dibulatkan hingga satu angka di belakang koma (tempat persepuluhan), maka $V$ juga harus dibulatkan hingga satu angka di belakang koma.\n    $$V = 310,0761\\ \\text{cm}^3 \\rightarrow 310,1\\ \\text{cm}^3$$\n\n*   **Hasil Akhir:**\n    Volume balok kayu jati adalah $V = (310,1 \\pm 0,5)\\ \\text{cm}^3$.\n\n**Penjelasan Tambahan (Penanganan Propagasi Ketidakpastian):**\nPendekatan propagasi ketidakpastian ini didasarkan pada asumsi bahwa ketidakpastian pengukuran bersifat acak dan tidak berkorelasi. Dengan menggunakan metode akar kuadrat dari jumlah kuadrat ketidakpastian relatif, kita memperhitungkan bagaimana \"kesalahan\" dari setiap pengukuran individu berkontribusi pada \"kesalahan\" total dalam hasil akhir. Ini adalah metode standar dalam fisika eksperimen untuk mendapatkan estimasi yang realistis terhadap ketidakpastian hasil perhitungan yang melibatkan beberapa pengukuran.\n\n**Hukum/Prinsip yang Digunakan:**\n*   Prinsip Pengukuran Fisika\n*   Aturan Angka Penting\n*   Propagasi Ketidakpastian (Metode Statistik)\n\n**Simbol SI:** Satuan yang digunakan adalah centimeter (cm) untuk panjang, lebar, dan tebal, serta centimeter kubik (cm³) untuk volume. Meskipun cm bukan satuan dasar SI, ia merupakan satuan turunan yang umum digunakan dan diterima dalam konteks ini.",
+    "topic": "Pengukuran dan Angka Penting Kelas X",
+    "grade": "XII",
+    "isLoading": false,
+    "questionNumber": 7,
+    "globalIndex": 6,
+    "savedAt": "2025-11-28T05:44:56.719Z",
+    "metadata": {
+      "topic": "-",
+      "grade": "XII",
+      "difficulty": "Acak",
+      "type": "Acak",
+      "total": 12,
+      "prompt": "Buat soal yang menilai pemahaman tentang ketidakpastian pengukuran, angka penting, serta penggunaan alat laboratorium."
+    },
+    "author": {
+      "name": "Viane Pindhi, S.Pd",
+      "nupkt": "vianepindhi@gmail.com"
+    },
+    "id": "1764308697321gk9zz7eg7"
+  },
+  {
+    "prompt": "8. Seorang siswa di laboratorium fisika SMA sedang mengukur panjang sehelai kain batik menggunakan jangka sorong. Setelah beberapa kali pengukuran, didapatkan rata-rata hasil 125,45 mm dengan deviasi standar 0,05 mm. Tentukan ketidakpastian mutlak dan relatif dari pengukuran tersebut, kemudian tuliskan hasil pengukuran dengan angka penting yang tepat. Selanjutnya, analisis mengapa pelaporan ketidakpastian dan angka penting ini krusial dalam menyampaikan validitas data eksperimen.",
+    "difficulty": "random",
+    "type": "Esai",
+    "title": "Pengukuran Batik dengan Jangka Sorong",
+    "description": "KD Pengukuran dan Angka Penting Kelas X. Seorang siswa di laboratorium fisika SMA sedang mengukur panjang sehelai kain batik menggunakan jangka sorong. Setelah beberapa kali pengukuran, didapatkan rata-rata hasil $125{,}45\\ \\text{mm}$ dengan deviasi standar $0{,}05\\ \\text{mm}$. Tentukan ketidakpastian mutlak dan relatif dari pengukuran tersebut, kemudian tuliskan hasil pengukuran dengan angka penting yang tepat. Selanjutnya, analisis mengapa pelaporan ketidakpastian dan angka penting ini krusial dalam menyampaikan validitas data eksperimen. Tingkat kognitif: C5 (Mengevaluasi).",
+    "answer": "Langkah penyelesaian:\n1.  **Menentukan Ketidakpastian Mutlak**:\n    Untuk pengukuran berulang, deviasi standar dari hasil pengukuran sering digunakan sebagai ketidakpastian mutlak ($\\Delta L$).\n    Diberikan deviasi standar $= 0{,}05\\ \\text{mm}$.\n    Maka, ketidakpastian mutlak $\\Delta L = 0{,}05\\ \\text{mm}$.\n\n2.  **Menentukan Ketidakpastian Relatif**:\n    Ketidakpastian relatif dihitung dengan rumus:\n    $$\\text{Ketidakpastian Relatif} = \\frac{\\text{Ketidakpastian Mutlak}}{\\text{Nilai Rata-rata}} \\times 100\\%$$\n    $$\\text{Ketidakpastian Relatif} = \\frac{0{,}05\\ \\text{mm}}{125{,}45\\ \\text{mm}} \\times 100\\%$$\n    $$\\text{Ketidakpastian Relatif} \\approx 0{,}0003985 \\times 100\\% \\approx 0{,}04\\%$$\n\n3.  **Menuliskan Hasil Pengukuran dengan Angka Penting yang Tepat**:\n    Aturan penulisan hasil pengukuran adalah $(L \\pm \\Delta L)\\ \\text{unit}$.\n    Ketidakpastian mutlak ($\\Delta L = 0{,}05\\ \\text{mm}$) memiliki dua angka penting dan berakhir pada posisi perseratusan. Oleh karena itu, nilai rata-rata juga harus dibulatkan hingga posisi perseratusan.\n    Nilai rata-rata yang diberikan adalah $125{,}45\\ \\text{mm}$, yang sudah berada pada posisi perseratusan.\n    Jadi, hasil pengukuran ditulis sebagai $$(125{,}45 \\pm 0{,}05)\\ \\text{mm}$$\n\n4.  **Analisis Mengapa Pelaporan Ketidakpastian dan Angka Penting Krusial**:\n    *   **Ketidakpastian (Uncertainty)**: Setiap pengukuran fisik memiliki batasan dan tidak pernah sepenuhnya tepat. Ketidakpastian mencerminkan rentang nilai di mana nilai sebenarnya dari besaran yang diukur kemungkinan besar berada. Melaporkan ketidakpastian adalah krusial karena:\n        *   **Validitas Data**: Ini memberikan gambaran yang jujur tentang seberapa akurat dan presisi data yang diperoleh. Data tanpa ketidakpastian dapat menyesatkan, menyiratkan presisi yang tidak ada.\n        *   **Perbandingan dan Replikasi**: Memungkinkan ilmuwan lain untuk membandingkan hasil mereka dengan hasil yang dilaporkan, mengevaluasi konsistensi, dan mereplikasi eksperimen dengan pemahaman yang jelas tentang batasan pengukuran.\n        *   **Pengambilan Keputusan**: Dalam aplikasi praktis, seperti rekayasa atau manufaktur, pemahaman tentang ketidakpastian sangat penting untuk membuat keputusan yang tepat dan memastikan keamanan atau kinerja produk.\n        *   **Identifikasi Sumber Error**: Analisis ketidakpastian dapat membantu mengidentifikasi sumber-sumber kesalahan eksperimen (sistematis atau acak) dan area yang perlu perbaikan dalam metodologi.\n\n    *   **Angka Penting (Significant Figures)**: Angka penting adalah semua digit yang diketahui dengan pasti ditambah satu digit perkiraan. Pelaporan angka penting adalah krusial karena:\n        *   **Komunikasi Presisi**: Angka penting secara langsung mengkomunikasikan tingkat presisi suatu pengukuran. Misalnya, $10\\ \\text{m}$ (dua angka penting) kurang presisi daripada $10{,}00\\ \\text{m}$ (empat angka penting).\n        *   **Menghindari Klaim Palsu**: Mencegah pelaporan data yang menyiratkan presisi lebih tinggi dari yang benar-benar dicapai oleh instrumen atau prosedur pengukuran.\n        *   **Konsistensi Ilmiah**: Memastikan bahwa hasil perhitungan yang melibatkan data pengukuran tidak secara artifisial meningkatkan atau mengurangi presisi. Aturan angka penting dalam operasi matematika (penjumlahan, pengurangan, perkalian, pembagian) memastikan bahwa hasil akhir mencerminkan presisi terendah dari pengukuran yang terlibat.\n        *   **Standardisasi**: Membantu standardisasi pelaporan data ilmiah, membuat data lebih mudah dipahami dan diinterpretasikan oleh komunitas ilmiah global.\n\nSecara keseluruhan, pelaporan ketidakpastian dan penggunaan angka penting adalah fondasi metodologi ilmiah yang baik. Keduanya memastikan bahwa data eksperimen disajikan secara jujur, akurat, dan dapat diandalkan, yang merupakan inti dari validitas ilmiah.\n\nHasil akhir: Ketidakpastian mutlak $\\Delta L = 0{,}05\\ \\text{mm}$. Ketidakpastian relatif $\\approx 0{,}04\\%$. Hasil pengukuran $(125{,}45 \\pm 0{,}05)\\ \\text{mm}$. Pelaporan ketidakpastian dan angka penting krusial untuk validitas data, komunikasi presisi, dan pengambilan keputusan ilmiah yang tepat.",
+    "topic": "Pengukuran Fisika Kelas X",
+    "grade": "XII",
+    "isLoading": false,
+    "questionNumber": 8,
+    "globalIndex": 7,
+    "savedAt": "2025-11-28T05:44:56.719Z",
+    "metadata": {
+      "topic": "-",
+      "grade": "XII",
+      "difficulty": "Acak",
+      "type": "Acak",
+      "total": 12,
+      "prompt": "Buat soal yang menilai pemahaman tentang ketidakpastian pengukuran, angka penting, serta penggunaan alat laboratorium."
+    },
+    "author": {
+      "name": "Viane Pindhi, S.Pd",
+      "nupkt": "vianepindhi@gmail.com"
+    },
+    "id": "1764308697321jg00fmejm"
+  },
+  {
+    "prompt": "9. Dalam sebuah praktikum fisika di SMA Nusantara, seorang siswa mengukur panjang sebuah pensil menggunakan mistar dan jangka sorong. Hasil yang diperoleh adalah 15,3 cm (dengan mistar) dan 15,34 cm (dengan jangka sorong). Berdasarkan data ini, analisis dan bandingkan ketelitian serta ketidakpastian relatif dari kedua pengukuran tersebut, lalu jelaskan mengapa pelaporan angka penting yang berbeda itu krusial.",
+    "difficulty": "random",
+    "type": "Esai",
+    "title": "Analisis Ketelitian Pengukuran",
+    "description": "KD Pengukuran Kelas X. Dalam sebuah praktikum fisika di SMA Nusantara, seorang siswa mengukur panjang sebuah pensil menggunakan mistar dan jangka sorong. Hasil yang diperoleh adalah $15{,}3\\ \\text{cm}$ (dengan mistar) dan $15{,}34\\ \\text{cm}$ (dengan jangka sorong). Berdasarkan data ini, analisis dan bandingkan ketelitian serta ketidakpastian relatif dari kedua pengukuran tersebut, lalu jelaskan mengapa pelaporan angka penting yang berbeda itu krusial. Tingkat kognitif: C4 (Menganalisis).",
+    "answer": "Langkah penyelesaian:\n1.  **Ketelitian Alat Ukur dan Ketidakpastian Mutlak:**\n    *   **Mistar:** Skala terkecil $0{,}1\\ \\text{cm}$. Ketidakpastian mutlak adalah setengah dari skala terkecil, yaitu $\\pm 0{,}05\\ \\text{cm}$.\n    *   **Jangka Sorong:** Skala terkecil $0{,}01\\ \\text{cm}$ (untuk pembacaan nonius). Ketidakpastian mutlak adalah setengah dari skala terkecil, yaitu $\\pm 0{,}005\\ \\text{cm}$.\n    *   **Perbandingan Ketelitian:** Jangka sorong memiliki ketidakpastian mutlak yang lebih kecil ($0{,}005\\ \\text{cm}$ vs $0{,}05\\ \\text{cm}$), menunjukkan bahwa jangka sorong jauh lebih teliti dibandingkan mistar.\n\n2.  **Ketidakpastian Relatif:**\n    *   **Pengukuran dengan Mistar:**\n        Nilai ukur $L_m = 15{,}3\\ \\text{cm}$.\n        Ketidakpastian relatif $K_R_m = \\left( \\frac{\\text{Ketidakpastian Mutlak}}{\\text{Nilai Ukur}} \\right) \\times 100\\% = \\left( \\frac{0{,}05\\ \\text{cm}}{15{,}3\\ \\text{cm}} \\right) \\times 100\\% \\approx 0{,}327\\%$.\n    *   **Pengukuran dengan Jangka Sorong:**\n        Nilai ukur $L_{js} = 15{,}34\\ \\text{cm}$.\n        Ketidakpastian relatif $K_R_{js} = \\left( \\frac{\\text{Ketidakpastian Mutlak}}{\\text{Nilai Ukur}} \\right) \\times 100\\% = \\left( \\frac{0{,}005\\ \\text{cm}}{15{,}34\\ \\text{cm}} \\right) \\times 100\\% \\approx 0{,}0326\\%$.\n    *   **Perbandingan Ketidakpastian Relatif:** Ketidakpastian relatif pengukuran dengan jangka sorong ($0{,}0326\\%$) jauh lebih kecil daripada dengan mistar ($0{,}327\\%$). Ini mengkonfirmasi bahwa pengukuran dengan jangka sorong lebih presisi dan memiliki keandalan yang lebih tinggi.\n\n3.  **Pentingnya Pelaporan Angka Penting yang Berbeda:**\n    *   **Angka Penting** adalah semua angka yang diketahui dengan pasti ditambah satu angka taksiran. Jumlah angka penting mencerminkan tingkat ketelitian alat ukur yang digunakan.\n    *   **Mistar (15,3 cm):** Memiliki 3 angka penting. Ini menunjukkan bahwa angka '3' pada posisi persepuluhan adalah angka taksiran (diperkirakan oleh pengamat), dan angka '1' dan '5' diketahui dengan pasti. Jika dilaporkan lebih banyak angka (misal $15{,}30\\ \\text{cm}$), akan memberikan kesan palsu bahwa alat tersebut lebih teliti dari yang sebenarnya.\n    *   **Jangka Sorong (15,34 cm):** Memiliki 4 angka penting. Ini menunjukkan bahwa angka '4' pada posisi perseratusan adalah angka taksiran, dan angka '1', '5', dan '3' diketahui dengan pasti. Jika dilaporkan lebih sedikit angka (misal $15{,}3\\ \\text{cm}$), informasi mengenai ketelitian alat yang lebih tinggi akan hilang.\n    *   **Kekrusialan:** Pelaporan angka penting yang sesuai dengan ketelitian alat ukur sangat krusial untuk:\n        *   **Integritas Data:** Menghindari misinterpretasi tentang seberapa akurat suatu pengukuran.\n        *   **Reproduksibilitas Eksperimen:** Memungkinkan peneliti lain untuk memahami batasan dan keandalan data.\n        *   **Perhitungan Lanjut:** Angka penting memandu bagaimana hasil perhitungan harus dibulatkan, memastikan bahwa hasil akhir tidak lebih presisi dari data input yang paling tidak presisi.\n        *   **Komunikasi Ilmiah:** Standar pelaporan yang konsisten sangat penting dalam komunikasi hasil ilmiah.\n\nKesimpulan: Jangka sorong memberikan pengukuran yang jauh lebih teliti dan presisi dibandingkan mistar, yang ditunjukkan oleh ketidakpastian mutlak dan relatif yang lebih kecil. Pelaporan angka penting yang berbeda ($15{,}3\\ \\text{cm}$ vs $15{,}34\\ \\text{cm}$) secara tepat mencerminkan perbedaan ketelitian alat ukur dan merupakan aspek fundamental dalam integritas dan komunikasi data ilmiah.",
+    "topic": "Pengukuran Kelas X",
+    "grade": "XII",
+    "isLoading": false,
+    "questionNumber": 9,
+    "globalIndex": 8,
+    "savedAt": "2025-11-28T05:44:56.719Z",
+    "metadata": {
+      "topic": "-",
+      "grade": "XII",
+      "difficulty": "Acak",
+      "type": "Acak",
+      "total": 12,
+      "prompt": "Buat soal yang menilai pemahaman tentang ketidakpastian pengukuran, angka penting, serta penggunaan alat laboratorium."
+    },
+    "author": {
+      "name": "Viane Pindhi, S.Pd",
+      "nupkt": "vianepindhi@gmail.com"
+    },
+    "id": "1764308697321hpjtmljnr"
+  },
+  {
+    "prompt": "10. Sekelompok siswa SMA di laboratorium fisika sedang melakukan pengukuran dimensi Kartu Tanda Penduduk (KTP) menggunakan mistar (ketelitian 1 mm) dan jangka sorong (ketelitian 0,05 mm). Setelah mencatat beberapa data pengukuran, susunlah soal yang meminta mereka untuk: a) Menentukan nilai terbaik panjang dan lebar KTP beserta ketidakpastian mutlaknya dari data yang diberikan. b) Menghitung luas KTP berdasarkan hasil pengukuran tersebut dengan memperhatikan aturan angka penting. c) Menganalisis mengapa penggunaan jangka sorong memberikan presisi yang lebih tinggi dibandingkan mistar pada pengukuran ini, dan bagaimana hal tersebut mempengaruhi ketidakpastian hasil akhir.",
+    "difficulty": "random",
+    "type": "Esai",
+    "title": "",
+    "description": "",
+    "answer": "",
+    "topic": "-",
+    "grade": "XII",
+    "isLoading": false,
+    "questionNumber": 10,
+    "globalIndex": 9,
+    "savedAt": "2025-11-28T05:44:56.719Z",
+    "metadata": {
+      "topic": "-",
+      "grade": "XII",
+      "difficulty": "Acak",
+      "type": "Acak",
+      "total": 12,
+      "prompt": "Buat soal yang menilai pemahaman tentang ketidakpastian pengukuran, angka penting, serta penggunaan alat laboratorium."
+    },
+    "author": {
+      "name": "Viane Pindhi, S.Pd",
+      "nupkt": "vianepindhi@gmail.com"
+    },
+    "id": "1764308697321mw9sbtk6q"
+  },
+  {
+    "prompt": "11. Sekelompok siswa di SMA Negeri 3 Yogyakarta melakukan pengukuran panjang dan lebar selembar kain batik menggunakan mistar dan jangka sorong. Data hasil pengukuran mereka tercatat sebagai berikut: Panjang dengan mistar (25,3 ± 0,1) cm, Panjang dengan jangka sorong (25,34 ± 0,01) cm. Lebar dengan mistar (15,2 ± 0,1) cm. Analisislah hasil pengukuran tersebut, tentukan luas kain batik dengan angka penting yang benar berdasarkan pengukuran menggunakan jangka sorong, dan jelaskan mengapa jangka sorong lebih presisi dibandingkan mistar dalam konteks ini.",
+    "difficulty": "random",
+    "type": "Esai",
+    "title": "",
+    "description": "",
+    "answer": "",
+    "topic": "-",
+    "grade": "XII",
+    "isLoading": false,
+    "questionNumber": 11,
+    "globalIndex": 10,
+    "savedAt": "2025-11-28T05:44:56.719Z",
+    "metadata": {
+      "topic": "-",
+      "grade": "XII",
+      "difficulty": "Acak",
+      "type": "Acak",
+      "total": 12,
+      "prompt": "Buat soal yang menilai pemahaman tentang ketidakpastian pengukuran, angka penting, serta penggunaan alat laboratorium."
+    },
+    "author": {
+      "name": "Viane Pindhi, S.Pd",
+      "nupkt": "vianepindhi@gmail.com"
+    },
+    "id": "1764308697321eijz6dkgo"
+  },
+  {
+    "prompt": "12. Seorang siswa SMA di laboratorium fisika di Bandung melakukan pengukuran berulang terhadap diameter sebuah kelereng menggunakan jangka sorong. Setelah mendapatkan lima data pengukuran yang berbeda tipis, ia diminta untuk menentukan hasil pengukuran terbaik, ketidakpastian mutlaknya, dan menuliskannya sesuai aturan angka penting. Jelaskan langkah-langkah sistematis yang harus dilakukan siswa tersebut untuk mencapai hasil yang akurat dan identifikasi potensi kesalahan dalam penggunaan jangka sorong yang dapat menyebabkan ketidakpastian pada pengukurannya.",
+    "difficulty": "random",
+    "type": "Esai",
+    "title": "",
+    "description": "",
+    "answer": "",
+    "topic": "-",
+    "grade": "XII",
+    "isLoading": false,
+    "questionNumber": 12,
+    "globalIndex": 11,
+    "savedAt": "2025-11-28T05:44:56.719Z",
+    "metadata": {
+      "topic": "-",
+      "grade": "XII",
+      "difficulty": "Acak",
+      "type": "Acak",
+      "total": 12,
+      "prompt": "Buat soal yang menilai pemahaman tentang ketidakpastian pengukuran, angka penting, serta penggunaan alat laboratorium."
+    },
+    "author": {
+      "name": "Viane Pindhi, S.Pd",
+      "nupkt": "vianepindhi@gmail.com"
+    },
+    "id": "17643086973214u9mig4ce"
+  },
+  {
+    "prompt": "10. Sekelompok siswa SMA di laboratorium fisika sedang melakukan pengukuran dimensi Kartu Tanda Penduduk (KTP) menggunakan mistar (ketelitian 1 mm) dan jangka sorong (ketelitian 0,05 mm). Setelah mencatat beberapa data pengukuran, susunlah soal yang meminta mereka untuk: a) Menentukan nilai terbaik panjang dan lebar KTP beserta ketidakpastian mutlaknya dari data yang diberikan. b) Menghitung luas KTP berdasarkan hasil pengukuran tersebut dengan memperhatikan aturan angka penting. c) Menganalisis mengapa penggunaan jangka sorong memberikan presisi yang lebih tinggi dibandingkan mistar pada pengukuran ini, dan bagaimana hal tersebut mempengaruhi ketidakpastian hasil akhir.",
+    "difficulty": "random",
+    "type": "Esai",
+    "title": "Pengukuran KTP: Presisi & Angka Penting",
+    "description": "KD Pengukuran Fisika Kelas X. Sekelompok siswa SMA di laboratorium fisika sedang melakukan pengukuran dimensi Kartu Tanda Penduduk (KTP) menggunakan mistar (ketelitian 1 mm) dan jangka sorong (ketelitian 0,05 mm). Data pengukuran yang mereka peroleh adalah sebagai berikut:\n\n**Data Pengukuran Panjang KTP (mm):**\n*   **Mistar:** $95, 96, 95, 97, 96$\n*   **Jangka Sorong:** $95{,}40, 95{,}45, 95{,}35, 95{,}40, 95{,}35$\n\n**Data Pengukuran Lebar KTP (mm):**\n*   **Mistar:** $58, 59, 58, 60, 59$\n*   **Jangka Sorong:** $58{,}75, 58{,}80, 58{,}70, 58{,}75, 58{,}70$\n\nBerdasarkan data di atas, susunlah soal yang meminta siswa untuk:\na) Menentukan nilai terbaik panjang dan lebar KTP beserta ketidakpastian mutlaknya dari data yang diberikan, menggunakan hasil pengukuran dengan jangka sorong. Gunakan metode standar deviasi rata-rata untuk ketidakpastian.\nb) Menghitung luas KTP berdasarkan hasil pengukuran tersebut dengan memperhatikan aturan angka penting.\nc) Menganalisis mengapa penggunaan jangka sorong memberikan presisi yang lebih tinggi dibandingkan mistar pada pengukuran ini, dan bagaimana hal tersebut mempengaruhi ketidakpastian hasil akhir.\nTingkat kognitif: C3 (Mengaplikasikan) untuk a & b, C4 (Menganalisis) untuk c. Tipe soal: Esai.",
+    "answer": "Langkah penyelesaian:\n**a) Menentukan nilai terbaik panjang dan lebar KTP beserta ketidakpastian mutlaknya (Jangka Sorong):**\n\n**Untuk Panjang (L):**\nData pengukuran (mm): $95{,}40, 95{,}45, 95{,}35, 95{,}40, 95{,}35$\nJumlah data ($N$) = 5\n1.  **Nilai rata-rata ($\\bar{L}$):**\n    $$\\bar{L} = \\frac{95{,}40 + 95{,}45 + 95{,}35 + 95{,}40 + 95{,}35}{5} = \\frac{476{,}95}{5} = 95{,}39\\ \\text{mm}$$\n2.  **Standar deviasi ($s$):**\n    $$s = \\sqrt{\\frac{\\sum (L_i - \\bar{L})^2}{N-1}}$$\n    $\\sum (L_i - \\bar{L})^2 = (95{,}40-95{,}39)^2 + (95{,}45-95{,}39)^2 + (95{,}35-95{,}39)^2 + (95{,}40-95{,}39)^2 + (95{,}35-95{,}39)^2$\n    $= (0{,}01)^2 + (0{,}06)^2 + (-0{,}04)^2 + (0{,}01)^2 + (-0{,}04)^2$\n    $= 0{,}0001 + 0{,}0036 + 0{,}0016 + 0{,}0001 + 0{,}0016 = 0{,}007\\ \\text{mm}^2$\n    $$s = \\sqrt{\\frac{0{,}007}{5-1}} = \\sqrt{\\frac{0{,}007}{4}} = \\sqrt{0{,}00175} \\approx 0{,}04183\\ \\text{mm}$$\n3.  **Ketidakpastian mutlak ($\\Delta L$):**\n    $$\\Delta L = \\frac{s}{\\sqrt{N}} = \\frac{0{,}04183}{\\sqrt{5}} \\approx \\frac{0{,}04183}{2{,}236} \\approx 0{,}01869\\ \\text{mm}$$\n    Pembulatan ketidakpastian mutlak ke satu angka penting: $\\Delta L = 0{,}02\\ \\text{mm}$.\n    Maka, nilai terbaik panjang KTP adalah $L = (95{,}39 \\pm 0{,}02)\\ \\text{mm}$.\n\n**Untuk Lebar (W):**\nData pengukuran (mm): $58{,}75, 58{,}80, 58{,}70, 58{,}75, 58{,}70$\nJumlah data ($N$) = 5\n1.  **Nilai rata-rata ($\\bar{W}$):**\n    $$\\bar{W} = \\frac{58{,}75 + 58{,}80 + 58{,}70 + 58{,}75 + 58{,}70}{5} = \\frac{293{,}70}{5} = 58{,}74\\ \\text{mm}$$\n2.  **Standar deviasi ($s$):**\n    $\\sum (W_i - \\bar{W})^2 = (58{,}75-58{,}74)^2 + (58{,}80-58{,}74)^2 + (58{,}70-58{,}74)^2 + (58{,}75-58{,}74)^2 + (58{,}70-58{,}74)^2$\n    $= (0{,}01)^2 + (0{,}06)^2 + (-0{,}04)^2 + (0{,}01)^2 + (-0{,}04)^2$\n    $= 0{,}0001 + 0{,}0036 + 0{,}0016 + 0{,}0001 + 0{,}0016 = 0{,}007\\ \\text{mm}^2$\n    $$s = \\sqrt{\\frac{0{,}007}{5-1}} = \\sqrt{\\frac{0{,}007}{4}} = \\sqrt{0{,}00175} \\approx 0{,}04183\\ \\text{mm}$$\n3.  **Ketidakpastian mutlak ($\\Delta W$):**\n    $$\\Delta W = \\frac{s}{\\sqrt{N}} = \\frac{0{,}04183}{\\sqrt{5}} \\approx \\frac{0{,}04183}{2{,}236} \\approx 0{,}01869\\ \\text{mm}$$\n    Pembulatan ketidakpastian mutlak ke satu angka penting: $\\Delta W = 0{,}02\\ \\text{mm}$.\n    Maka, nilai terbaik lebar KTP adalah $W = (58{,}74 \\pm 0{,}02)\\ \\text{mm}$.\n\n**b) Menghitung luas KTP berdasarkan hasil pengukuran dengan memperhatikan aturan angka penting:**\nDari hasil pengukuran jangka sorong:\n$L = 95{,}39\\ \\text{mm}$ (memiliki 4 angka penting)\n$W = 58{,}74\\ \\text{mm}$ (memiliki 4 angka penting)\n\nLuas ($A$) = Panjang $\\times$ Lebar\n$A = L \\times W = 95{,}39\\ \\text{mm} \\times 58{,}74\\ \\text{mm} = 5604{,}2886\\ \\text{mm}^2$\n\nMenurut aturan angka penting untuk perkalian, hasil harus memiliki jumlah angka penting yang sama dengan faktor yang memiliki angka penting paling sedikit. Dalam kasus ini, kedua faktor memiliki 4 angka penting. Oleh karena itu, hasil luas harus dibulatkan menjadi 4 angka penting.\n$A = 5604\\ \\text{mm}^2$.\n\n**c) Analisis mengapa penggunaan jangka sorong memberikan presisi yang lebih tinggi dibandingkan mistar dan bagaimana hal tersebut mempengaruhi ketidakpastian hasil akhir:**\n1.  **Presisi Instrument:** Jangka sorong memiliki skala nonius yang memungkinkan pembacaan hingga dua desimal (misalnya, ketelitian 0,05 mm), yang jauh lebih kecil dibandingkan mistar yang hanya dapat membaca hingga satu desimal (ketelitian 1 mm). Skala terkecil ini secara langsung menunjukkan tingkat presisi instrumen; semakin kecil skala terkecil, semakin presisi instrumen tersebut dalam mendeteksi variasi ukuran.\n2.  **Dampak pada Ketidakpastian:** Ketelitian instrumen adalah salah satu sumber utama ketidakpastian pengukuran. Dengan ketelitian yang lebih tinggi, jangka sorong mampu mengurangi ketidakpastian sistematis yang berasal dari instrumen. Ini terlihat dari ketidakpastian mutlak yang dihitung (misalnya, $0{,}02\\ \\text{mm}$ untuk jangka sorong) yang jauh lebih kecil dibandingkan ketelitian mistar ($1\\ \\text{mm}$).\n3.  **Pengaruh pada Hasil Akhir:** Pengukuran dengan jangka sorong menghasilkan data yang lebih rapat dan konsisten (rentang variasi data lebih kecil), yang tercermin dalam nilai standar deviasi dan ketidakpastian mutlak rata-rata yang lebih kecil. Ini berarti nilai terbaik yang diperoleh dari jangka sorong lebih mendekati nilai sebenarnya (akurasi lebih tinggi) dan memiliki rentang kepercayaan yang lebih sempit (presisi lebih tinggi). Akibatnya, perhitungan luas KTP yang menggunakan data dari jangka sorong akan memiliki ketidakpastian yang jauh lebih kecil dibandingkan jika menggunakan data dari mistar, memberikan keyakinan yang lebih besar terhadap hasil pengukuran tersebut.\n\nPrinsip fisika yang digunakan: Pengukuran, Ketidakpastian, Angka Penting.",
+    "topic": "Pengukuran Fisika Kelas X",
+    "grade": "XII",
+    "isLoading": false,
+    "questionNumber": 10,
+    "globalIndex": 9,
+    "savedAt": "2025-11-28T05:45:16.917Z",
+    "metadata": null,
+    "author": {
+      "name": "Viane Pindhi, S.Pd",
+      "nupkt": "vianepindhi@gmail.com"
+    },
+    "id": "1764308716929dycwxwxpb"
   }
 ]

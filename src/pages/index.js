@@ -219,22 +219,23 @@ export default function Home() {
     };
 
     const handleStreamingComplete = (event) => {
-      const { completed, total } = event.detail;
+      const { completed, total, questions } = event.detail;
 
-      // Remove any remaining skeleton questions and prepare for review
+      // Remove any remaining skeleton questions
       setQuestions(prevQuestions => {
-        const cleanedQuestions = prevQuestions.filter(q => !q.isLoading);
-
-        // Set questions for review - show all completed questions
-        if (cleanedQuestions.length > 0) {
-          setTimeout(() => {
-            setReviewQuestions(cleanedQuestions);
-            setIsReviewOpen(true);
-          }, 800); // Delay untuk smooth transition
-        }
-
-        return cleanedQuestions;
+        return prevQuestions.filter(q => !q.isLoading);
       });
+
+      // Use questions passed from event, fallback to ref
+      const generatedQuestions = questions || collectedQuestionsRef.current;
+
+      // Auto-open review modal disabled
+      // if (generatedQuestions && generatedQuestions.length > 0) {
+      //   setTimeout(() => {
+      //     setReviewQuestions(generatedQuestions);
+      //     setIsReviewOpen(true);
+      //   }, 800); // Delay for smooth transition
+      // }
 
       setStreamingState({
         isStreaming: false,
@@ -444,7 +445,10 @@ export default function Home() {
                       index: globalIndex,
                       questionNumber: chunk.start + chunkCompleted, // Add question number for display
                       chunkIndex: chunkIndex,
-                      chunkPosition: chunkCompleted + 1
+                      chunkPosition: chunkCompleted + 1,
+                      // Ensure metadata is preserved for review
+                      grade: metadata.grade,
+                      topic: metadata.topic
                     };
 
                     collectedQuestionsRef.current.push(adjustedQuestion);
@@ -526,7 +530,8 @@ export default function Home() {
           detail: {
             completed: totalCompleted,
             total: totalQuestions,
-            message: t('streaming.allChunksCompleted')
+            message: t('streaming.allChunksCompleted'),
+            questions: [...collectedQuestionsRef.current] // Pass copy of questions
           }
         }));
       }

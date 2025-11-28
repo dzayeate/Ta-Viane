@@ -4,13 +4,12 @@ import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
 import Sidebar from '@/components/sidebar';
 import { useRouter } from 'next/router';
 import users from '@/mock/users/index.json';
-import { HiSparkles, HiArrowLeft, HiPencilSquare, HiCpuChip } from 'react-icons/hi2';
+import { HiSparkles, HiArrowLeft } from 'react-icons/hi2';
 
 export default function CreateQuestion() {
   const { t, i18n } = useTranslation('common');
   const router = useRouter();
   const [user, setUser] = useState({ nama: '', nuptk: '' });
-  const [activeTab, setActiveTab] = useState('auto'); // 'auto' | 'manual'
   
   // Auto Form State
   const [isParsing, setIsParsing] = useState(false);
@@ -22,14 +21,6 @@ export default function CreateQuestion() {
     difficulty: 'random',
     type: 'random',
     reference: ''
-  });
-  
-  // Manual Form State
-  const [manualData, setManualData] = useState({
-    topic: '',
-    grade: '',
-    difficulty: 'c1',
-    type: 'essay'
   });
 
   const [filteredSuggestions, setFilteredSuggestions] = useState([]);
@@ -152,17 +143,6 @@ export default function CreateQuestion() {
     router.push('/');
   };
 
-  // Manual Form Handlers
-  const handleManualChange = (field, value) => {
-    setManualData({ ...manualData, [field]: value });
-  };
-
-  const handleManualSubmit = (e) => {
-    e.preventDefault();
-    sessionStorage.setItem('manual_create_config', JSON.stringify(manualData));
-    router.push('/');
-  };
-
   const handleLogout = () => {
     localStorage.removeItem('nupkt');
     localStorage.removeItem('password');
@@ -193,38 +173,11 @@ export default function CreateQuestion() {
                 {/* Header */}
                 <div className="bg-gradient-brand p-8 text-white">
                     <h1 className="text-3xl font-display font-bold mb-2">Buat Soal Baru</h1>
-                    <p className="text-white/90">Pilih metode pembuatan soal yang Anda inginkan.</p>
-                </div>
-
-                {/* Tabs */}
-                <div className="flex border-b border-neutral-200">
-                    <button
-                        onClick={() => setActiveTab('auto')}
-                        className={`flex-1 py-4 px-6 text-center font-semibold text-sm transition-colors flex items-center justify-center gap-2 ${
-                            activeTab === 'auto'
-                                ? 'text-brand-600 border-b-2 border-brand-600 bg-brand-50/50'
-                                : 'text-neutral-500 hover:text-neutral-700 hover:bg-neutral-50'
-                        }`}
-                    >
-                        <HiCpuChip className="w-5 h-5" />
-                        Otomatis (AI)
-                    </button>
-                    <button
-                        onClick={() => setActiveTab('manual')}
-                        className={`flex-1 py-4 px-6 text-center font-semibold text-sm transition-colors flex items-center justify-center gap-2 ${
-                            activeTab === 'manual'
-                                ? 'text-brand-600 border-b-2 border-brand-600 bg-brand-50/50'
-                                : 'text-neutral-500 hover:text-neutral-700 hover:bg-neutral-50'
-                        }`}
-                    >
-                        <HiPencilSquare className="w-5 h-5" />
-                        Manual
-                    </button>
+                    <p className="text-white/90">Isi formulir di bawah untuk membuat soal secara otomatis dengan AI.</p>
                 </div>
 
                 {/* Content */}
-                {activeTab === 'auto' ? (
-                    <form onSubmit={handleSubmit} className="p-8 space-y-6 animate-fade-in">
+                <form onSubmit={handleSubmit} className="p-8 space-y-6 animate-fade-in">
                         {/* Prompt Input */}
                         <div className="relative">
                             <label htmlFor="prompt" className="block text-sm font-semibold text-neutral-700 mb-2">
@@ -399,101 +352,10 @@ export default function CreateQuestion() {
                                 className="btn btn-primary btn-lg gap-2 group w-full md:w-auto"
                             >
                                 <HiSparkles className="text-xl transition-transform duration-200 group-hover:rotate-12" />
-                                {t('modal.generate')}
+                                Generate Instruction
                             </button>
                         </div>
                     </form>
-                ) : (
-                    <form onSubmit={handleManualSubmit} className="p-8 space-y-6 animate-fade-in">
-                        <div className="bg-neutral-50 border border-neutral-200 rounded-xl p-6 mb-6">
-                            <p className="text-neutral-600 text-sm">
-                                Mode ini memungkinkan Anda untuk membuat soal secara manual. Anda akan diarahkan ke editor soal dengan template kosong yang sudah dikonfigurasi sesuai pilihan Anda.
-                            </p>
-                        </div>
-
-                        {/* Topic & Grade */}
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                            <div>
-                                <label htmlFor="manual-topic" className="block text-sm font-semibold text-neutral-700 mb-2">
-                                    {t('modal.topic')} <span className="text-danger-500">*</span>
-                                </label>
-                                <input
-                                    type="text"
-                                    id="manual-topic"
-                                    value={manualData.topic}
-                                    onChange={(e) => handleManualChange('topic', e.target.value)}
-                                    className="input"
-                                    placeholder={t('modal.topicPlaceholder')}
-                                    required
-                                />
-                            </div>
-                            <div>
-                                <label htmlFor="manual-grade" className="block text-sm font-semibold text-neutral-700 mb-2">
-                                    {t('modal.grade')} <span className="text-danger-500">*</span>
-                                </label>
-                                <select
-                                    id="manual-grade"
-                                    value={manualData.grade}
-                                    onChange={(e) => handleManualChange('grade', e.target.value)}
-                                    className="input"
-                                    required
-                                >
-                                    <option value="">{t('modal.gradePlaceholder')}</option>
-                                    <option value="X">Kelas X</option>
-                                    <option value="XI">Kelas XI</option>
-                                    <option value="XII">Kelas XII</option>
-                                </select>
-                            </div>
-                        </div>
-
-                        {/* Difficulty & Type */}
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                            <div>
-                                <label htmlFor="manual-difficulty" className="block text-sm font-semibold text-neutral-700 mb-2">
-                                    {t('modal.difficulty')}
-                                </label>
-                                <select
-                                    id="manual-difficulty"
-                                    value={manualData.difficulty}
-                                    onChange={(e) => handleManualChange('difficulty', e.target.value)}
-                                    className="input"
-                                >
-                                    <option value="c1">{t('main.cognitive.c1')}</option>
-                                    <option value="c2">{t('main.cognitive.c2')}</option>
-                                    <option value="c3">{t('main.cognitive.c3')}</option>
-                                    <option value="c4">{t('main.cognitive.c4')}</option>
-                                    <option value="c5">{t('main.cognitive.c5')}</option>
-                                    <option value="c6">{t('main.cognitive.c6')}</option>
-                                </select>
-                            </div>
-                            <div>
-                                <label htmlFor="manual-type" className="block text-sm font-semibold text-neutral-700 mb-2">
-                                    {t('modal.type')}
-                                </label>
-                                <select
-                                    id="manual-type"
-                                    value={manualData.type}
-                                    onChange={(e) => handleManualChange('type', e.target.value)}
-                                    className="input"
-                                >
-                                    <option value="essay">{t('types.essay')}</option>
-                                    <option value="multipleChoice">{t('types.multipleChoice')}</option>
-                                </select>
-                            </div>
-                        </div>
-
-                        {/* Submit Button */}
-                        <div className="pt-6 border-t border-neutral-200 flex justify-end">
-                            <button
-                                type="submit"
-                                className="btn btn-primary btn-lg gap-2 group w-full md:w-auto"
-                            >
-                                <HiPencilSquare className="text-xl" />
-                                Mulai Menulis Soal
-                            </button>
-                        </div>
-                    </form>
-                )}
             </div>
         </div>
       </main>
@@ -508,3 +370,4 @@ export async function getStaticProps({ locale }) {
     },
   };
 }
+            

@@ -24,6 +24,14 @@ The "Auto" submenu in the Question Creation page fails to correctly populate/per
 - [x] **Update `onGenerateStreaming`:** Explicitly included `grade` and `topic` when creating the initial `skeletonQuestions` array for better consistency.
 - [x] **Verification:** "Class" and "Topic" selections from the Create Question page should now correctly appear in the generated question cards.
 
+## Fix Review Modal Auto-Open for Large Batches
+- [x] **Analyze `handleStreamingComplete`:** Identified that the logic for opening the review modal was coupled with the `setQuestions` state updater, which could be unreliable for large batches or rapid updates.
+- [x] **Refactor Modal Trigger:** Moved the modal opening logic *outside* the state updater.
+- [x] **Use Ref for Data:** Switched to using `collectedQuestionsRef.current` as the source of truth for the review modal. This ensures that exactly the batch of questions just generated is shown, regardless of render timing.
+- [x] **Enrich Data:** Updated `onGenerateStreaming` to inject `grade` and `topic` metadata directly into the objects stored in `collectedQuestionsRef`, ensuring the review modal has complete data.
+- [x] **Pass Data via Event:** Updated `onGenerateStreaming` to pass the collected questions in the `streamingComplete` event payload, ensuring data availability even if the ref is cleared.
+- [x] **Verification:** The Review Modal should now reliably open after auto-generation completes, even for large numbers of questions.
+
 ## Fix Blank View in Question Review
 - [x] **Analyze `QuestionReview`:** Check how it handles the `questions` prop.
 - [x] **Trace Data:** Verify `reviewQuestions` in `src/pages/index.js` has the correct structure.
