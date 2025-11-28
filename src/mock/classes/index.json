@@ -1,0 +1,44 @@
+[
+  {
+    "id": "class-1",
+    "name": "XII IPA 1",
+    "grade": "12",
+    "school": "SMA Negeri 1 Jakarta",
+    "teacher_nuptk": "1234567890",
+    "classCode": "ABC123",
+    "students": [
+      {
+        "id": "student-1",
+        "name": "Budi Santoso",
+        "nisn": "001",
+        "email": "budi@example.com",
+        "joinedAt": "2023-01-01T00:00:00.000Z"
+      },
+      {
+        "id": "student-2",
+        "name": "Siti Aminah",
+        "nisn": "002",
+        "email": "siti@example.com",
+        "joinedAt": "2023-01-01T00:00:00.000Z"
+      },
+      {
+        "id": "student-3",
+        "name": "Rudi Hartono",
+        "nisn": "003",
+        "email": "rudi@example.com",
+        "joinedAt": "2023-01-01T00:00:00.000Z"
+      }
+    ],
+    "createdAt": "2023-01-01T00:00:00.000Z"
+  },
+  {
+    "id": "1764331696737",
+    "name": "X IPA 1",
+    "grade": "X",
+    "school": "SMAN 1 Margahayu",
+    "teacher_nuptk": "vianepindhi@gmail.com",
+    "classCode": "DJ691A",
+    "students": [],
+    "createdAt": "2025-11-28T12:08:16.737Z"
+  }
+]

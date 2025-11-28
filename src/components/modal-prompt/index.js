@@ -3,6 +3,7 @@ import { useTranslation } from 'next-i18next';
 import { IoClose } from 'react-icons/io5';
 import { HiSparkles } from 'react-icons/hi2';
 import { generateQuestionsStream } from '@/services/streamingService';
+import Swal from 'sweetalert2';
 
 const ModalPrompt = ({ isOpen, onClose, onSubmit }) => {
   const { t, i18n } = useTranslation('common');
@@ -279,7 +280,12 @@ const ModalPrompt = ({ isOpen, onClose, onSubmit }) => {
           handleChange('reference', data.text);
         } catch (error) {
           console.error('Error parsing PDF:', error);
-          alert(t('streaming.failedToParsePdf'));
+          Swal.fire({
+            icon: 'error',
+            title: 'Terjadi Kesalahan',
+            text: t('streaming.failedToParsePdf'),
+            customClass: { popup: 'rounded-xl' }
+          });
         } finally {
           setIsParsing(false);
         }
@@ -370,7 +376,7 @@ const ModalPrompt = ({ isOpen, onClose, onSubmit }) => {
             {/* Prompt Input with Suggestions */}
             <div className="relative">
               <label htmlFor="prompt" className="block text-sm font-semibold text-neutral-700 mb-2">
-                {t('modal.prompt')} <span className="text-neutral-400 font-normal">(Opsional)</span>
+                {t('modal.prompt')} <span className="text-neutral-500 font-normal">(Opsional)</span>
               </label>
               <input
                 type="text"
@@ -492,7 +498,7 @@ const ModalPrompt = ({ isOpen, onClose, onSubmit }) => {
             {/* Total Questions */}
             <div>
               <label htmlFor="total" className="block text-sm font-semibold text-neutral-700 mb-2">
-                {t('modal.total')} <span className="text-neutral-400 font-normal">(Jumlah soal yang akan dibuat)</span>
+                {t('modal.total')} <span className="text-neutral-500 font-normal">(Jumlah soal yang akan dibuat)</span>
               </label>
               <input
                 type="number"
@@ -511,7 +517,7 @@ const ModalPrompt = ({ isOpen, onClose, onSubmit }) => {
             <div>
               <label htmlFor="reference" className="block text-sm font-semibold text-neutral-700 mb-2">
                 {t('modal.reference')}
-                <span className="text-neutral-400 font-normal text-xs ml-1">(Opsional)</span>
+                <span className="text-neutral-500 font-normal text-xs ml-1">(Opsional)</span>
               </label>
               <textarea
                 id="reference"

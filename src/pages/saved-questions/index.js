@@ -228,18 +228,18 @@ export default function SavedQuestions() {
                     {/* Toolbar */}
                     <div className="bg-white p-4 rounded-xl shadow-sm border border-neutral-200 mb-8 flex flex-col md:flex-row gap-4 items-center justify-between sticky top-0 z-10">
                         <div className="relative w-full md:w-96">
-                            <HiMagnifyingGlass className="absolute left-3 top-1/2 -translate-y-1/2 text-neutral-400 w-5 h-5" />
+                            <HiMagnifyingGlass className="absolute left-3 top-1/2 -translate-y-1/2 text-neutral-500 w-5 h-5" />
                             <input
                                 type="text"
                                 placeholder="Cari judul atau isi soal..."
-                                className="w-full pl-10 pr-4 py-2 rounded-lg border border-neutral-300 focus:ring-2 focus:ring-brand-500 focus:border-brand-500 outline-none transition-all"
+                                className="input pl-10"
                                 value={searchQuery}
                                 onChange={(e) => setSearchQuery(e.target.value)}
                             />
                         </div>
                         <div className="flex gap-3 w-full md:w-auto overflow-x-auto pb-2 md:pb-0">
                             <select 
-                                className="px-4 py-2 rounded-lg border border-neutral-300 focus:ring-2 focus:ring-brand-500 focus:border-brand-500 outline-none bg-white min-w-[140px]"
+                                className="input min-w-[140px]"
                                 value={filterGrade} 
                                 onChange={(e) => setFilterGrade(e.target.value)}
                             >
@@ -249,7 +249,7 @@ export default function SavedQuestions() {
                                 <option value="XII">Kelas XII</option>
                             </select>
                             <select 
-                                className="px-4 py-2 rounded-lg border border-neutral-300 focus:ring-2 focus:ring-brand-500 focus:border-brand-500 outline-none bg-white min-w-[140px]"
+                                className="input min-w-[140px]"
                                 value={filterDifficulty} 
                                 onChange={(e) => setFilterDifficulty(e.target.value)}
                             >
@@ -269,7 +269,7 @@ export default function SavedQuestions() {
                     ) : filteredQuestions.length === 0 ? (
                         <div className="text-center py-16 bg-white rounded-2xl border border-neutral-200 shadow-sm animate-fade-in">
                             <div className="w-16 h-16 bg-neutral-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                                <HiDocumentText className="w-8 h-8 text-neutral-400" />
+                                <HiDocumentText className="w-8 h-8 text-neutral-500" />
                             </div>
                             <h3 className="text-xl font-bold text-neutral-900 mb-2">Tidak ada soal ditemukan</h3>
                             <p className="text-neutral-600 mb-6 text-lg">Coba ubah filter pencarian Anda atau buat soal baru.</p>
@@ -319,7 +319,7 @@ export default function SavedQuestions() {
                                         
                                         <div className="flex items-center gap-3 self-end md:self-start">
                                             <div className="text-right">
-                                                <div className="text-xs text-neutral-400">
+                                                <div className="text-xs text-neutral-500">
                                                     {new Date(q.savedAt).toLocaleDateString('id-ID', {
                                                         day: 'numeric', month: 'short', year: 'numeric'
                                                     })}
@@ -333,7 +333,7 @@ export default function SavedQuestions() {
                                             {q.author?.nupkt === user.nuptk && (
                                                 <button
                                                     onClick={() => handleDelete(q.id)}
-                                                    className="p-2 text-red-500 hover:bg-red-50 rounded-lg transition-colors focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2"
+                                                    className="btn btn-icon text-red-500 hover:bg-red-50 hover:text-red-600"
                                                     title="Hapus Soal"
                                                 >
                                                     <HiTrash className="w-5 h-5" />

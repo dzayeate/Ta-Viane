@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useTranslation } from 'next-i18next';
-import { HiCheckCircle, HiPencil, HiXCircle, HiDocumentDownload, HiEye, HiEyeSlash } from 'react-icons/hi2';
+import { HiCheckCircle, HiPencil, HiXCircle, HiEye, HiEyeSlash } from 'react-icons/hi2';
 import Preview from '@/components/preview';
 
 const QuestionReview = ({ questions = [], onSave, onModify, onCancel, metadata }) => {

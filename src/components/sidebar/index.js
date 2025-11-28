@@ -9,7 +9,9 @@ import {
   HiChatBubbleLeftRight,
   HiBars3,
   HiXMark,
-  HiEye
+  HiEye,
+  HiUserGroup,
+  HiAcademicCap
 } from 'react-icons/hi2';
 import LanguageSwitcher from '@/components/language-switcher';
 
@@ -39,6 +41,18 @@ const Sidebar = ({
       icon: HiDocumentText,
       path: '/saved-questions',
       onClick: () => router.push('/saved-questions')
+    },
+    {
+      label: 'Kelas Saya',
+      icon: HiUserGroup,
+      path: '/classes',
+      onClick: () => router.push('/classes')
+    },
+    {
+      label: 'Ujian',
+      icon: HiAcademicCap,
+      path: '/exams',
+      onClick: () => router.push('/exams')
     }
   ];
 

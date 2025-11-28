@@ -3,6 +3,7 @@ import { useTranslation } from 'next-i18next';
 import { useRouter } from 'next/router';
 import users from '@/mock/users/index.json';
 import { generateQuestionsStream } from '@/services/streamingService';
+import Swal from 'sweetalert2';
 
 export const useHomeLogic = () => {
   const { t, ready, i18n } = useTranslation('common');
@@ -19,7 +20,6 @@ export const useHomeLogic = () => {
   });
   const [reviewQuestions, setReviewQuestions] = useState([]);
   const [generationMetadata, setGenerationMetadata] = useState(null);
-  const [savedQuestions, setSavedQuestions] = useState([]);
 
   // Refs for streaming
   const abortControllerRef = useRef(null);
@@ -34,7 +34,6 @@ export const useHomeLogic = () => {
     left: 0,
     width: 0
   });
-  const [isFoucused, setIsFocused] = useState(false);
   const [suggestionQuery, setSuggestionQuery] = useState('');
   const [generateClickCount, setGenerateClickCount] = useState(0);
 
@@ -584,14 +583,24 @@ export const useHomeLogic = () => {
             console.error(error);
             retryCount++;
             if (retryCount >= maxRetries) {
-              alert(error.message);
+              Swal.fire({
+                icon: 'error',
+                title: 'Terjadi Kesalahan',
+                text: error.message,
+                customClass: { popup: 'rounded-xl' }
+              });
             }
           }
         }
       });
     } catch (error) {
       console.error("Queue task failed:", error);
-      alert("Terjadi kesalahan saat memproses permintaan Anda.");
+      Swal.fire({
+        icon: 'error',
+        title: 'Terjadi Kesalahan',
+        text: 'Terjadi kesalahan saat memproses permintaan Anda.',
+        customClass: { popup: 'rounded-xl' }
+      });
     } finally {
       setIsGenerating((prev) => {
         const newIsGenerating = [...prev];
@@ -629,7 +638,6 @@ export const useHomeLogic = () => {
       return;
     }
 
-    setIsFocused(true);
     setActiveSuggestionIndex(index);
     setSuggestionQuery('');
 
@@ -682,11 +690,15 @@ export const useHomeLogic = () => {
       const updatedSaved = [...existingSaved, ...questionsWithMetadata];
       localStorage.setItem('savedQuestions', JSON.stringify(updatedSaved));
 
-      // Update state
-      setSavedQuestions(updatedSaved);
-
       // Tampilkan notifikasi
-      alert(`Berhasil menyimpan ${questionsToSave.length} soal ke Bank Soal!`);
+      Swal.fire({
+        icon: 'success',
+        title: 'Berhasil!',
+        text: `Berhasil menyimpan ${questionsToSave.length} soal ke Bank Soal!`,
+        timer: 2000,
+        showConfirmButton: false,
+        customClass: { popup: 'rounded-xl' }
+      });
 
       // Tutup review dan reset
       setIsReviewOpen(false);
@@ -706,7 +718,12 @@ export const useHomeLogic = () => {
 
     } catch (error) {
       console.error('Error saving questions:', error);
-      alert('Gagal menyimpan soal ke server. Silakan coba lagi.');
+      Swal.fire({
+        icon: 'error',
+        title: 'Gagal!',
+        text: 'Gagal menyimpan soal ke server. Silakan coba lagi.',
+        customClass: { popup: 'rounded-xl' }
+      });
     }
   };
 
@@ -719,7 +736,12 @@ export const useHomeLogic = () => {
     // Atau biarkan soal tetap di editor untuk dimodifikasi manual
     // Untuk sekarang, kita biarkan soal tetap ada di editor
 
-    alert(`Anda dapat memodifikasi ${questionsToModify.length} soal yang dipilih.`);
+    Swal.fire({
+      icon: 'info',
+      title: 'Info',
+      text: `Anda dapat memodifikasi ${questionsToModify.length} soal yang dipilih.`,
+      customClass: { popup: 'rounded-xl' }
+    });
 
     // Reset review
     setReviewQuestions([]);
@@ -744,7 +766,12 @@ export const useHomeLogic = () => {
       setReviewQuestions(questionsWithContent);
       setIsReviewOpen(true);
     } else {
-      alert('Belum ada soal untuk direview. Silakan buat soal terlebih dahulu.');
+      Swal.fire({
+        icon: 'info',
+        title: 'Info',
+        text: 'Belum ada soal untuk direview. Silakan buat soal terlebih dahulu.',
+        customClass: { popup: 'rounded-xl' }
+      });
     }
   };
 
@@ -766,15 +793,11 @@ export const useHomeLogic = () => {
     streamingState,
     reviewQuestions,
     generationMetadata,
-    savedQuestions,
     isLoading,
     nuptk,
     nama,
     activeSuggestionIndex,
     suggestionPosition,
-    isFoucused,
-    suggestionQuery,
-    generateClickCount,
     completedQuestionsCount,
     handleLogout,
     addQuestion,

@@ -5,6 +5,7 @@ import Sidebar from '@/components/sidebar';
 import { useRouter } from 'next/router';
 import users from '@/mock/users/index.json';
 import { HiSparkles, HiArrowLeft } from 'react-icons/hi2';
+import Swal from 'sweetalert2';
 
 export default function CreateQuestion() {
   const { t, i18n } = useTranslation('common');
@@ -139,7 +140,13 @@ export default function CreateQuestion() {
           handleChange('reference', data.text);
         } catch (error) {
           console.error('Error parsing PDF:', error);
-          alert('Gagal memproses PDF');
+          Swal.fire({
+            icon: 'error',
+            title: 'Terjadi Kesalahan',
+            text: 'Gagal memproses PDF',
+            confirmButtonColor: '#ef4444',
+            customClass: { popup: 'rounded-xl' }
+          });
         } finally {
           setIsParsing(false);
         }
@@ -158,7 +165,13 @@ export default function CreateQuestion() {
     }
 
     if (!finalGrade) {
-      alert("Mohon pilih Kelas terlebih dahulu.");
+      Swal.fire({
+        icon: 'warning',
+        title: 'Perhatian',
+        text: 'Mohon pilih Kelas terlebih dahulu.',
+        confirmButtonColor: '#f59e0b',
+        customClass: { popup: 'rounded-xl' }
+      });
       return;
     }
 
@@ -209,7 +222,7 @@ export default function CreateQuestion() {
                         {/* Prompt Input */}
                         <div className="relative">
                             <label htmlFor="prompt" className="block text-sm font-semibold text-neutral-700 mb-2">
-                                {t('modal.prompt')} <span className="text-neutral-400 font-normal">(Opsional)</span>
+                                {t('modal.prompt')} <span className="text-neutral-500 font-normal">(Opsional)</span>
                             </label>
                             <input
                                 type="text"
@@ -341,7 +354,7 @@ export default function CreateQuestion() {
                         {/* Reference */}
                         <div>
                             <label htmlFor="reference" className="block text-sm font-semibold text-neutral-700 mb-2">
-                                {t('modal.reference')} <span className="text-neutral-400 font-normal text-xs ml-1">(Opsional)</span>
+                                {t('modal.reference')} <span className="text-neutral-500 font-normal text-xs ml-1">(Opsional)</span>
                             </label>
                             <textarea
                                 id="reference"

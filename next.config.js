@@ -1,12 +1,29 @@
 const removeImports = require("next-remove-imports")();
+const webpack = require("webpack");
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   reactStrictMode: false,
   
   // Konfigurasi webpack
-  webpack: (config) => {
-    config.resolve.fallback = { fs: false };
+  webpack: (config, { isServer }) => {
+    if (!isServer) {
+      config.resolve.fallback = {
+        ...config.resolve.fallback,
+        fs: false,
+        path: false,
+        os: false,
+      };
+
+      config.plugins.push(
+        new webpack.NormalModuleReplacementPlugin(
+          /^node:/,
+          (resource) => {
+            resource.request = resource.request.replace(/^node:/, "");
+          }
+        )
+      );
+    }
     return config;
   },
   
