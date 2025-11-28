@@ -30,3 +30,12 @@ yarn-error.log*
 .env.development.local
 .env.test.local
 .env.production.local
+
+# Auto-generated files
+.github/
+/DESIGN_REFRESH_PLAN.md
+/ERROR_ANALYSIS.md
+/NAVIGATION_MIGRATION_PLAN.md
+/REFACTOR_PLAN.md
+/REPORT_QUESTION_CREATION_PROCESS.md
+/PLANNING.md
