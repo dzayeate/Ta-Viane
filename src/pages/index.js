@@ -6,6 +6,7 @@ import QuestionSkeleton from '@/components/question-skeleton';
 import SuggestionList from '@/components/suggestion-list';
 import QuestionReview from '@/modules/question-review';
 import { useHomeLogic } from '@/modules/home/hooks/useHomeLogic';
+import { HiSparkles, HiBolt, HiPencilSquare, HiListBullet, HiArchiveBox } from 'react-icons/hi2';
 
 export default function Home() {
   const {
@@ -216,24 +217,58 @@ export default function Home() {
                   {/* Questions List - NEW GRID LAYOUT */}
                   <div className="space-y-6">
                     {questions.length === 0 ? (
-                      <div className="card p-12 text-center animate-fade-in">
-                        <div className="max-w-md mx-auto">
-                          <div className="w-24 h-24 mx-auto mb-6 bg-gradient-brand rounded-3xl flex items-center justify-center shadow-lg">
-                            <svg className="w-12 h-12 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
-                            </svg>
-                          </div>
-                          <h3 className="text-2xl font-display font-bold text-neutral-900 mb-2">
-                            Mulai Membuat Soal
-                          </h3>
-                          <p className="text-neutral-600 mb-6">
-                            Klik tombol di bawah untuk membuat soal otomatis atau tambahkan soal baru
-                          </p>
-                          <div className="flex gap-3 justify-center">
-                            <button onClick={() => router.push('/create-question')} className="btn btn-primary btn-lg">
-                              Buat Soal Baru
+                      <div className="animate-fade-in">
+                        {/* Welcome Banner */}
+                        <div className="bg-gradient-to-r from-brand-600 to-brand-500 rounded-2xl p-8 text-white shadow-lg mb-8 relative overflow-hidden">
+                            <div className="absolute top-0 right-0 w-64 h-64 bg-white/10 rounded-full blur-3xl -mr-16 -mt-16"></div>
+                            <div className="relative z-10">
+                                <h2 className="text-3xl font-display font-bold mb-2 flex items-center gap-3">
+                                    <HiSparkles className="w-8 h-8 text-yellow-300" />
+                                    Selamat Datang, {nama || 'Guru'}!
+                                </h2>
+                                <p className="text-brand-100 text-lg max-w-xl flex items-center gap-2">
+                                    Siap membuat soal fisika hari ini? <HiBolt className="w-5 h-5 text-yellow-300" />
+                                </p>
+                                <p className="text-brand-100 mt-2">
+                                    Pilih menu di bawah untuk mulai membuat soal berkualitas dengan bantuan AI.
+                                </p>
+                            </div>
+                        </div>
+
+                        {/* Quick Actions Grid */}
+                        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                            <button 
+                                onClick={() => router.push('/create-question')}
+                                className="group bg-white p-6 rounded-xl shadow-sm border border-neutral-200 hover:shadow-md hover:border-brand-300 transition-all text-left"
+                            >
+                                <div className="w-12 h-12 bg-blue-50 rounded-lg flex items-center justify-center text-blue-600 mb-4 group-hover:scale-110 transition-transform">
+                                    <HiPencilSquare className="w-7 h-7" />
+                                </div>
+                                <h3 className="text-lg font-bold text-neutral-900 mb-1 group-hover:text-brand-600 transition-colors">Buat Soal Essay</h3>
+                                <p className="text-sm text-neutral-500">Generate soal essay mendalam dengan kriteria spesifik.</p>
                             </button>
-                          </div>
+
+                            <button 
+                                onClick={() => router.push('/create-question')}
+                                className="group bg-white p-6 rounded-xl shadow-sm border border-neutral-200 hover:shadow-md hover:border-brand-300 transition-all text-left"
+                            >
+                                <div className="w-12 h-12 bg-purple-50 rounded-lg flex items-center justify-center text-purple-600 mb-4 group-hover:scale-110 transition-transform">
+                                    <HiListBullet className="w-7 h-7" />
+                                </div>
+                                <h3 className="text-lg font-bold text-neutral-900 mb-1 group-hover:text-brand-600 transition-colors">Buat Soal Pilihan Ganda</h3>
+                                <p className="text-sm text-neutral-500">Generate soal PG lengkap dengan kunci jawaban dan pembahasan.</p>
+                            </button>
+
+                            <button 
+                                onClick={() => router.push('/saved-questions')}
+                                className="group bg-white p-6 rounded-xl shadow-sm border border-neutral-200 hover:shadow-md hover:border-brand-300 transition-all text-left"
+                            >
+                                <div className="w-12 h-12 bg-green-50 rounded-lg flex items-center justify-center text-green-600 mb-4 group-hover:scale-110 transition-transform">
+                                    <HiArchiveBox className="w-7 h-7" />
+                                </div>
+                                <h3 className="text-lg font-bold text-neutral-900 mb-1 group-hover:text-brand-600 transition-colors">Lihat Bank Soal</h3>
+                                <p className="text-sm text-neutral-500">Akses koleksi soal yang telah Anda buat dan simpan sebelumnya.</p>
+                            </button>
                         </div>
                       </div>
                     ) : (
