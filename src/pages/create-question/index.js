@@ -22,6 +22,7 @@ export default function CreateQuestion() {
     type: 'random',
     reference: ''
   });
+  const [errors, setErrors] = useState({});
 
   const [filteredSuggestions, setFilteredSuggestions] = useState([]);
   const blurTimeoutRef = useRef(null);
@@ -56,10 +57,37 @@ export default function CreateQuestion() {
     }
   }, []);
 
+  // Robust listener for external scripts (Auto-fillers)
+  useEffect(() => {
+    const el = gradeRef.current;
+    if (!el) return;
+
+    const handleNativeInput = (e) => {
+      const val = e.target.value;
+      if (val !== formData.grade) {
+        handleChange('grade', val);
+      }
+    };
+
+    // Listen to both input and change to catch all updates
+    el.addEventListener('input', handleNativeInput);
+    el.addEventListener('change', handleNativeInput);
+
+    return () => {
+      el.removeEventListener('input', handleNativeInput);
+      el.removeEventListener('change', handleNativeInput);
+    };
+  }, [formData.grade]);
+
   // Auto Form Handlers
   const handleChange = (field, value) => {
     // Ensure value is treated as raw string to preserve LaTeX characters
-    setFormData({ ...formData, [field]: value });
+    setFormData(prev => ({ ...prev, [field]: value }));
+    
+    // Clear error when user types
+    if (errors[field]) {
+      setErrors(prev => ({ ...prev, [field]: null }));
+    }
 
     if (field === 'prompt') {
       if (value.trim() === "") {
@@ -111,7 +139,7 @@ export default function CreateQuestion() {
           handleChange('reference', data.text);
         } catch (error) {
           console.error('Error parsing PDF:', error);
-          alert(t('streaming.failedToParsePdf'));
+          alert('Gagal memproses PDF');
         } finally {
           setIsParsing(false);
         }
@@ -226,10 +254,11 @@ export default function CreateQuestion() {
                                         id="topic"
                                         value={formData.topic}
                                         onChange={(e) => handleChange('topic', e.target.value)}
-                                        className="input border-brand-300 focus:border-brand-500 focus:ring-brand-500"
+                                        className={`input border-brand-300 focus:border-brand-500 focus:ring-brand-500 ${errors.topic ? 'border-red-500 ring-1 ring-red-500' : ''}`}
                                         placeholder={t('modal.topicPlaceholder')}
                                         required
                                     />
+                                    {errors.topic && <p className="text-xs text-red-500 mt-1">Topik harus diisi</p>}
                                 </div>
                                 <div>
                                     <label htmlFor="grade" className="block text-sm font-semibold text-neutral-700 mb-2">
@@ -240,7 +269,8 @@ export default function CreateQuestion() {
                                         ref={gradeRef}
                                         value={formData.grade}
                                         onChange={(e) => handleChange('grade', e.target.value)}
-                                        className="input border-brand-300 focus:border-brand-500 focus:ring-brand-500"
+                                        onInput={(e) => handleChange('grade', e.target.value)}
+                                        className={`input border-brand-300 focus:border-brand-500 focus:ring-brand-500 ${errors.grade ? 'border-red-500 ring-1 ring-red-500' : ''}`}
                                         required
                                     >
                                         <option value="">{t('modal.gradePlaceholder')}</option>
@@ -248,6 +278,7 @@ export default function CreateQuestion() {
                                         <option value="XI">Kelas XI</option>
                                         <option value="XII">Kelas XII</option>
                                     </select>
+                                    {errors.grade && <p className="text-xs text-red-500 mt-1">Kelas harus dipilih</p>}
                                 </div>
                             </div>
                         </div>

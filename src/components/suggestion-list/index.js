@@ -56,7 +56,7 @@ const SuggestionList = ({
 
   return (
       <div 
-        className="absolute mt-2 z-[9] bg-white border border-gray-200 rounded-lg shadow-lg max-h-48 overflow-y-auto"
+        className="card absolute mt-2 z-20 max-h-48 overflow-y-auto shadow-lg"
         style={position}
         onMouseDown={(e) => e.preventDefault()} 
       >
@@ -64,10 +64,10 @@ const SuggestionList = ({
         {filteredSuggestions.map((s, sIndex) => (
           <li
             key={s.key}
-            className="p-3 hover:bg-gray-50 cursor-pointer border-b border-gray-100 last:border-0"
+            className="p-3 hover:bg-neutral-50 cursor-pointer border-b border-neutral-100 last:border-0"
             onMouseDown={(e) => onSuggestionClick(activeSuggestionIndex, s.value, e)}
           >
-            <strong className="text-blue-600">{s.label}:</strong> {s.value}
+            <strong className="text-brand-600">{s.label}:</strong> {s.value}
           </li>
         ))}
       </ul>

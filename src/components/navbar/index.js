@@ -27,7 +27,7 @@ const Navbar = ({ showLogout = false, onLogout }) => {
           <div className="flex items-center gap-3 group cursor-pointer" onClick={() => router.push('/')}>
             <div className="relative">
               <div className="absolute inset-0 bg-brand-200 rounded-xl blur opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
-              <div className="relative p-2 bg-white rounded-xl shadow-sm border border-neutral-200 group-hover:border-brand-200 transition-colors">
+              <div className="relative p-2 card group-hover:border-brand-200 transition-colors">
                 <img
                   src="/math.png"
                   alt="Auto Physics Logo"
@@ -38,7 +38,7 @@ const Navbar = ({ showLogout = false, onLogout }) => {
             <div className="flex flex-col">
               <div className="flex items-center gap-2">
                 <span className="font-display font-bold text-lg md:text-xl text-neutral-900 tracking-tight">{t('main.title')}</span>
-                <span className="px-1.5 py-0.5 rounded text-[10px] font-bold bg-brand-100 text-brand-700 border border-brand-200 uppercase tracking-wider">Beta</span>
+                <span className="badge badge-primary uppercase tracking-wider">Beta</span>
               </div>
             </div>
           </div>

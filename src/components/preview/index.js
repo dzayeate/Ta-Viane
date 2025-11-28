@@ -259,9 +259,9 @@ const renderContent = (text) => {
   return elements;
 };
 
-const Preview = ({ children, isEditMode, clickHandler }) => {
+const Preview = ({ children, isEditMode, clickHandler, className = "" }) => {
   return (
-    <div className="border border-gray-100 pb-4 rounded-[3px] overflow-scroll h-[500px] relative">
+    <div className={`border border-gray-100 pb-4 rounded-[3px] overflow-scroll relative ${className || 'h-[500px]'}`}>
       <div className="sticky z-[10] top-0 left-0 w-full flex justify-between items-center border-b border-b-gray-100 px-[3px] h-fit bg-white">
         <span className="text-[14px] text-gray-500 py-[2px] ml-1">Preview</span>
         {clickHandler && <ButtonPreview isEditMode={isEditMode} clickHandler={clickHandler} />}

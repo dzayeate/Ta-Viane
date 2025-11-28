@@ -38,7 +38,7 @@ export default function QuestionEditor({
       {/* Header Section */}
       <div className="p-4 md:p-5 border-b border-neutral-100 bg-neutral-50/50 flex items-center justify-between">
         <div className="flex items-center gap-3">
-          <div className="flex items-center justify-center w-10 h-10 rounded-xl bg-white border border-neutral-200 shadow-sm text-brand-600 font-bold font-display text-lg">
+          <div className="card w-10 h-10 flex items-center justify-center text-brand-600 font-bold font-display text-lg">
             {index + 1}
           </div>
           <div>
@@ -225,7 +225,7 @@ export default function QuestionEditor({
           </div>
 
           {/* Description Editor */}
-          <div className="bg-white rounded-xl border border-neutral-200 overflow-hidden shadow-sm">
+          <div className="card overflow-hidden">
             <Editor
               label={t('main.description')}
               id="description"
@@ -236,7 +236,7 @@ export default function QuestionEditor({
           </div>
 
           {/* Answer Editor */}
-          <div className="bg-white rounded-xl border border-neutral-200 overflow-hidden shadow-sm">
+          <div className="card overflow-hidden">
             <Editor
               label={t('main.answer')}
               id="answer"

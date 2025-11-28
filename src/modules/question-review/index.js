@@ -158,24 +158,28 @@ const QuestionReview = ({ questions = [], onSave, onModify, onCancel, metadata }
                                         </button>
                                     </div>
 
-                                    {/* Question Title */}
-                                    {question.title && (
-                                        <h3 className="font-semibold text-lg text-neutral-900 mb-3">{question.title}</h3>
+                                    {/* Question Title or Prompt */}
+                                    {(question.title || question.prompt) && (
+                                        <h3 className="font-semibold text-lg text-neutral-900 mb-3">
+                                            {question.title || question.prompt}
+                                        </h3>
                                     )}
 
                                     {/* Question Description Preview */}
-                                    {question.description && (
+                                    {(question.description || question.prompt) && (
                                         <div className="mb-4">
                                             <div className="prose prose-sm max-w-none">
                                                 {expandedIndex === index ? (
                                                     <div className="prose prose-sm max-w-none">
-                                                        <Preview>{question.description}</Preview>
+                                                        <Preview className="h-auto min-h-[100px] max-h-[500px]">
+                                                            {question.description || question.prompt || "Tidak ada deskripsi."}
+                                                        </Preview>
                                                     </div>
                                                 ) : (
                                                     <div
                                                         className="line-clamp-3 text-neutral-700"
                                                         dangerouslySetInnerHTML={{
-                                                            __html: (question.description || '').substring(0, 200) + ((question.description || '').length > 200 ? '...' : '')
+                                                            __html: (question.description || question.prompt || '').substring(0, 200) + ((question.description || question.prompt || '').length > 200 ? '...' : '')
                                                         }}
                                                     />
                                                 )}
@@ -192,7 +196,9 @@ const QuestionReview = ({ questions = [], onSave, onModify, onCancel, metadata }
                                                         Jawaban & Pembahasan:
                                                     </label>
                                                     <div className="prose prose-sm max-w-none">
-                                                        <Preview>{question.answer}</Preview>
+                                                        <Preview className="h-auto min-h-[100px] max-h-[500px]">
+                                                            {question.answer}
+                                                        </Preview>
                                                     </div>
                                                 </div>
                                             )}

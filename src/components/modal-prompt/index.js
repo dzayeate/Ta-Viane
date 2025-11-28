@@ -2,12 +2,12 @@ import { useState, useRef, useEffect } from 'react';
 import { useTranslation } from 'next-i18next';
 import { IoClose } from 'react-icons/io5';
 import { HiSparkles } from 'react-icons/hi2';
+import { generateQuestionsStream } from '@/services/streamingService';
 
 const ModalPrompt = ({ isOpen, onClose, onSubmit }) => {
   const { t, i18n } = useTranslation('common');
   const [isGenerating, setIsGenerating] = useState(false);
   const [isParsing, setIsParsing] = useState(false);
-  const [streamingQuestions, setStreamingQuestions] = useState([]);
   const [formData, setFormData] = useState({
     prompt: '',
     topic: '',
@@ -19,9 +19,7 @@ const ModalPrompt = ({ isOpen, onClose, onSubmit }) => {
   });
   const [filteredSuggestions, setFilteredSuggestions] = useState([]);
   const abortControllerRef = useRef(null);
-  const eventSourceRef = useRef(null);
   const blurTimeoutRef = useRef(null);
-  const collectedQuestionsRef = useRef([]);
 
   const suggestionList = [
     {
@@ -92,14 +90,11 @@ const ModalPrompt = ({ isOpen, onClose, onSubmit }) => {
     }, 200);
   };
 
-  // Cleanup timeout and event source on unmount
+  // Cleanup timeout on unmount
   useEffect(() => {
     return () => {
       if (blurTimeoutRef.current) {
         clearTimeout(blurTimeoutRef.current);
-      }
-      if (eventSourceRef.current) {
-        eventSourceRef.current.close();
       }
     };
   }, []);
@@ -152,227 +147,110 @@ const ModalPrompt = ({ isOpen, onClose, onSubmit }) => {
     setStreamingQuestions([]);
     collectedQuestionsRef.current = [];
 
-    // Create AbortController for cancellation
-    abortControllerRef.current = new AbortController();
-    let isCancelled = false;
 
     try {
-      const totalQuestions = parseInt(total);
-
-      // Split into chunks of 5
-      const chunkSize = 5;
-      const chunks = [];
-      let startIndex = 1;
-
-      while (startIndex <= totalQuestions) {
-        const endIndex = Math.min(startIndex + chunkSize - 1, totalQuestions);
-        const currentChunkSize = endIndex - startIndex + 1;
-        chunks.push({
-          start: startIndex,
-          end: endIndex,
-          size: currentChunkSize
-        });
-        startIndex = endIndex + 1;
-      }
-
-      let totalCompleted = 0;
-
       // Send initial status
       window.dispatchEvent(new CustomEvent('streamingStatus', {
         detail: {
           type: 'status',
           message: 'Starting generation...',
-          total: totalQuestions,
+          total: parseInt(total),
           completed: 0,
-          chunks: chunks.length
+          chunks: Math.ceil(parseInt(total) / 5)
         }
       }));
 
-      // Process each chunk
-      for (let chunkIndex = 0; chunkIndex < chunks.length; chunkIndex++) {
-        // Check if cancelled
-        if (abortControllerRef.current?.signal.aborted) {
-          isCancelled = true;
-          break;
-        }
-
-        const chunk = chunks[chunkIndex];
-
-        // Send chunk progress
-        window.dispatchEvent(new CustomEvent('streamingStatus', {
-          detail: {
-            type: 'progress',
-            message: t('streaming.processingChunk', {
-              chunkIndex: chunkIndex + 1,
-              totalChunks: chunks.length,
-              start: chunk.start,
-              end: chunk.end
-            }),
-            total: totalQuestions,
-            completed: totalCompleted,
-            currentChunk: chunkIndex + 1,
-            totalChunks: chunks.length
-          }
-        }));
-
-        try {
-          // Create a POST request to initiate streaming for this chunk
-          const response = await fetch('/api/generate', {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify({
-              prompt,
-              type,
-              difficulty,
-              reference,
-              mode: "list",
-              total: chunk.size,
-              range: { start: chunk.start, end: chunk.end },
-              lang: i18n.language,
-              stream: true
-            }),
-            signal: abortControllerRef.current.signal
-          });
-
-          if (!response.ok) {
-            throw new Error(t('streaming.failedToStartStreaming', { chunkIndex: chunkIndex + 1 }));
-          }
-
-          const reader = response.body.getReader();
-          const decoder = new TextDecoder();
-          let chunkCompleted = 0;
-
-          while (true) {
-            // Check if cancelled
-            if (abortControllerRef.current?.signal.aborted) {
-              isCancelled = true;
-              reader.cancel();
-              break;
-            }
-
-            const { done, value } = await reader.read();
-            if (done) break;
-
-            const chunkData = decoder.decode(value);
-            const lines = chunkData.split('\n');
-
-            for (const line of lines) {
-              if (line.startsWith('data: ')) {
-                try {
-                  const data = JSON.parse(line.slice(6));
-
-                  if (data.type === 'question') {
-                    // Calculate correct global index based on chunk position
-                    const globalIndex = chunk.start + chunkCompleted - 1;
-
-                    // Adjust question index for global position
-                    const adjustedQuestion = {
-                      ...data.data,
-                      index: globalIndex,
-                      questionNumber: chunk.start + chunkCompleted, // Add question number for display
-                      chunkIndex: chunkIndex,
-                      chunkPosition: chunkCompleted + 1
-                    };
-
-                    collectedQuestionsRef.current.push(adjustedQuestion);
-                    setStreamingQuestions(prev => [...prev, adjustedQuestion]);
-                    chunkCompleted++;
-
-                    // Send update to parent via window event
-                    window.dispatchEvent(new CustomEvent('streamingQuestionReady', {
-                      detail: {
-                        question: adjustedQuestion,
-                        completed: totalCompleted + chunkCompleted,
-                        total: totalQuestions,
-                        chunkIndex: chunkIndex,
-                        chunkCompleted: chunkCompleted,
-                        chunkTotal: chunk.size,
-                        globalIndex: globalIndex
-                      }
-                    }));
-                  } else if (data.type === 'complete') {
-                    // Chunk completed
-                    totalCompleted += chunkCompleted;
-                    break;
-                  } else if (data.type === 'error') {
-                    console.error('Streaming error:', data.message);
-
-                    // Send error event to parent
-                    window.dispatchEvent(new CustomEvent('streamingError', {
-                      detail: {
-                        message: t('streaming.chunkError', { chunkIndex: chunkIndex + 1, message: data.message }),
-                        completed: totalCompleted + chunkCompleted,
-                        total: totalQuestions,
-                        chunkIndex: chunkIndex
-                      }
-                    }));
-                  }
-                } catch (e) {
-                  console.error('Error parsing streaming data:', e);
-                }
-              }
-            }
-          }
-
-          // If cancelled during this chunk, break
-          if (isCancelled) {
-            break;
-          }
-
-        } catch (error) {
-          if (error.name === 'AbortError') {
-            isCancelled = true;
-            break;
-          }
-
-          console.error(`Error in chunk ${chunkIndex + 1}:`, error);
-
-          // Send error event to parent
-          window.dispatchEvent(new CustomEvent('streamingError', {
+      await generateQuestionsStream({
+        prompt,
+        difficulty,
+        type,
+        total,
+        reference,
+        lang: i18n.language,
+        signal: abortControllerRef.current.signal
+      }, {
+        onProgress: (progress) => {
+          window.dispatchEvent(new CustomEvent('streamingStatus', {
             detail: {
-              message: t('streaming.chunkError', { chunkIndex: chunkIndex + 1, message: error.message }),
-              completed: totalCompleted,
-              total: totalQuestions,
-              chunkIndex: chunkIndex
+              type: 'progress',
+              message: t('streaming.processingChunk', {
+                chunkIndex: progress.chunkIndex + 1,
+                totalChunks: progress.totalChunks,
+                start: progress.start,
+                end: progress.end
+              }),
+              total: progress.total,
+              completed: progress.completed,
+              currentChunk: progress.chunkIndex + 1,
+              totalChunks: progress.totalChunks
             }
           }));
-        }
-      }
+        },
+        onQuestionFound: (info) => {
+          const { data, globalIndex, chunkIndex, chunkPosition, totalCompleted } = info;
 
-      // Send final status
-      if (isCancelled) {
-        window.dispatchEvent(new CustomEvent('streamingCancelled', {
-          detail: {
-            completed: totalCompleted,
-            total: totalQuestions,
-            message: t('streaming.generationCancelled')
+          // Adjust question index for global position
+          const adjustedQuestion = {
+            ...data,
+            index: globalIndex,
+            questionNumber: globalIndex + 1,
+            chunkIndex: chunkIndex,
+            chunkPosition: chunkPosition
+          };
+
+          collectedQuestionsRef.current.push(adjustedQuestion);
+          setStreamingQuestions(prev => [...prev, adjustedQuestion]);
+  detail: {
+              question: adjustedQuestion,
+              completed: totalCompleted,
+              total: parseInt(total),
+              chunkIndex: chunkIndex,
+              chunkCompleted: chunkPosition,
+              chunkTotal: 5, // approximate
+              globalIndex: globalIndex
+            }
+          }));
+        },
+        onError: (error) => {
+          window.dispatchEvent(new CustomEvent('streamingError', {
+            detail: {
+              message: t('streaming.chunkError', { chunkIndex: error.chunkIndex + 1, message: error.message }),
+              completed: error.completed,
+              total: parseInt(total),
+              chunkIndex: error.chunkIndex
+            }
+          }));
+        },
+        onComplete: (result) => {
+          if (result.isCancelled) {
+            window.dispatchEvent(new CustomEvent('streamingCancelled', {
+              detail: {
+                completed: result.completed,
+                total: parseInt(total),
+                message: t('streaming.generationCancelled')
+              }
+            }));
+          } else {
+            window.dispatchEvent(new CustomEvent('streamingComplete', {
+              detail: {
+                completed: result.completed,
+                total: parseInt(total),
+                message: t('streaming.allChunksCompleted')
+              }
+            }));
           }
-        }));
-      } else {
-        window.dispatchEvent(new CustomEvent('streamingComplete', {
-          detail: {
-            completed: totalCompleted,
-            total: totalQuestions,
-            message: t('streaming.allChunksCompleted')
-          }
-        }));
-      }
+        }
+      });
 
     } catch (error) {
-      if (error.name === 'AbortError') {
-        console.log('Generation cancelled by user');
-      } else {
-        console.error('Streaming error:', error);
-        window.dispatchEvent(new CustomEvent('streamingError', {
-          detail: {
-            message: error.message,
-            completed: 0,
-            total: parseInt(total)
-          }
-        }));
-      }
+      console.error('Streaming error:', error);
+      window.dispatchEvent(new CustomEvent('streamingError', {
+        detail: {
+          message: error.message,
+          completed: 0,
+          total: parseInt(total)
+        }
+      }));
     } finally {
       setIsGenerating(false);
       collectedQuestionsRef.current = [];
@@ -380,8 +258,7 @@ const ModalPrompt = ({ isOpen, onClose, onSubmit }) => {
     }
   }
 
-  // All generation now uses streaming by default
-  const onGenerate = onGenerateStreaming;
+  // At onGenerate = onGenerateStreaming;
 
   const handleFileChange = async (event) => {
     const file = event.target.files[0];
@@ -425,13 +302,8 @@ const ModalPrompt = ({ isOpen, onClose, onSubmit }) => {
       eventSourceRef.current.close();
     }
     // Reset streaming state
-    setIsGenerating(false);
-    setStreamingQuestions([]);
-    collectedQuestionsRef.current = [];
-    onClose();
-  };
-
-  useEffect(() => {
+    // Reset streaming state
+    setIsGenerating(false)
     if (isOpen) {
       document.body.style.overflow = 'hidden';
     } else {
