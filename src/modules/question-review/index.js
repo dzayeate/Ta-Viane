@@ -3,11 +3,11 @@ import { useTranslation } from 'next-i18next';
 import { HiCheckCircle, HiPencil, HiXCircle, HiDocumentDownload, HiEye, HiEyeSlash } from 'react-icons/hi2';
 import Preview from '@/components/preview';
 
-const QuestionReview = ({ questions, onSave, onModify, onCancel, metadata }) => {
+const QuestionReview = ({ questions = [], onSave, onModify, onCancel, metadata }) => {
     const { t } = useTranslation('common');
     const [expandedIndex, setExpandedIndex] = useState(null);
     const [selectedQuestions, setSelectedQuestions] = useState(
-        questions?.map(() => true) || [] // Default semua terpilih
+        (questions || []).map(() => true) // Default semua terpilih
     );
 
     // Initialize selectedQuestions when questions change
@@ -41,9 +41,10 @@ const QuestionReview = ({ questions, onSave, onModify, onCancel, metadata }) => 
         onModify(filteredQuestions, metadata);
     };
 
-    if (!questions || questions.length === 0) {
-        return null;
-    }
+    // Removed early return to allow empty state rendering
+    // if (!questions || questions.length === 0) {
+    //     return null;
+    // }
 
     return (
         <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-fade-in">
@@ -168,7 +169,7 @@ const QuestionReview = ({ questions, onSave, onModify, onCancel, metadata }) => 
                                             <div className="prose prose-sm max-w-none">
                                                 {expandedIndex === index ? (
                                                     <div className="prose prose-sm max-w-none">
-                                                        <Preview content={question.description} />
+                                                        <Preview>{question.description}</Preview>
                                                     </div>
                                                 ) : (
                                                     <div
@@ -191,7 +192,7 @@ const QuestionReview = ({ questions, onSave, onModify, onCancel, metadata }) => 
                                                         Jawaban & Pembahasan:
                                                     </label>
                                                     <div className="prose prose-sm max-w-none">
-                                                        <Preview content={question.answer} />
+                                                        <Preview>{question.answer}</Preview>
                                                     </div>
                                                 </div>
                                             )}

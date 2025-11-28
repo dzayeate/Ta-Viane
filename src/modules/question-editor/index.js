@@ -114,22 +114,7 @@ export default function QuestionEditor({
             </div>
 
             {/* Settings Grid */}
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-              <div className="space-y-1.5">
-                <label className="text-xs font-semibold text-neutral-500 uppercase tracking-wider flex items-center gap-1.5">
-                  <HiTag className="text-brand-400" />
-                  {t('main.branch')}
-                </label>
-                <input
-                  type="text"
-                  value={question.topic}
-                  onChange={(e) => onInputChange(index, 'topic', e.target.value)}
-                  className="input input-sm"
-                  placeholder="Topik..."
-                  required
-                />
-              </div>
-
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               <div className="space-y-1.5">
                 <label className="text-xs font-semibold text-neutral-500 uppercase tracking-wider flex items-center gap-1.5">
                   <HiAcademicCap className="text-brand-400" />
@@ -209,6 +194,21 @@ export default function QuestionEditor({
       {/* Expanded Details Section */}
       <div className={`transition-all duration-500 ease-in-out overflow-hidden bg-neutral-50/30 ${isExpanded ? 'max-h-[2000px] opacity-100 border-t border-neutral-100' : 'max-h-0 opacity-0'}`}>
         <div className="p-4 md:p-6 space-y-6">
+          {/* Topic Field (Generated) */}
+          <div className="space-y-2">
+            <label className="text-sm font-semibold text-neutral-700 flex items-center gap-2">
+              <HiTag className="text-brand-500" />
+              {t('main.branch')}
+            </label>
+            <input
+              type="text"
+              value={question.topic}
+              onChange={(e) => onInputChange(index, 'topic', e.target.value)}
+              className="input bg-white"
+              placeholder="Topik akan muncul di sini setelah generate..."
+            />
+          </div>
+
           {/* Title Field */}
           <div className="space-y-2">
             <label className="text-sm font-semibold text-neutral-700">

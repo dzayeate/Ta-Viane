@@ -4,24 +4,37 @@ import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
 import Sidebar from '@/components/sidebar';
 import { useRouter } from 'next/router';
 import users from '@/mock/users/index.json';
-import { HiSparkles, HiArrowLeft } from 'react-icons/hi2';
+import { HiSparkles, HiArrowLeft, HiPencilSquare, HiCpuChip } from 'react-icons/hi2';
 
 export default function CreateQuestion() {
   const { t, i18n } = useTranslation('common');
   const router = useRouter();
   const [user, setUser] = useState({ nama: '', nuptk: '' });
+  const [activeTab, setActiveTab] = useState('auto'); // 'auto' | 'manual'
+  
+  // Auto Form State
   const [isParsing, setIsParsing] = useState(false);
   const [formData, setFormData] = useState({
     prompt: '',
     topic: '',
     grade: '',
     total: 1,
-    difficulty: 'random', // Default value matching translation key logic
-    type: 'random',       // Default value matching translation key logic
+    difficulty: 'random',
+    type: 'random',
     reference: ''
   });
+  
+  // Manual Form State
+  const [manualData, setManualData] = useState({
+    topic: '',
+    grade: '',
+    difficulty: 'c1',
+    type: 'essay'
+  });
+
   const [filteredSuggestions, setFilteredSuggestions] = useState([]);
   const blurTimeoutRef = useRef(null);
+  const gradeRef = useRef(null);
 
   const suggestionList = [
     { label: t('suggestions.algebra.label'), value: t('suggestions.algebra.value') },
@@ -52,7 +65,9 @@ export default function CreateQuestion() {
     }
   }, []);
 
+  // Auto Form Handlers
   const handleChange = (field, value) => {
+    // Ensure value is treated as raw string to preserve LaTeX characters
     setFormData({ ...formData, [field]: value });
 
     if (field === 'prompt') {
@@ -117,10 +132,34 @@ export default function CreateQuestion() {
   const handleSubmit = (e) => {
     e.preventDefault();
     
-    // Save config to sessionStorage
-    sessionStorage.setItem('auto_generate_config', JSON.stringify(formData));
-    
-    // Redirect to Home to start generation
+    // Safety check: Ensure grade is captured even if onChange didn't fire (e.g. auto-fillers)
+    let finalGrade = formData.grade;
+    if (!finalGrade && gradeRef.current) {
+      finalGrade = gradeRef.current.value;
+    }
+
+    if (!finalGrade) {
+      alert("Mohon pilih Kelas terlebih dahulu.");
+      return;
+    }
+
+    const config = {
+      ...formData,
+      grade: finalGrade
+    };
+
+    sessionStorage.setItem('auto_generate_config', JSON.stringify(config));
+    router.push('/');
+  };
+
+  // Manual Form Handlers
+  const handleManualChange = (field, value) => {
+    setManualData({ ...manualData, [field]: value });
+  };
+
+  const handleManualSubmit = (e) => {
+    e.preventDefault();
+    sessionStorage.setItem('manual_create_config', JSON.stringify(manualData));
     router.push('/');
   };
 
@@ -136,7 +175,7 @@ export default function CreateQuestion() {
         t={t}
         user={user}
         onLogout={handleLogout}
-        onOpenModal={() => {}} // Already here
+        onOpenModal={() => {}} 
         onAddQuestion={() => router.push('/')}
         onOpenReview={() => router.push('/')}
       />
@@ -153,74 +192,250 @@ export default function CreateQuestion() {
             <div className="bg-white rounded-2xl shadow-sm border border-neutral-200 overflow-hidden">
                 {/* Header */}
                 <div className="bg-gradient-brand p-8 text-white">
-                    <h1 className="text-3xl font-display font-bold mb-2">{t('modal.title')}</h1>
-                    <p className="text-white/90">Buat banyak soal sekaligus dengan bantuan AI. Isi formulir di bawah ini untuk memulai.</p>
+                    <h1 className="text-3xl font-display font-bold mb-2">Buat Soal Baru</h1>
+                    <p className="text-white/90">Pilih metode pembuatan soal yang Anda inginkan.</p>
                 </div>
 
-                {/* Form */}
-                <form onSubmit={handleSubmit} className="p-8 space-y-6">
-                    {/* Prompt Input */}
-                    <div className="relative">
-                        <label htmlFor="prompt" className="block text-sm font-semibold text-neutral-700 mb-2">
-                            {t('modal.prompt')} <span className="text-neutral-400 font-normal">(Opsional)</span>
-                        </label>
-                        <input
-                            type="text"
-                            id="prompt"
-                            value={formData.prompt}
-                            onChange={(e) => handleChange('prompt', e.target.value)}
-                            onFocus={handleFocus}
-                            onBlur={handleBlur}
-                            className="input"
-                            placeholder="Contoh: Buat soal tentang hukum Newton..."
-                            autoComplete="off"
-                        />
-                        {filteredSuggestions.length > 0 && (
-                            <div className="absolute z-20 w-full mt-2 card max-h-60 overflow-auto animate-slide-down shadow-lg">
-                                {filteredSuggestions.map((suggestion, index) => (
-                                    <div
-                                        key={index}
-                                        className="p-3 hover:bg-brand-50 cursor-pointer transition-colors duration-150 border-b border-neutral-100 last:border-0"
-                                        onClick={() => handleSuggestionClick(suggestion.value)}
-                                    >
-                                        <div className="font-semibold text-brand-700 text-sm">{suggestion.label}</div>
-                                        <div className="text-xs text-neutral-600 mt-1">{suggestion.value}</div>
-                                    </div>
-                                ))}
-                            </div>
-                        )}
-                    </div>
+                {/* Tabs */}
+                <div className="flex border-b border-neutral-200">
+                    <button
+                        onClick={() => setActiveTab('auto')}
+                        className={`flex-1 py-4 px-6 text-center font-semibold text-sm transition-colors flex items-center justify-center gap-2 ${
+                            activeTab === 'auto'
+                                ? 'text-brand-600 border-b-2 border-brand-600 bg-brand-50/50'
+                                : 'text-neutral-500 hover:text-neutral-700 hover:bg-neutral-50'
+                        }`}
+                    >
+                        <HiCpuChip className="w-5 h-5" />
+                        Otomatis (AI)
+                    </button>
+                    <button
+                        onClick={() => setActiveTab('manual')}
+                        className={`flex-1 py-4 px-6 text-center font-semibold text-sm transition-colors flex items-center justify-center gap-2 ${
+                            activeTab === 'manual'
+                                ? 'text-brand-600 border-b-2 border-brand-600 bg-brand-50/50'
+                                : 'text-neutral-500 hover:text-neutral-700 hover:bg-neutral-50'
+                        }`}
+                    >
+                        <HiPencilSquare className="w-5 h-5" />
+                        Manual
+                    </button>
+                </div>
 
-                    {/* Topic & Grade */}
-                    <div className="bg-brand-50 border-2 border-brand-200 rounded-xl p-6">
-                        <h3 className="text-sm font-bold text-brand-700 mb-4 flex items-center gap-2">
-                            <span className="w-1.5 h-1.5 bg-brand-600 rounded-full"></span>
-                            Informasi Soal <span className="text-danger-600">*</span>
-                        </h3>
+                {/* Content */}
+                {activeTab === 'auto' ? (
+                    <form onSubmit={handleSubmit} className="p-8 space-y-6 animate-fade-in">
+                        {/* Prompt Input */}
+                        <div className="relative">
+                            <label htmlFor="prompt" className="block text-sm font-semibold text-neutral-700 mb-2">
+                                {t('modal.prompt')} <span className="text-neutral-400 font-normal">(Opsional)</span>
+                            </label>
+                            <input
+                                type="text"
+                                id="prompt"
+                                value={formData.prompt}
+                                onChange={(e) => handleChange('prompt', e.target.value)}
+                                onFocus={handleFocus}
+                                onBlur={handleBlur}
+                                className="input"
+                                placeholder="Contoh: Buat soal tentang hukum Newton..."
+                                autoComplete="off"
+                            />
+                            {filteredSuggestions.length > 0 && (
+                                <div className="absolute z-20 w-full mt-2 card max-h-60 overflow-auto animate-slide-down shadow-lg">
+                                    {filteredSuggestions.map((suggestion, index) => (
+                                        <div
+                                            key={index}
+                                            className="p-3 hover:bg-brand-50 cursor-pointer transition-colors duration-150 border-b border-neutral-100 last:border-0"
+                                            onClick={() => handleSuggestionClick(suggestion.value)}
+                                        >
+                                            <div className="font-semibold text-brand-700 text-sm">{suggestion.label}</div>
+                                            <div className="text-xs text-neutral-600 mt-1">{suggestion.value}</div>
+                                        </div>
+                                    ))}
+                                </div>
+                            )}
+                        </div>
+
+                        {/* Topic & Grade */}
+                        <div className="bg-brand-50 border-2 border-brand-200 rounded-xl p-6">
+                            <h3 className="text-sm font-bold text-brand-700 mb-4 flex items-center gap-2">
+                                <span className="w-1.5 h-1.5 bg-brand-600 rounded-full"></span>
+                                Informasi Soal <span className="text-danger-600">*</span>
+                            </h3>
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                <div>
+                                    <label htmlFor="topic" className="block text-sm font-semibold text-neutral-700 mb-2">
+                                        {t('modal.topic')} <span className="text-danger-500">*</span>
+                                    </label>
+                                    <input
+                                        type="text"
+                                        id="topic"
+                                        value={formData.topic}
+                                        onChange={(e) => handleChange('topic', e.target.value)}
+                                        className="input border-brand-300 focus:border-brand-500 focus:ring-brand-500"
+                                        placeholder={t('modal.topicPlaceholder')}
+                                        required
+                                    />
+                                </div>
+                                <div>
+                                    <label htmlFor="grade" className="block text-sm font-semibold text-neutral-700 mb-2">
+                                        {t('modal.grade')} <span className="text-danger-500">*</span>
+                                    </label>
+                                    <select
+                                        id="grade"
+                                        ref={gradeRef}
+                                        value={formData.grade}
+                                        onChange={(e) => handleChange('grade', e.target.value)}
+                                        className="input border-brand-300 focus:border-brand-500 focus:ring-brand-500"
+                                        required
+                                    >
+                                        <option value="">{t('modal.gradePlaceholder')}</option>
+                                        <option value="X">Kelas X</option>
+                                        <option value="XI">Kelas XI</option>
+                                        <option value="XII">Kelas XII</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+
+                        {/* Difficulty & Type */}
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                             <div>
-                                <label htmlFor="topic" className="block text-sm font-semibold text-neutral-700 mb-2">
+                                <label htmlFor="difficulty" className="block text-sm font-semibold text-neutral-700 mb-2">
+                                    {t('modal.difficulty')}
+                                </label>
+                                <select
+                                    id="difficulty"
+                                    value={formData.difficulty}
+                                    onChange={(e) => handleChange('difficulty', e.target.value)}
+                                    className="input"
+                                >
+                                    <option value="random">{t('difficulties.random')}</option>
+                                    <option value="c1">{t('main.cognitive.c1')}</option>
+                                    <option value="c2">{t('main.cognitive.c2')}</option>
+                                    <option value="c3">{t('main.cognitive.c3')}</option>
+                                    <option value="c4">{t('main.cognitive.c4')}</option>
+                                    <option value="c5">{t('main.cognitive.c5')}</option>
+                                    <option value="c6">{t('main.cognitive.c6')}</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label htmlFor="type" className="block text-sm font-semibold text-neutral-700 mb-2">
+                                    {t('modal.type')}
+                                </label>
+                                <select
+                                    id="type"
+                                    value={formData.type}
+                                    onChange={(e) => handleChange('type', e.target.value)}
+                                    className="input"
+                                >
+                                    <option value="random">{t('types.random')}</option>
+                                    <option value="multipleChoice">{t('types.multipleChoice')}</option>
+                                    <option value="essay">{t('types.essay')}</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        {/* Total Questions */}
+                        <div>
+                            <label htmlFor="total" className="block text-sm font-semibold text-neutral-700 mb-2">
+                                {t('modal.total')}
+                            </label>
+                            <input
+                                type="number"
+                                id="total"
+                                min="1"
+                                max="100"
+                                value={formData.total}
+                                onChange={(e) => handleChange('total', parseInt(e.target.value) || 1)}
+                                className="input"
+                            />
+                            <p className="text-xs text-neutral-500 mt-1">Maksimal 100 soal per batch</p>
+                        </div>
+
+                        {/* Reference */}
+                        <div>
+                            <label htmlFor="reference" className="block text-sm font-semibold text-neutral-700 mb-2">
+                                {t('modal.reference')} <span className="text-neutral-400 font-normal text-xs ml-1">(Opsional)</span>
+                            </label>
+                            <textarea
+                                id="reference"
+                                value={formData.reference}
+                                onChange={(e) => handleChange('reference', e.target.value)}
+                                className="input min-h-[100px] resize-y"
+                                placeholder="Tambahkan referensi materi atau konteks..."
+                            />
+                            <div className="mt-2">
+                                <label className="btn btn-secondary text-sm gap-2 cursor-pointer inline-flex">
+                                    <input
+                                        type="file"
+                                        accept=".pdf"
+                                        onChange={handleFileChange}
+                                        className="hidden"
+                                        disabled={isParsing}
+                                    />
+                                    {isParsing ? (
+                                        <>
+                                            <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-gray-600"></div>
+                                            {t('modal.uploading')}
+                                        </>
+                                    ) : (
+                                        <>
+                                            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
+                                            </svg>
+                                            {t('modal.uploadPdf')}
+                                        </>
+                                    )}
+                                </label>
+                            </div>
+                        </div>
+
+                        {/* Submit Button */}
+                        <div className="pt-6 border-t border-neutral-200 flex justify-end">
+                            <button
+                                type="submit"
+                                className="btn btn-primary btn-lg gap-2 group w-full md:w-auto"
+                            >
+                                <HiSparkles className="text-xl transition-transform duration-200 group-hover:rotate-12" />
+                                {t('modal.generate')}
+                            </button>
+                        </div>
+                    </form>
+                ) : (
+                    <form onSubmit={handleManualSubmit} className="p-8 space-y-6 animate-fade-in">
+                        <div className="bg-neutral-50 border border-neutral-200 rounded-xl p-6 mb-6">
+                            <p className="text-neutral-600 text-sm">
+                                Mode ini memungkinkan Anda untuk membuat soal secara manual. Anda akan diarahkan ke editor soal dengan template kosong yang sudah dikonfigurasi sesuai pilihan Anda.
+                            </p>
+                        </div>
+
+                        {/* Topic & Grade */}
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div>
+                                <label htmlFor="manual-topic" className="block text-sm font-semibold text-neutral-700 mb-2">
                                     {t('modal.topic')} <span className="text-danger-500">*</span>
                                 </label>
                                 <input
                                     type="text"
-                                    id="topic"
-                                    value={formData.topic}
-                                    onChange={(e) => handleChange('topic', e.target.value)}
-                                    className="input border-brand-300 focus:border-brand-500 focus:ring-brand-500"
+                                    id="manual-topic"
+                                    value={manualData.topic}
+                                    onChange={(e) => handleManualChange('topic', e.target.value)}
+                                    className="input"
                                     placeholder={t('modal.topicPlaceholder')}
                                     required
                                 />
                             </div>
                             <div>
-                                <label htmlFor="grade" className="block text-sm font-semibold text-neutral-700 mb-2">
+                                <label htmlFor="manual-grade" className="block text-sm font-semibold text-neutral-700 mb-2">
                                     {t('modal.grade')} <span className="text-danger-500">*</span>
                                 </label>
                                 <select
-                                    id="grade"
-                                    value={formData.grade}
-                                    onChange={(e) => handleChange('grade', e.target.value)}
-                                    className="input border-brand-300 focus:border-brand-500 focus:ring-brand-500"
+                                    id="manual-grade"
+                                    value={manualData.grade}
+                                    onChange={(e) => handleManualChange('grade', e.target.value)}
+                                    className="input"
                                     required
                                 >
                                     <option value="">{t('modal.gradePlaceholder')}</option>
@@ -230,112 +445,55 @@ export default function CreateQuestion() {
                                 </select>
                             </div>
                         </div>
-                    </div>
 
-                    {/* Difficulty & Type */}
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        <div>
-                            <label htmlFor="difficulty" className="block text-sm font-semibold text-neutral-700 mb-2">
-                                {t('modal.difficulty')}
-                            </label>
-                            <select
-                                id="difficulty"
-                                value={formData.difficulty}
-                                onChange={(e) => handleChange('difficulty', e.target.value)}
-                                className="input"
+                        {/* Difficulty & Type */}
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div>
+                                <label htmlFor="manual-difficulty" className="block text-sm font-semibold text-neutral-700 mb-2">
+                                    {t('modal.difficulty')}
+                                </label>
+                                <select
+                                    id="manual-difficulty"
+                                    value={manualData.difficulty}
+                                    onChange={(e) => handleManualChange('difficulty', e.target.value)}
+                                    className="input"
+                                >
+                                    <option value="c1">{t('main.cognitive.c1')}</option>
+                                    <option value="c2">{t('main.cognitive.c2')}</option>
+                                    <option value="c3">{t('main.cognitive.c3')}</option>
+                                    <option value="c4">{t('main.cognitive.c4')}</option>
+                                    <option value="c5">{t('main.cognitive.c5')}</option>
+                                    <option value="c6">{t('main.cognitive.c6')}</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label htmlFor="manual-type" className="block text-sm font-semibold text-neutral-700 mb-2">
+                                    {t('modal.type')}
+                                </label>
+                                <select
+                                    id="manual-type"
+                                    value={manualData.type}
+                                    onChange={(e) => handleManualChange('type', e.target.value)}
+                                    className="input"
+                                >
+                                    <option value="essay">{t('types.essay')}</option>
+                                    <option value="multipleChoice">{t('types.multipleChoice')}</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        {/* Submit Button */}
+                        <div className="pt-6 border-t border-neutral-200 flex justify-end">
+                            <button
+                                type="submit"
+                                className="btn btn-primary btn-lg gap-2 group w-full md:w-auto"
                             >
-                                <option value="random">{t('difficulties.random')}</option>
-                                <option value="c1">{t('main.cognitive.c1')}</option>
-                                <option value="c2">{t('main.cognitive.c2')}</option>
-                                <option value="c3">{t('main.cognitive.c3')}</option>
-                                <option value="c4">{t('main.cognitive.c4')}</option>
-                                <option value="c5">{t('main.cognitive.c5')}</option>
-                                <option value="c6">{t('main.cognitive.c6')}</option>
-                            </select>
+                                <HiPencilSquare className="text-xl" />
+                                Mulai Menulis Soal
+                            </button>
                         </div>
-                        <div>
-                            <label htmlFor="type" className="block text-sm font-semibold text-neutral-700 mb-2">
-                                {t('modal.type')}
-                            </label>
-                            <select
-                                id="type"
-                                value={formData.type}
-                                onChange={(e) => handleChange('type', e.target.value)}
-                                className="input"
-                            >
-                                <option value="random">{t('types.random')}</option>
-                                <option value="multipleChoice">{t('types.multipleChoice')}</option>
-                                <option value="essay">{t('types.essay')}</option>
-                            </select>
-                        </div>
-                    </div>
-
-                    {/* Total Questions */}
-                    <div>
-                        <label htmlFor="total" className="block text-sm font-semibold text-neutral-700 mb-2">
-                            {t('modal.total')}
-                        </label>
-                        <input
-                            type="number"
-                            id="total"
-                            min="1"
-                            max="100"
-                            value={formData.total}
-                            onChange={(e) => handleChange('total', parseInt(e.target.value) || 1)}
-                            className="input"
-                        />
-                        <p className="text-xs text-neutral-500 mt-1">Maksimal 100 soal per batch</p>
-                    </div>
-
-                    {/* Reference */}
-                    <div>
-                        <label htmlFor="reference" className="block text-sm font-semibold text-neutral-700 mb-2">
-                            {t('modal.reference')} <span className="text-neutral-400 font-normal text-xs ml-1">(Opsional)</span>
-                        </label>
-                        <textarea
-                            id="reference"
-                            value={formData.reference}
-                            onChange={(e) => handleChange('reference', e.target.value)}
-                            className="input min-h-[100px] resize-y"
-                            placeholder="Tambahkan referensi materi atau konteks..."
-                        />
-                        <div className="mt-2">
-                            <label className="btn btn-secondary text-sm gap-2 cursor-pointer inline-flex">
-                                <input
-                                    type="file"
-                                    accept=".pdf"
-                                    onChange={handleFileChange}
-                                    className="hidden"
-                                    disabled={isParsing}
-                                />
-                                {isParsing ? (
-                                    <>
-                                        <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-gray-600"></div>
-                                        {t('modal.uploading')}
-                                    </>
-                                ) : (
-                                    <>
-                                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
-                                        </svg>
-                                        {t('modal.uploadPdf')}
-                                    </>
-                                )}
-                            </label>
-                        </div>
-                    </div>
-
-                    {/* Submit Button */}
-                    <div className="pt-6 border-t border-neutral-200 flex justify-end">
-                        <button
-                            type="submit"
-                            className="btn btn-primary btn-lg gap-2 group w-full md:w-auto"
-                        >
-                            <HiSparkles className="text-xl transition-transform duration-200 group-hover:rotate-12" />
-                            {t('modal.generate')}
-                        </button>
-                    </div>
-                </form>
+                    </form>
+                )}
             </div>
         </div>
       </main>

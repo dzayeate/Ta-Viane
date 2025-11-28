@@ -15,6 +15,8 @@
 - [x] **Improve Error Handling in `onGenerate`:** Ensure all errors are visible to the user, not just after 3 retries.
 - [ ] **Verify Event Listeners:** Ensure `useEffect` dependencies are correct for event listeners.
 - [ ] **Fix API Flush:** Safely check for `res.flush` before calling it.
+- [x] **Fix Topic Overwriting:** Ensure `onGenerate` does not overwrite the Topic field with an empty string if the AI response is incomplete.
+- [x] **Verify LaTeX Input:** Ensure prompt inputs pass raw strings without aggressive sanitization.
 
 ## 4. Verification
 - [x] Run reproduction tests to confirm failure (Red).

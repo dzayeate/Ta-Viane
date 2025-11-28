@@ -100,19 +100,8 @@ const Sidebar = ({
                 }}
                 className="w-full flex items-center gap-3 px-4 py-3 bg-brand-600 text-white rounded-xl hover:bg-brand-700 transition-all shadow-sm hover:shadow-md group"
               >
-                <HiSparkles className="w-5 h-5 group-hover:rotate-12 transition-transform" />
-                <span className="font-semibold">Buat Soal Otomatis</span>
-              </button>
-              
-              <button
-                onClick={() => {
-                  onAddQuestion();
-                  setIsMobileOpen(false);
-                }}
-                className="w-full flex items-center gap-3 px-4 py-3 bg-white border border-neutral-200 text-neutral-700 rounded-xl hover:bg-neutral-50 transition-all"
-              >
                 <HiPlus className="w-5 h-5" />
-                <span className="font-medium">Tambah Manual</span>
+                <span className="font-semibold">Buat Soal Baru</span>
               </button>
             </div>
 

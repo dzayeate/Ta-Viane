@@ -5,6 +5,8 @@ import Sidebar from '@/components/sidebar';
 import { useRouter } from 'next/router';
 import { HiArrowLeft, HiDocumentText } from 'react-icons/hi2';
 import users from '@/mock/users/index.json';
+import { normalizeQuestion } from '@/utils/questionAdapter';
+import Preview from '@/components/preview';
 
 export default function SavedQuestions() {
     const { t } = useTranslation('common');
@@ -44,8 +46,9 @@ export default function SavedQuestions() {
             const response = await fetch('/api/questions');
             if (response.ok) {
                 const data = await response.json();
-                // Sort by newest first
-                setQuestions(data.reverse());
+                // Sort by newest first and normalize
+                const normalizedData = data.reverse().map(normalizeQuestion);
+                setQuestions(normalizedData);
             }
         } catch (error) {
             console.error('Error fetching questions:', error);
@@ -165,15 +168,34 @@ export default function SavedQuestions() {
                                     <div className="mb-4">
                                         <h3 className="font-bold text-lg text-neutral-900 mb-2">Soal:</h3>
                                         <div className="prose prose-sm max-w-none text-neutral-700 bg-neutral-50 p-4 rounded-lg">
-                                            {q.prompt || q.description}
+                                            <Preview>{q.content || q.prompt || q.description}</Preview>
                                         </div>
+                                        
+                                        {/* Render Options if available */}
+                                        {q.options && q.options.length > 0 && (
+                                            <div className="mt-4 space-y-2">
+                                                <h4 className="font-semibold text-sm text-neutral-700">Pilihan Jawaban:</h4>
+                                                <div className="grid gap-2">
+                                                    {q.options.map((opt, i) => (
+                                                        <div key={i} className="flex items-start gap-3 p-2 rounded-lg hover:bg-neutral-50 border border-transparent hover:border-neutral-200 transition-colors">
+                                                            <span className="flex-shrink-0 w-6 h-6 flex items-center justify-center rounded-full bg-brand-100 text-brand-700 text-xs font-bold">
+                                                                {opt.label}
+                                                            </span>
+                                                            <div className="text-sm text-neutral-700 pt-0.5">
+                                                                <Preview>{opt.text}</Preview>
+                                                            </div>
+                                                        </div>
+                                                    ))}
+                                                </div>
+                                            </div>
+                                        )}
                                     </div>
 
                                     {q.answer && (
                                         <div>
                                             <h3 className="font-bold text-sm text-neutral-900 mb-2">Jawaban/Pembahasan:</h3>
                                             <div className="prose prose-sm max-w-none text-neutral-600 border-l-4 border-brand-200 pl-4">
-                                                {q.answer}
+                                                <Preview>{q.answer}</Preview>
                                             </div>
                                         </div>
                                     )}

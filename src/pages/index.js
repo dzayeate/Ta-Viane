@@ -90,6 +90,36 @@ export default function Home() {
     }
   }, [ready, isLoggedIn]);
 
+  // Check for manual creation config from Create Question page
+  useEffect(() => {
+    if (ready && isLoggedIn) {
+      const manualConfigStr = sessionStorage.getItem('manual_create_config');
+      if (manualConfigStr) {
+        try {
+          const config = JSON.parse(manualConfigStr);
+          sessionStorage.removeItem('manual_create_config');
+          
+          // Add new blank question with config
+          setQuestions(prev => [...prev, {
+            prompt: "",
+            difficulty: config.difficulty,
+            type: config.type,
+            title: "",
+            description: "",
+            answer: "",
+            topic: config.topic,
+            grade: config.grade,
+            isLoading: false
+          }]);
+          setIsGenerating(prev => [...prev, false]);
+          
+        } catch (e) {
+          console.error('Error parsing manual config:', e);
+        }
+      }
+    }
+  }, [ready, isLoggedIn]);
+
   // Handle language changes
   useEffect(() => {
     if (ready && questions.length > 0) {
@@ -131,6 +161,7 @@ export default function Home() {
         const targetIndex = globalIndex;
 
         if (targetIndex < newQuestions.length && newQuestions[targetIndex].isLoading) {
+          const existingQuestion = newQuestions[targetIndex];
           newQuestions[targetIndex] = {
             prompt: question.prompt,
             difficulty: question.difficulty,
@@ -138,7 +169,8 @@ export default function Home() {
             title: "",
             description: "",
             answer: "",
-            topic: "",
+            topic: existingQuestion.topic || "",
+            grade: existingQuestion.grade || "",
             isLoading: false,
             questionNumber: question.questionNumber, // Store question number for display
             globalIndex: globalIndex
@@ -147,6 +179,7 @@ export default function Home() {
           // If for some reason the index doesn't match, find the first available skeleton
           const skeletonIndex = newQuestions.findIndex(q => q.isLoading);
           if (skeletonIndex !== -1) {
+            const existingQuestion = newQuestions[skeletonIndex];
             newQuestions[skeletonIndex] = {
               prompt: question.prompt,
               difficulty: question.difficulty,
@@ -154,7 +187,8 @@ export default function Home() {
               title: "",
               description: "",
               answer: "",
-              topic: "",
+              topic: existingQuestion.topic || "",
+              grade: existingQuestion.grade || "",
               isLoading: false,
               questionNumber: question.questionNumber,
               globalIndex: globalIndex
@@ -263,7 +297,8 @@ export default function Home() {
       title: "",
       description: "",
       answer: "",
-      topic: "",
+      topic: formData.topic || "",
+      grade: formData.grade || "",
       isLoading: true,
       loadingIndex: index
     }));
@@ -645,15 +680,18 @@ export default function Home() {
               .split("|->")
               .map(item => item.trim());
 
-            if ((title && description && answer && generatedTopic) || retryCount >= maxRetries) {
+            if ((title && description && answer) || retryCount >= maxRetries) {
               setQuestions((prevQuestions) => {
                 const newQuestions = [...prevQuestions];
+                // Use generated topic if available, otherwise keep existing topic
+                const finalTopic = generatedTopic || newQuestions[index].topic || topic || "";
+                
                 newQuestions[index] = {
                   ...newQuestions[index],
                   title,
                   description,
                   answer,
-                  topic: generatedTopic,
+                  topic: finalTopic,
                 };
                 return newQuestions;
               });
@@ -1023,10 +1061,7 @@ export default function Home() {
                           </p>
                           <div className="flex gap-3 justify-center">
                             <button onClick={() => router.push('/create-question')} className="btn btn-primary btn-lg">
-                              Buat Otomatis
-                            </button>
-                            <button onClick={addQuestion} className="btn btn-outline btn-lg">
-                              Tambah Manual
+                              Buat Soal Baru
                             </button>
                           </div>
                         </div>
