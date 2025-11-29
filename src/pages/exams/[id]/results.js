@@ -119,6 +119,17 @@ export default function ExamResults() {
 
   // Open grading modal with selected submission
   const handleOpenGrading = async (result) => {
+    // Ensure exam data is loaded before opening modal
+    if (!exam || !exam.questions || exam.questions.length === 0) {
+      Swal.fire({
+        icon: 'warning',
+        title: 'Data Belum Siap',
+        text: 'Data ujian masih dimuat. Silakan coba lagi.',
+        customClass: { popup: 'rounded-xl' }
+      });
+      return;
+    }
+
     try {
       // Fetch full submission details including answers
       const res = await fetch('/api/exam/results', {
@@ -419,12 +430,62 @@ export default function ExamResults() {
               {/* Modal Body - Questions List */}
               <div className="p-6 overflow-y-auto flex-1 space-y-6">
                 {(selectedSubmission.details || selectedSubmission.answers || []).map((item, idx) => {
+                  // Get question info - prefer data from details, fallback to exam lookup
                   const questionId = item.questionId;
-                  const isEssay = isEssayQuestion(questionId);
-                  const studentAnswer = item.studentAnswer || item.answer || '(Tidak dijawab)';
-                  const correctAnswer = item.correctAnswer || getCorrectAnswer(questionId);
-                  const questionText = getQuestionText(questionId);
                   const questionType = item.type || getQuestionType(questionId);
+                  const isEssay = questionType?.toLowerCase() === 'essay' || questionType?.toLowerCase() === 'uraian';
+                  
+                  // Student answer - prioritize from details
+                  const studentAnswer = item.studentAnswer || item.answer || '(Tidak dijawab)';
+                  
+                  // Correct answer - prioritize from details (already stored during submission)
+                  const correctAnswer = item.correctAnswer || getCorrectAnswer(questionId);
+                  
+                  // Question text - try to find from exam, fallback to placeholder
+                  const examQuestion = exam?.questions?.find(q => q.id === questionId);
+                  const questionText = examQuestion?.question || 
+                                       examQuestion?.content || 
+                                       examQuestion?.description || 
+                                       `Soal #${item.questionNumber || idx + 1}`;
+
+                  // Safety check - if question not found, show warning
+                  if (!examQuestion) {
+                    return (
+                      <div key={idx} className="card p-4 border-l-4 border-l-warning-400">
+                        <div className="flex items-start gap-3">
+                          <span className="badge badge-warning">Soal {item.questionNumber || idx + 1}</span>
+                          <div className="flex-1">
+                            <p className="text-sm text-warning-700 mb-2">
+                              ⚠️ Data soal tidak ditemukan dalam ujian.
+                            </p>
+                            <div className="grid grid-cols-2 gap-4 text-sm">
+                              <div className="p-2 bg-neutral-50 rounded-lg">
+                                <span className="font-semibold text-neutral-500">Jawaban Siswa:</span>
+                                <p className="text-neutral-700 mt-1">{studentAnswer}</p>
+                              </div>
+                              <div className="p-2 bg-brand-50 rounded-lg">
+                                <span className="font-semibold text-neutral-500">Kunci:</span>
+                                <p className="text-brand-700 mt-1">{correctAnswer}</p>
+                              </div>
+                            </div>
+                            {isEssay && (
+                              <div className="mt-3 flex items-center gap-2">
+                                <label className="text-sm font-medium text-neutral-600">Nilai:</label>
+                                <input
+                                  type="number"
+                                  min="0"
+                                  max="100"
+                                  value={gradedScores[idx] || 0}
+                                  onChange={(e) => handleScoreChange(idx, e.target.value)}
+                                  className="input w-20 text-center font-bold"
+                                />
+                              </div>
+                            )}
+                          </div>
+                        </div>
+                      </div>
+                    );
+                  }
 
                   return (
                     <div key={idx} className="card p-4">
@@ -432,7 +493,7 @@ export default function ExamResults() {
                       <div className="flex items-start justify-between mb-3">
                         <div className="flex-1">
                           <div className="flex items-center gap-2 mb-1">
-                            <span className="badge badge-neutral text-xs">Soal {idx + 1}</span>
+                            <span className="badge badge-neutral text-xs">Soal {item.questionNumber || idx + 1}</span>
                             <span className={`badge text-xs ${isEssay ? 'badge-primary' : 'badge-neutral'}`}>
                               {questionType}
                             </span>

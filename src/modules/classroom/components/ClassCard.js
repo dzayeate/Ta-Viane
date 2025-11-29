@@ -1,8 +1,8 @@
 import { useRouter } from 'next/router';
-import { HiUserGroup, HiAcademicCap, HiClipboardDocumentCheck, HiArrowRight } from 'react-icons/hi2';
+import { HiUserGroup, HiAcademicCap, HiClipboardDocumentCheck, HiArrowRight, HiTrash } from 'react-icons/hi2';
 import Swal from 'sweetalert2';
 
-export default function ClassCard({ data }) {
+export default function ClassCard({ data, onDelete }) {
   const router = useRouter();
 
   const copyToClipboard = (e) => {
@@ -41,6 +41,18 @@ export default function ClassCard({ data }) {
           <span className="bg-success-50 text-success-700 px-2 py-0.5 rounded-md text-xs font-bold">
             Aktif
           </span>
+          {onDelete && (
+            <button
+              onClick={(e) => {
+                e.stopPropagation();
+                onDelete(data);
+              }}
+              className="p-1.5 rounded-lg text-neutral-400 hover:text-red-600 hover:bg-red-50 transition-colors"
+              title="Hapus kelas"
+            >
+              <HiTrash className="w-4 h-4" />
+            </button>
+          )}
           <HiArrowRight className="w-5 h-5 text-neutral-300 group-hover:text-brand-500 group-hover:translate-x-1 transition-all" />
         </div>
       </div>

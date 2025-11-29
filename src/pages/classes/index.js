@@ -8,6 +8,7 @@ import { HiPlus, HiAcademicCap } from 'react-icons/hi2';
 import users from '@/mock/users/index.json';
 import ClassCard from '@/modules/classroom/components/ClassCard';
 import CreateClassModal from '@/modules/classroom/components/CreateClassModal';
+import Swal from 'sweetalert2';
 
 export default function Classes() {
   const { t } = useTranslation('common');
@@ -54,6 +55,50 @@ export default function Classes() {
       fetchClasses();
     }
   }, [user.nuptk]);
+
+  const handleDelete = async (classData) => {
+    const result = await Swal.fire({
+      title: 'Hapus Kelas?',
+      html: `Anda yakin ingin menghapus kelas <strong>${classData.name}</strong>?<br/><br/><span class="text-red-600 text-sm">Semua data siswa di kelas ini akan ikut terhapus.</span>`,
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#EF4444',
+      cancelButtonColor: '#6B7280',
+      confirmButtonText: 'Ya, Hapus',
+      cancelButtonText: 'Batal',
+      customClass: { popup: 'rounded-xl' }
+    });
+
+    if (result.isConfirmed) {
+      try {
+        const response = await fetch(`/api/classes?id=${classData.id}`, {
+          method: 'DELETE'
+        });
+
+        if (response.ok) {
+          setClasses(prev => prev.filter(c => c.id !== classData.id));
+          Swal.fire({
+            icon: 'success',
+            title: 'Berhasil!',
+            text: 'Kelas berhasil dihapus.',
+            timer: 1500,
+            showConfirmButton: false,
+            customClass: { popup: 'rounded-xl' }
+          });
+        } else {
+          const errorData = await response.json();
+          throw new Error(errorData.message || 'Gagal menghapus kelas');
+        }
+      } catch (error) {
+        Swal.fire({
+          icon: 'error',
+          title: 'Gagal!',
+          text: error.message || 'Terjadi kesalahan saat menghapus kelas.',
+          customClass: { popup: 'rounded-xl' }
+        });
+      }
+    }
+  };
 
   const handleLogout = () => {
     localStorage.removeItem('nupkt');
@@ -120,7 +165,7 @@ export default function Classes() {
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 animate-fade-in">
               {classes.map((cls) => (
-                <ClassCard key={cls.id} data={cls} />
+                <ClassCard key={cls.id} data={cls} onDelete={handleDelete} />
               ))}
             </div>
           )}

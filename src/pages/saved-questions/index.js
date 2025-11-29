@@ -2,6 +2,7 @@ import { useState, useEffect, useMemo } from 'react';
 import { useTranslation } from 'next-i18next';
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
 import Sidebar from '@/components/sidebar';
+import AuthGuard from '@/components/auth-guard';
 import { useRouter } from 'next/router';
 import { 
     HiArrowLeft, 
@@ -15,7 +16,11 @@ import {
     HiSparkles,
     HiFolder,
     HiChevronDown,
-    HiChevronUp
+    HiChevronUp,
+    HiChevronLeft,
+    HiChevronRight,
+    HiEye,
+    HiListBullet
 } from 'react-icons/hi2';
 import users from '@/mock/users/index.json';
 import { normalizeQuestion } from '@/utils/questionAdapter';
@@ -42,10 +47,13 @@ const getDifficultyInfo = (difficulty) => {
 const getTypeInfo = (type) => {
     const map = {
         essay: { label: 'Essay', icon: HiDocumentText },
-        multiplechoice: { label: 'Pilihan Ganda', icon: HiSparkles },
+        multiplechoice: { label: 'Pilihan Ganda', icon: HiListBullet },
     };
     return map[type?.toLowerCase()] || { label: type || 'Essay', icon: HiDocumentText };
 };
+
+// Items per page for pagination
+const ITEMS_PER_PAGE = 9;
 
 export default function SavedQuestions() {
     const { t } = useTranslation('common');
@@ -61,8 +69,14 @@ export default function SavedQuestions() {
     const [filterDifficulty, setFilterDifficulty] = useState('');
     const [filterType, setFilterType] = useState('');
     
+    // Pagination State
+    const [currentPage, setCurrentPage] = useState(1);
+    
     // Expanded state for each question card
     const [expandedCards, setExpandedCards] = useState({});
+    
+    // View state for question detail modal
+    const [selectedQuestion, setSelectedQuestion] = useState(null);
     
     const toggleCardExpand = (index) => {
         setExpandedCards(prev => ({ ...prev, [index]: !prev[index] }));
@@ -192,6 +206,7 @@ export default function SavedQuestions() {
         return questions.filter(q => {
             const matchesSearch = (q.title || '').toLowerCase().includes(searchQuery.toLowerCase()) ||
                                   (q.description || '').toLowerCase().includes(searchQuery.toLowerCase()) ||
+                                  (q.content || '').toLowerCase().includes(searchQuery.toLowerCase()) ||
                                   (q.prompt || '').toLowerCase().includes(searchQuery.toLowerCase());
             const matchesGrade = filterGrade ? q.grade === filterGrade : true;
             const matchesDifficulty = filterDifficulty ? (q.difficulty || '').toLowerCase() === filterDifficulty.toLowerCase() : true;
@@ -201,9 +216,26 @@ export default function SavedQuestions() {
         });
     }, [questions, searchQuery, filterGrade, filterDifficulty, filterType]);
 
+    // Reset to page 1 when filters change
+    useEffect(() => {
+        setCurrentPage(1);
+    }, [searchQuery, filterGrade, filterDifficulty, filterType]);
+
+    // Derived State: Paginated Questions
+    const paginatedQuestions = useMemo(() => {
+        const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
+        return filteredQuestions.slice(startIndex, startIndex + ITEMS_PER_PAGE);
+    }, [filteredQuestions, currentPage]);
+
+    // Pagination Info
+    const totalPages = Math.ceil(filteredQuestions.length / ITEMS_PER_PAGE);
+    const startItem = (currentPage - 1) * ITEMS_PER_PAGE + 1;
+    const endItem = Math.min(currentPage * ITEMS_PER_PAGE, filteredQuestions.length);
+
     if (!isLoggedIn) return null;
 
     return (
+        <AuthGuard>
         <div className="min-h-screen bg-neutral-50 flex">
             <Sidebar 
                 t={t}
@@ -370,138 +402,215 @@ export default function SavedQuestions() {
                             </div>
                         </div>
                     ) : (
-                        <div className="grid gap-3 animate-fade-in">
-                            {filteredQuestions.map((q, index) => {
+                        <>
+                        {/* Question Cards Grid */}
+                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 animate-fade-in">
+                            {paginatedQuestions.map((q, index) => {
                                 const difficultyInfo = getDifficultyInfo(q.difficulty);
                                 const typeInfo = getTypeInfo(q.type);
                                 const TypeIcon = typeInfo.icon;
-                                const isExpanded = expandedCards[index];
+                                const globalIndex = (currentPage - 1) * ITEMS_PER_PAGE + index;
+                                const isExpanded = expandedCards[globalIndex];
                                 const questionContent = q.content || q.prompt || q.description || '';
-                                const isLongContent = questionContent.length > 200;
+                                const isLongContent = questionContent.length > 150;
                                 
                                 return (
-                                    <div key={index} className="card card-hover">
-                                        {/* Compact Card Layout */}
-                                        <div className="p-4">
-                                            {/* Header Row: Title + Badges + Delete */}
-                                            <div className="flex items-start justify-between gap-3 mb-2">
-                                                <div className="flex-1 min-w-0">
-                                                    {/* Title */}
-                                                    <h3 className="text-lg font-bold text-neutral-900 truncate">
-                                                        {q.title || 'Soal Tanpa Judul'}
-                                                    </h3>
-                                                    {/* Badges Row */}
-                                                    <div className="flex flex-wrap items-center gap-1.5 mt-1.5">
-                                                        {q.grade && (
-                                                            <span className="badge badge-primary text-xs">
-                                                                {q.grade}
-                                                            </span>
-                                                        )}
-                                                        <span className={`badge text-xs ${difficultyInfo.color}`}>
-                                                            {difficultyInfo.label}
-                                                        </span>
-                                                        <span className="badge badge-neutral text-xs">
-                                                            {typeInfo.label}
-                                                        </span>
-                                                        {q.topic && (
-                                                            <span className="badge badge-neutral text-xs max-w-[120px] truncate">
-                                                                {q.topic}
-                                                            </span>
-                                                        )}
-                                                    </div>
-                                                </div>
-                                                
-                                                {/* Delete Button - Top Right */}
-                                                <div className="flex items-center gap-2 flex-shrink-0">
-                                                    <span className="text-xs text-neutral-400">
-                                                        {new Date(q.savedAt).toLocaleDateString('id-ID', {
-                                                            day: 'numeric', month: 'short'
-                                                        })}
-                                                    </span>
-                                                    {q.author?.nupkt === user.nuptk && (
-                                                        <button
-                                                            onClick={(e) => { e.stopPropagation(); handleDelete(q.id); }}
-                                                            className="p-1.5 rounded-lg text-neutral-400 hover:text-danger-500 hover:bg-danger-50 transition-colors"
-                                                            title="Hapus Soal"
-                                                        >
-                                                            <HiTrash className="w-4 h-4" />
-                                                        </button>
-                                                    )}
-                                                </div>
+                                    <div key={q.id || index} className="card card-hover flex flex-col h-full">
+                                        {/* Card Header */}
+                                        <div className="p-4 border-b border-neutral-100">
+                                            {/* Title Row */}
+                                            <div className="flex items-start justify-between gap-2 mb-2">
+                                                <h3 className="text-base font-bold text-neutral-900 line-clamp-2 flex-1">
+                                                    {q.title || 'Soal Tanpa Judul'}
+                                                </h3>
+                                                {q.author?.nupkt === user.nuptk && (
+                                                    <button
+                                                        onClick={(e) => { e.stopPropagation(); handleDelete(q.id); }}
+                                                        className="p-1.5 rounded-lg text-neutral-400 hover:text-danger-500 hover:bg-danger-50 transition-colors flex-shrink-0"
+                                                        title="Hapus Soal"
+                                                    >
+                                                        <HiTrash className="w-4 h-4" />
+                                                    </button>
+                                                )}
                                             </div>
-
-                                            {/* Question Content - Collapsible */}
-                                            <div className={`mt-3 bg-neutral-50 rounded-lg p-3 border border-neutral-100 ${!isExpanded && isLongContent ? 'max-h-24 overflow-hidden relative' : ''}`}>
-                                                <div className="prose prose-sm max-w-none text-neutral-700">
+                                            {/* Badges */}
+                                            <div className="flex flex-wrap items-center gap-1.5">
+                                                {q.grade && (
+                                                    <span className="badge badge-primary text-xs">
+                                                        Kelas {q.grade}
+                                                    </span>
+                                                )}
+                                                <span className={`badge text-xs ${difficultyInfo.color}`}>
+                                                    {difficultyInfo.label}
+                                                </span>
+                                                <span className="badge badge-neutral text-xs flex items-center gap-1">
+                                                    <TypeIcon className="w-3 h-3" />
+                                                    {typeInfo.label}
+                                                </span>
+                                            </div>
+                                        </div>
+                                        
+                                        {/* Card Body - Question Content */}
+                                        <div className="p-4 flex-1 flex flex-col">
+                                            {/* Topic Badge */}
+                                            {q.topic && (
+                                                <div className="mb-2">
+                                                    <span className="inline-flex items-center gap-1 text-xs text-brand-600 bg-brand-50 px-2 py-1 rounded-md">
+                                                        <HiBookOpen className="w-3 h-3" />
+                                                        {q.topic}
+                                                    </span>
+                                                </div>
+                                            )}
+                                            
+                                            {/* Question Preview */}
+                                            <div className={`bg-neutral-50 rounded-lg p-3 text-sm text-neutral-600 flex-1 ${!isExpanded && isLongContent ? 'max-h-28 overflow-hidden relative' : ''}`}>
+                                                <div className="prose prose-sm max-w-none">
                                                     <Preview>{questionContent}</Preview>
                                                 </div>
                                                 
-                                                {/* Options for Multiple Choice - Compact */}
+                                                {/* Options for MC - Only when expanded */}
                                                 {isExpanded && q.options && q.options.length > 0 && (
-                                                    <div className="mt-3 pt-3 border-t border-neutral-200 space-y-1.5">
+                                                    <div className="mt-3 pt-3 border-t border-neutral-200 space-y-1">
                                                         {q.options.map((opt, i) => (
-                                                            <div key={i} className="flex items-start gap-2 text-sm">
-                                                                <span className="font-bold text-brand-600 min-w-[20px]">
+                                                            <div key={i} className="flex items-start gap-2 text-xs">
+                                                                <span className="font-bold text-brand-600 min-w-[16px]">
                                                                     {opt.label}.
                                                                 </span>
-                                                                <span className="text-neutral-600">
-                                                                    <Preview>{opt.text}</Preview>
+                                                                <span className="text-neutral-600 line-clamp-2">
+                                                                    {typeof opt.text === 'string' ? opt.text : opt.text}
                                                                 </span>
                                                             </div>
                                                         ))}
                                                     </div>
                                                 )}
                                                 
-                                                {/* Fade overlay for truncated content */}
+                                                {/* Fade for truncated */}
                                                 {!isExpanded && isLongContent && (
-                                                    <div className="absolute bottom-0 left-0 right-0 h-12 bg-gradient-to-t from-neutral-50 to-transparent pointer-events-none"></div>
+                                                    <div className="absolute bottom-0 left-0 right-0 h-10 bg-gradient-to-t from-neutral-50 to-transparent"></div>
                                                 )}
                                             </div>
-                                            
-                                            {/* Show More/Less Toggle + Answer */}
-                                            <div className="flex items-center justify-between mt-2">
-                                                {isLongContent || (q.options && q.options.length > 0) ? (
+                                        </div>
+                                        
+                                        {/* Card Footer */}
+                                        <div className="p-4 pt-0 mt-auto">
+                                            <div className="flex items-center justify-between">
+                                                {/* Expand Toggle */}
+                                                {(isLongContent || (q.options && q.options.length > 0)) ? (
                                                     <button
-                                                        onClick={() => toggleCardExpand(index)}
-                                                        className="flex items-center gap-1 text-sm text-brand-600 hover:text-brand-700 font-medium"
+                                                        onClick={() => toggleCardExpand(globalIndex)}
+                                                        className="flex items-center gap-1 text-xs text-brand-600 hover:text-brand-700 font-medium"
                                                     >
                                                         {isExpanded ? (
                                                             <>
-                                                                <HiChevronUp className="w-4 h-4" />
-                                                                Tampilkan Lebih Sedikit
+                                                                <HiChevronUp className="w-3 h-3" />
+                                                                Sembunyikan
                                                             </>
                                                         ) : (
                                                             <>
-                                                                <HiChevronDown className="w-4 h-4" />
-                                                                Tampilkan Selengkapnya
+                                                                <HiChevronDown className="w-3 h-3" />
+                                                                Selengkapnya
                                                             </>
                                                         )}
                                                     </button>
                                                 ) : <span />}
                                                 
-                                                {q.answer && (
-                                                    <details className="group">
-                                                        <summary className="flex items-center gap-1 cursor-pointer text-sm text-success-600 hover:text-success-700 font-medium select-none">
-                                                            <span>Pembahasan</span>
-                                                            <svg className="w-3 h-3 transition-transform group-open:rotate-180" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-                                                            </svg>
-                                                        </summary>
-                                                        <div className="mt-2 p-3 bg-success-50 rounded-lg border border-success-100 text-sm prose prose-sm max-w-none text-neutral-600">
-                                                            <Preview>{q.answer}</Preview>
-                                                        </div>
-                                                    </details>
-                                                )}
+                                                {/* Date */}
+                                                <span className="text-xs text-neutral-400">
+                                                    {q.savedAt ? new Date(q.savedAt).toLocaleDateString('id-ID', {
+                                                        day: 'numeric', month: 'short', year: 'numeric'
+                                                    }) : '-'}
+                                                </span>
                                             </div>
+                                            
+                                            {/* Answer/Solution Toggle */}
+                                            {q.answer && (
+                                                <details className="mt-3 group">
+                                                    <summary className="flex items-center gap-1 cursor-pointer text-xs text-success-600 hover:text-success-700 font-medium select-none">
+                                                        <HiEye className="w-3 h-3" />
+                                                        <span>Lihat Pembahasan</span>
+                                                    </summary>
+                                                    <div className="mt-2 p-3 bg-success-50 rounded-lg border border-success-100 text-xs prose prose-sm max-w-none text-neutral-600">
+                                                        <Preview>{q.answer}</Preview>
+                                                    </div>
+                                                </details>
+                                            )}
                                         </div>
                                     </div>
                                 );
                             })}
                         </div>
+
+                        {/* Pagination */}
+                        {totalPages > 1 && (
+                            <div className="mt-8 flex flex-col sm:flex-row items-center justify-between gap-4 p-4 bg-white rounded-xl border border-neutral-200">
+                                {/* Info */}
+                                <p className="text-sm text-neutral-500">
+                                    Menampilkan <span className="font-semibold text-neutral-700">{startItem}-{endItem}</span> dari <span className="font-semibold text-neutral-700">{filteredQuestions.length}</span> soal
+                                </p>
+                                
+                                {/* Pagination Buttons */}
+                                <div className="flex items-center gap-2">
+                                    <button
+                                        onClick={() => setCurrentPage(prev => Math.max(1, prev - 1))}
+                                        disabled={currentPage === 1}
+                                        className="btn btn-sm btn-secondary disabled:opacity-50 disabled:cursor-not-allowed"
+                                    >
+                                        <HiChevronLeft className="w-4 h-4" />
+                                        Sebelumnya
+                                    </button>
+                                    
+                                    {/* Page Numbers */}
+                                    <div className="hidden sm:flex items-center gap-1">
+                                        {Array.from({ length: Math.min(5, totalPages) }, (_, i) => {
+                                            let pageNum;
+                                            if (totalPages <= 5) {
+                                                pageNum = i + 1;
+                                            } else if (currentPage <= 3) {
+                                                pageNum = i + 1;
+                                            } else if (currentPage >= totalPages - 2) {
+                                                pageNum = totalPages - 4 + i;
+                                            } else {
+                                                pageNum = currentPage - 2 + i;
+                                            }
+                                            
+                                            return (
+                                                <button
+                                                    key={pageNum}
+                                                    onClick={() => setCurrentPage(pageNum)}
+                                                    className={`w-8 h-8 rounded-lg text-sm font-medium transition-colors ${
+                                                        currentPage === pageNum
+                                                            ? 'bg-brand-600 text-white'
+                                                            : 'bg-neutral-100 text-neutral-600 hover:bg-brand-50 hover:text-brand-600'
+                                                    }`}
+                                                >
+                                                    {pageNum}
+                                                </button>
+                                            );
+                                        })}
+                                    </div>
+                                    
+                                    {/* Mobile Page Indicator */}
+                                    <span className="sm:hidden text-sm font-medium text-neutral-600">
+                                        {currentPage} / {totalPages}
+                                    </span>
+                                    
+                                    <button
+                                        onClick={() => setCurrentPage(prev => Math.min(totalPages, prev + 1))}
+                                        disabled={currentPage === totalPages}
+                                        className="btn btn-sm btn-secondary disabled:opacity-50 disabled:cursor-not-allowed"
+                                    >
+                                        Selanjutnya
+                                        <HiChevronRight className="w-4 h-4" />
+                                    </button>
+                                </div>
+                            </div>
+                        )}
+                        </>
                     )}
                 </div>
             </main>
         </div>
+        </AuthGuard>
     );
 }
 
