@@ -3,7 +3,19 @@ import { useTranslation } from 'next-i18next';
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
 import Sidebar from '@/components/sidebar';
 import { useRouter } from 'next/router';
-import { HiPlus, HiClipboard, HiChartBar, HiAcademicCap, HiTrash } from 'react-icons/hi2';
+import { 
+  HiPlus, 
+  HiChartBar, 
+  HiAcademicCap, 
+  HiTrash,
+  HiClock,
+  HiUsers,
+  HiDocumentText,
+  HiPencilSquare,
+  HiLink,
+  HiCheckBadge,
+  HiExclamationCircle
+} from 'react-icons/hi2';
 import users from '@/mock/users/index.json';
 import Swal from 'sweetalert2';
 
@@ -61,17 +73,45 @@ export default function ExamDashboard() {
     router.push('/');
   };
 
-  const copyExamLink = (examId) => {
+  const copyExamLink = (examId, examCode) => {
     const link = `${window.location.origin}/exam/${examId}/start`;
     navigator.clipboard.writeText(link);
     Swal.fire({
       icon: 'success',
       title: 'Link Disalin!',
-      text: 'Link ujian telah disalin ke clipboard.',
-      timer: 1500,
+      html: `<p class="text-neutral-600">Link ujian telah disalin ke clipboard.</p>
+             <p class="mt-2 font-mono bg-neutral-100 p-2 rounded-lg text-sm break-all">${link}</p>`,
+      timer: 2500,
       showConfirmButton: false,
       customClass: { popup: 'rounded-xl' }
     });
+  };
+
+  const getStatusConfig = (status) => {
+    const configs = {
+      published: {
+        label: 'Dipublikasi',
+        bgColor: 'bg-success-50',
+        textColor: 'text-success-700',
+        borderColor: 'border-success-200',
+        icon: HiCheckBadge
+      },
+      active: {
+        label: 'Aktif',
+        bgColor: 'bg-success-50',
+        textColor: 'text-success-700',
+        borderColor: 'border-success-200',
+        icon: HiCheckBadge
+      },
+      draft: {
+        label: 'Draft',
+        bgColor: 'bg-warning-50',
+        textColor: 'text-warning-700',
+        borderColor: 'border-warning-200',
+        icon: HiExclamationCircle
+      }
+    };
+    return configs[status] || configs.draft;
   };
 
   const handleDelete = async (examId) => {
@@ -167,73 +207,177 @@ export default function ExamDashboard() {
             </div>
           ) : exams.length === 0 ? (
             <div className="text-center py-16 bg-white rounded-2xl border border-neutral-200 shadow-sm animate-fade-in">
-              <div className="w-16 h-16 bg-brand-50 rounded-full flex items-center justify-center mx-auto mb-4">
-                <HiAcademicCap className="w-8 h-8 text-brand-500" />
+              <div className="w-20 h-20 bg-brand-50 rounded-2xl flex items-center justify-center mx-auto mb-6">
+                <HiAcademicCap className="w-10 h-10 text-brand-500" />
               </div>
-              <h3 className="text-xl font-bold text-neutral-900 mb-2">Belum ada ujian</h3>
-              <p className="text-neutral-600 mb-6">Buat ujian pertama Anda untuk mulai menguji siswa.</p>
+              <h3 className="text-2xl font-bold text-neutral-900 mb-2">Belum ada ujian</h3>
+              <p className="text-neutral-600 mb-8 max-w-md mx-auto">
+                Buat ujian pertama Anda untuk mulai menguji pemahaman siswa secara digital.
+              </p>
               <button
                 onClick={() => router.push('/exams/create')}
-                className="text-brand-600 font-medium hover:underline"
+                className="btn btn-primary btn-lg gap-2"
               >
+                <HiPlus className="w-5 h-5" />
                 Buat Ujian Sekarang
               </button>
             </div>
           ) : (
             <div className="grid gap-6 animate-fade-in">
-              {exams.map((exam) => (
-                <div key={exam.id} className="card bg-white rounded-xl p-6 shadow-sm border border-neutral-200 hover:shadow-md transition-all group">
-                  <div className="flex flex-col md:flex-row justify-between items-start gap-4">
-                    <div className="flex-1">
-                      <div className="flex items-center gap-3 mb-2">
-                        <span className="px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wide bg-brand-50 text-brand-800">
-                          {exam.class || 'Umum'}
-                        </span>
-                        <span className="px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wide bg-neutral-100 text-neutral-600">
-                          {exam.duration} Menit
-                        </span>
-                        <span className={`px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wide ${
-                            exam.status === 'active' ? 'bg-green-100 text-green-800' : 'bg-neutral-100 text-neutral-600'
-                        }`}>
-                            {exam.status === 'active' ? 'Aktif' : 'Draft'}
-                        </span>
+              {exams.map((exam) => {
+                const statusConfig = getStatusConfig(exam.status);
+                const StatusIcon = statusConfig.icon;
+                const questionCount = exam.questions?.length || 0;
+                
+                return (
+                  <div 
+                    key={exam.id} 
+                    className="card overflow-hidden hover:shadow-lg transition-all duration-300 group"
+                  >
+                    {/* Card Header */}
+                    <div className="px-6 py-4 border-b border-neutral-100 bg-neutral-50/50">
+                      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                        <div className="flex items-center gap-3 flex-wrap">
+                          {/* Status Badge */}
+                          <span className={`badge ${statusConfig.bgColor} ${statusConfig.textColor} border ${statusConfig.borderColor} gap-1`}>
+                            <StatusIcon className="w-3.5 h-3.5" />
+                            {statusConfig.label}
+                          </span>
+                          
+                          {/* Subject Badge */}
+                          {exam.subject && (
+                            <span className="badge badge-primary">
+                              {exam.subject}
+                            </span>
+                          )}
+                          
+                          {/* Class Badge */}
+                          {(exam.class || exam.classId) && (
+                            <span className="badge badge-neutral">
+                              {exam.class || exam.classId}
+                            </span>
+                          )}
+                        </div>
+                        
+                        {/* Exam Code */}
+                        <div className="flex items-center gap-2">
+                          <span className="text-xs text-neutral-500">Kode:</span>
+                          <span className="font-mono font-bold text-sm text-brand-700 bg-brand-50 px-3 py-1 rounded-lg border border-brand-100">
+                            {exam.code || 'N/A'}
+                          </span>
+                        </div>
                       </div>
-                      <h3 className="text-xl font-bold text-neutral-900 group-hover:text-brand-600 transition-colors">
-                        {exam.title}
-                      </h3>
-                      <p className="text-sm text-neutral-500 mt-1">
-                        Kode Ujian: <span className="font-mono font-bold text-neutral-700 bg-neutral-100 px-2 py-0.5 rounded">{exam.code}</span>
-                      </p>
                     </div>
 
-                    <div className="flex items-center gap-2 w-full md:w-auto">
-                      <button
-                        onClick={() => copyExamLink(exam.id)}
-                        className="btn btn-secondary flex-1 md:flex-none justify-center gap-2 text-sm"
-                        title="Salin Link Ujian"
-                      >
-                        <HiClipboard className="w-4 h-4" />
-                        <span className="md:hidden">Salin Link</span>
-                      </button>
-                      <button
-                        onClick={() => router.push(`/exams/${exam.id}/results`)}
-                        className="btn btn-secondary flex-1 md:flex-none justify-center gap-2 text-sm"
-                        title="Lihat Hasil"
-                      >
-                        <HiChartBar className="w-4 h-4" />
-                        <span className="md:hidden">Hasil</span>
-                      </button>
-                      <button
-                        onClick={() => handleDelete(exam.id)}
-                        className="btn btn-icon text-red-500 hover:bg-red-50 hover:text-red-600"
-                        title="Hapus Ujian"
-                      >
-                        <HiTrash className="w-5 h-5" />
-                      </button>
+                    {/* Card Body */}
+                    <div className="px-6 py-5">
+                      {/* Title */}
+                      <h3 className="text-xl font-bold text-neutral-900 mb-4 group-hover:text-brand-600 transition-colors">
+                        {exam.title}
+                      </h3>
+                      
+                      {/* Description */}
+                      {exam.description && (
+                        <p className="text-neutral-600 text-sm mb-4 line-clamp-2">
+                          {exam.description}
+                        </p>
+                      )}
+
+                      {/* Info Grid */}
+                      <div className="grid grid-cols-3 gap-4">
+                        {/* Duration */}
+                        <div className="flex items-center gap-3 p-3 bg-neutral-50 rounded-xl">
+                          <div className="w-10 h-10 bg-brand-100 rounded-lg flex items-center justify-center flex-shrink-0">
+                            <HiClock className="w-5 h-5 text-brand-600" />
+                          </div>
+                          <div>
+                            <p className="text-xs text-neutral-500">Durasi</p>
+                            <p className="font-bold text-neutral-900">{exam.duration || 60} menit</p>
+                          </div>
+                        </div>
+
+                        {/* Question Count */}
+                        <div className="flex items-center gap-3 p-3 bg-neutral-50 rounded-xl">
+                          <div className="w-10 h-10 bg-success-100 rounded-lg flex items-center justify-center flex-shrink-0">
+                            <HiDocumentText className="w-5 h-5 text-success-600" />
+                          </div>
+                          <div>
+                            <p className="text-xs text-neutral-500">Soal</p>
+                            <p className="font-bold text-neutral-900">{questionCount} soal</p>
+                          </div>
+                        </div>
+
+                        {/* Grade/Class */}
+                        <div className="flex items-center gap-3 p-3 bg-neutral-50 rounded-xl">
+                          <div className="w-10 h-10 bg-warning-100 rounded-lg flex items-center justify-center flex-shrink-0">
+                            <HiUsers className="w-5 h-5 text-warning-600" />
+                          </div>
+                          <div>
+                            <p className="text-xs text-neutral-500">Kelas</p>
+                            <p className="font-bold text-neutral-900">{exam.grade || exam.class || 'Umum'}</p>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Card Footer - Actions */}
+                    <div className="px-6 py-4 border-t border-neutral-100 bg-neutral-50/30">
+                      <div className="flex flex-wrap items-center justify-between gap-3">
+                        {/* Left: Created Date */}
+                        <p className="text-xs text-neutral-400">
+                          Dibuat: {exam.createdAt ? new Date(exam.createdAt).toLocaleDateString('id-ID', {
+                            day: 'numeric',
+                            month: 'short',
+                            year: 'numeric'
+                          }) : '-'}
+                        </p>
+
+                        {/* Right: Action Buttons */}
+                        <div className="flex items-center gap-2">
+                          {/* Copy Link */}
+                          <button
+                            onClick={() => copyExamLink(exam.id, exam.code)}
+                            className="btn btn-sm btn-ghost gap-1.5 text-brand-600 hover:bg-brand-50"
+                            title="Salin Link Ujian"
+                          >
+                            <HiLink className="w-4 h-4" />
+                            <span className="hidden sm:inline">Salin Link</span>
+                          </button>
+
+                          {/* View Results */}
+                          <button
+                            onClick={() => router.push(`/exams/${exam.id}/results`)}
+                            className="btn btn-sm btn-secondary gap-1.5"
+                            title="Lihat Hasil"
+                          >
+                            <HiChartBar className="w-4 h-4" />
+                            <span className="hidden sm:inline">Hasil</span>
+                          </button>
+
+                          {/* Edit */}
+                          <button
+                            onClick={() => router.push(`/exams/${exam.id}/edit`)}
+                            className="btn btn-sm btn-secondary gap-1.5"
+                            title="Edit Ujian"
+                          >
+                            <HiPencilSquare className="w-4 h-4" />
+                            <span className="hidden sm:inline">Edit</span>
+                          </button>
+
+                          {/* Delete */}
+                          <button
+                            onClick={() => handleDelete(exam.id)}
+                            className="btn btn-sm btn-ghost text-danger-600 hover:bg-danger-50"
+                            title="Hapus Ujian"
+                          >
+                            <HiTrash className="w-4 h-4" />
+                          </button>
+                        </div>
+                      </div>
                     </div>
                   </div>
-                </div>
-              ))}
+                );
+              })}
             </div>
           )}
         </div>

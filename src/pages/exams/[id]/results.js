@@ -4,8 +4,9 @@ import { useRouter } from 'next/router';
 import Sidebar from '@/components/sidebar';
 import { useTranslation } from 'next-i18next';
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
-import { HiChartBar, HiTrophy, HiUsers, HiChevronRight, HiXMark } from 'react-icons/hi2';
+import { HiChartBar, HiTrophy, HiUsers, HiChevronRight, HiXMark, HiCheck, HiXCircle, HiPencilSquare } from 'react-icons/hi2';
 import users from '@/mock/users/index.json';
+import Swal from 'sweetalert2';
 
 export default function ExamResults() {
   const { t } = useTranslation('common');
@@ -17,7 +18,12 @@ export default function ExamResults() {
   const [results, setResults] = useState([]);
   const [stats, setStats] = useState({ avg: 0, high: 0, total: 0 });
   const [loading, setLoading] = useState(true);
-  const [selectedResult, setSelectedResult] = useState(null);
+  
+  // Grading Modal State
+  const [selectedSubmission, setSelectedSubmission] = useState(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [gradedScores, setGradedScores] = useState({});
+  const [isSaving, setIsSaving] = useState(false);
 
   // Auth check
   useEffect(() => {
@@ -100,6 +106,114 @@ export default function ExamResults() {
   const getCorrectAnswer = (qId) => {
     const q = exam?.questions?.find(question => question.id === qId);
     return q?.correctAnswer || '-';
+  };
+
+  // Helper: Get question type by ID
+  const getQuestionType = (qId) => {
+    const q = exam?.questions?.find(question => question.id === qId);
+    return q?.type || 'Essay';
+  };
+
+  // Helper: Check if question is essay type
+  const isEssayQuestion = (qId) => {
+    const type = getQuestionType(qId);
+    return type?.toLowerCase() === 'essay' || type?.toLowerCase() === 'uraian';
+  };
+
+  // Open grading modal with selected submission
+  const handleOpenGrading = async (result) => {
+    try {
+      // Fetch full submission details including answers
+      const res = await fetch('/api/exam/results', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ action: 'getDetail', resultId: result.id })
+      });
+      
+      if (res.ok) {
+        const data = await res.json();
+        setSelectedSubmission(data.result);
+        
+        // Initialize graded scores from existing points
+        const initialScores = {};
+        (data.result.answers || []).forEach((ans, idx) => {
+          initialScores[idx] = ans.points || 0;
+        });
+        setGradedScores(initialScores);
+        setIsModalOpen(true);
+      }
+    } catch (error) {
+      console.error('Error fetching submission:', error);
+      Swal.fire({
+        icon: 'error',
+        title: 'Gagal',
+        text: 'Gagal memuat data jawaban siswa.',
+        customClass: { popup: 'rounded-xl' }
+      });
+    }
+  };
+
+  // Handle score change for a question
+  const handleScoreChange = (index, value) => {
+    const score = Math.max(0, Math.min(100, parseInt(value) || 0));
+    setGradedScores(prev => ({ ...prev, [index]: score }));
+  };
+
+  // Save graded scores
+  const handleSaveGrades = async () => {
+    if (!selectedSubmission) return;
+
+    setIsSaving(true);
+    try {
+      const nisn = selectedSubmission.studentIdentity?.nisn;
+      
+      const res = await fetch('/api/exam/grade', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          examId,
+          nisn,
+          gradedAnswers: gradedScores
+        })
+      });
+
+      const data = await res.json();
+
+      if (res.ok && data.success) {
+        Swal.fire({
+          icon: 'success',
+          title: 'Berhasil!',
+          text: `Nilai berhasil diperbarui. Skor baru: ${data.newScore}`,
+          timer: 2000,
+          showConfirmButton: false,
+          customClass: { popup: 'rounded-xl' }
+        });
+
+        // Close modal and refresh data
+        setIsModalOpen(false);
+        setSelectedSubmission(null);
+        fetchData();
+      } else {
+        throw new Error(data.message || 'Gagal menyimpan nilai');
+      }
+    } catch (error) {
+      console.error('Error saving grades:', error);
+      Swal.fire({
+        icon: 'error',
+        title: 'Gagal',
+        text: error.message || 'Gagal menyimpan nilai.',
+        customClass: { popup: 'rounded-xl' }
+      });
+    } finally {
+      setIsSaving(false);
+    }
+  };
+
+  // Close modal
+  const handleCloseModal = () => {
+    setIsModalOpen(false);
+    setSelectedSubmission(null);
+    setGradedScores({});
   };
 
   const handleLogout = () => {
@@ -237,10 +351,17 @@ export default function ExamResults() {
                       <tr
                         key={result.id}
                         className="hover:bg-neutral-50 transition-colors cursor-pointer"
-                        onClick={() => setSelectedResult(result)}
+                        onClick={() => handleOpenGrading(result)}
                       >
                         <td className="px-6 py-4 font-medium text-neutral-500">{index + 1}</td>
-                        <td className="px-6 py-4 font-semibold text-neutral-900">{getStudentName(result)}</td>
+                        <td className="px-6 py-4">
+                          <div className="flex items-center gap-2">
+                            <span className="font-semibold text-neutral-900">{getStudentName(result)}</span>
+                            {result.needsManualReview && (
+                              <span className="badge badge-warning text-xs">Perlu Dinilai</span>
+                            )}
+                          </div>
+                        </td>
                         <td className="px-6 py-4 text-neutral-600 font-mono">{getStudentNISN(result)}</td>
                         <td className="px-6 py-4 text-center">
                           <span className={`badge ${
@@ -253,7 +374,7 @@ export default function ExamResults() {
                         </td>
                         <td className="px-6 py-4 text-neutral-500">{formatDate(result.submittedAt)}</td>
                         <td className="px-6 py-4 text-neutral-400">
-                          <HiChevronRight className="w-5 h-5" />
+                          <HiPencilSquare className="w-5 h-5" />
                         </td>
                       </tr>
                     ))
@@ -265,58 +386,169 @@ export default function ExamResults() {
         </div>
       </main>
 
-      {/* Detail Modal */}
-      {selectedResult && (
+      {/* Grading Modal */}
+      {isModalOpen && selectedSubmission && (
         <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4 backdrop-blur-sm">
-          <div className="bg-white rounded-2xl shadow-xl w-full max-w-3xl max-h-[90vh] flex flex-col">
+          <div className="bg-white rounded-2xl shadow-xl w-full max-w-4xl max-h-[90vh] flex flex-col">
+            {/* Modal Header */}
             <div className="px-6 py-4 border-b border-neutral-200 flex justify-between items-center">
               <div>
-                <h3 className="text-lg font-bold text-neutral-900">{getStudentName(selectedResult)}</h3>
-                <p className="text-sm text-neutral-500">NISN: {getStudentNISN(selectedResult)} • Nilai: <span className="font-bold">{selectedResult.score ?? 0}</span></p>
+                <h3 className="text-lg font-bold text-neutral-900">
+                  {selectedSubmission.studentIdentity?.name || 'Siswa'}
+                </h3>
+                <p className="text-sm text-neutral-500">
+                  NISN: {selectedSubmission.studentIdentity?.nisn || '-'} • 
+                  Kelas: {selectedSubmission.studentIdentity?.class || '-'} • 
+                  Skor Saat Ini: <span className="font-bold text-brand-600">{selectedSubmission.score ?? 0}</span>
+                </p>
               </div>
               <button
-                onClick={() => setSelectedResult(null)}
+                onClick={handleCloseModal}
                 className="p-2 hover:bg-neutral-100 rounded-full transition-colors"
               >
                 <HiXMark className="text-xl text-neutral-500" />
               </button>
             </div>
 
+            {/* Modal Body - Questions List */}
             <div className="p-6 overflow-y-auto flex-1 space-y-6">
-              {selectedResult.answers?.length > 0 ? (
-                selectedResult.answers.map((ans, idx) => (
-                  <div key={idx} className="border-b border-neutral-100 pb-4 last:border-0">
-                    <p className="font-medium text-neutral-800 mb-2">
-                      {idx + 1}. {getQuestionText(ans.questionId)}
-                    </p>
+              {(selectedSubmission.details || selectedSubmission.answers || []).map((item, idx) => {
+                const questionId = item.questionId;
+                const isEssay = isEssayQuestion(questionId);
+                const studentAnswer = item.studentAnswer || item.answer || '(Tidak dijawab)';
+                const correctAnswer = item.correctAnswer || getCorrectAnswer(questionId);
+                const questionText = getQuestionText(questionId);
+                const questionType = item.type || getQuestionType(questionId);
 
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
-                      <div className={`p-3 rounded-xl border ${ans.isCorrect ? 'bg-success-50 border-success-200' : 'bg-danger-50 border-danger-200'}`}>
-                        <span className="block text-xs font-semibold text-neutral-500 mb-1">Jawaban Siswa:</span>
-                        <p className={ans.isCorrect ? 'text-success-700 font-medium' : 'text-danger-700 font-medium'}>
-                          {ans.answer || '(Tidak dijawab)'}
+                return (
+                  <div key={idx} className="card p-4">
+                    {/* Question Header */}
+                    <div className="flex items-start justify-between mb-3">
+                      <div className="flex-1">
+                        <div className="flex items-center gap-2 mb-1">
+                          <span className="badge badge-neutral text-xs">Soal {idx + 1}</span>
+                          <span className={`badge text-xs ${isEssay ? 'badge-primary' : 'badge-neutral'}`}>
+                            {questionType}
+                          </span>
+                          {!isEssay && (
+                            <span className={`badge text-xs ${item.isCorrect ? 'badge-success' : 'badge-danger'}`}>
+                              {item.isCorrect ? 'Benar' : 'Salah'}
+                            </span>
+                          )}
+                        </div>
+                        <p className="font-medium text-neutral-800 text-sm leading-relaxed">
+                          {questionText}
+                        </p>
+                      </div>
+                    </div>
+
+                    {/* Answers Section */}
+                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 mb-4">
+                      {/* Student Answer */}
+                      <div className={`p-3 rounded-xl border ${
+                        isEssay 
+                          ? 'bg-neutral-50 border-neutral-200' 
+                          : item.isCorrect 
+                            ? 'bg-success-50 border-success-200' 
+                            : 'bg-danger-50 border-danger-200'
+                      }`}>
+                        <div className="flex items-center gap-2 mb-1">
+                          {!isEssay && (
+                            item.isCorrect 
+                              ? <HiCheck className="w-4 h-4 text-success-600" />
+                              : <HiXCircle className="w-4 h-4 text-danger-600" />
+                          )}
+                          <span className="text-xs font-semibold text-neutral-500">Jawaban Siswa:</span>
+                        </div>
+                        <p className={`text-sm font-medium whitespace-pre-wrap ${
+                          isEssay 
+                            ? 'text-neutral-700' 
+                            : item.isCorrect 
+                              ? 'text-success-700' 
+                              : 'text-danger-700'
+                        }`}>
+                          {studentAnswer}
                         </p>
                       </div>
 
-                      <div className="p-3 rounded-xl bg-neutral-50 border border-neutral-200">
+                      {/* Reference Answer */}
+                      <div className="p-3 rounded-xl bg-brand-50 border border-brand-200">
                         <span className="block text-xs font-semibold text-neutral-500 mb-1">Kunci Jawaban:</span>
-                        <p className="text-neutral-700 font-medium">{getCorrectAnswer(ans.questionId)}</p>
+                        <p className="text-sm text-brand-700 font-medium whitespace-pre-wrap line-clamp-6">
+                          {correctAnswer.length > 300 ? correctAnswer.substring(0, 300) + '...' : correctAnswer}
+                        </p>
                       </div>
                     </div>
+
+                    {/* Score Input Section */}
+                    <div className="flex items-center justify-between pt-3 border-t border-neutral-100">
+                      {isEssay ? (
+                        <div className="flex items-center gap-3">
+                          <label className="text-sm font-medium text-neutral-600">Nilai:</label>
+                          <input
+                            type="number"
+                            min="0"
+                            max="100"
+                            value={gradedScores[idx] || 0}
+                            onChange={(e) => handleScoreChange(idx, e.target.value)}
+                            className="input w-24 text-center font-bold"
+                            placeholder="0"
+                          />
+                          <span className="text-sm text-neutral-400">/ 100</span>
+                        </div>
+                      ) : (
+                        <div className="flex items-center gap-2">
+                          <span className="text-sm font-medium text-neutral-600">Nilai:</span>
+                          <span className={`font-bold ${item.isCorrect ? 'text-success-600' : 'text-danger-600'}`}>
+                            {item.points ?? (item.isCorrect ? 100 : 0)}
+                          </span>
+                          <span className="text-sm text-neutral-400">(Otomatis)</span>
+                        </div>
+                      )}
+                      
+                      {item.isGraded && (
+                        <span className="badge badge-success text-xs">Sudah Dinilai</span>
+                      )}
+                    </div>
                   </div>
-                ))
-              ) : (
-                <p className="text-center text-neutral-500">Tidak ada data jawaban.</p>
+                );
+              })}
+
+              {(!selectedSubmission.details?.length && !selectedSubmission.answers?.length) && (
+                <p className="text-center text-neutral-500 py-8">Tidak ada data jawaban.</p>
               )}
             </div>
 
-            <div className="px-6 py-4 border-t border-neutral-200 bg-neutral-50 rounded-b-2xl flex justify-end">
-              <button
-                onClick={() => setSelectedResult(null)}
-                className="btn btn-secondary"
-              >
-                Tutup
-              </button>
+            {/* Modal Footer */}
+            <div className="px-6 py-4 border-t border-neutral-200 bg-neutral-50 rounded-b-2xl flex items-center justify-between">
+              <div className="text-sm text-neutral-500">
+                Total Nilai Baru: <span className="font-bold text-lg text-brand-600">
+                  {Object.values(gradedScores).reduce((sum, s) => sum + (s || 0), 0)}
+                </span>
+              </div>
+              <div className="flex gap-3">
+                <button
+                  onClick={handleCloseModal}
+                  className="btn btn-secondary"
+                  disabled={isSaving}
+                >
+                  Batal
+                </button>
+                <button
+                  onClick={handleSaveGrades}
+                  className="btn btn-primary"
+                  disabled={isSaving}
+                >
+                  {isSaving ? (
+                    <>
+                      <span className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></span>
+                      Menyimpan...
+                    </>
+                  ) : (
+                    'Simpan & Update Nilai'
+                  )}
+                </button>
+              </div>
             </div>
           </div>
         </div>

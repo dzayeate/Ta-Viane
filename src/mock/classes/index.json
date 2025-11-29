@@ -38,7 +38,16 @@
     "school": "SMAN 1 Margahayu",
     "teacher_nuptk": "vianepindhi@gmail.com",
     "classCode": "DJ691A",
-    "students": [],
-    "createdAt": "2025-11-28T12:08:16.737Z"
+    "students": [
+      {
+        "id": "student-1764411438241",
+        "name": "Budi",
+        "nisn": "123",
+        "email": "",
+        "joinedAt": "2025-11-29T10:17:18.241Z"
+      }
+    ],
+    "createdAt": "2025-11-28T12:08:16.737Z",
+    "updatedAt": "2025-11-29T10:17:18.241Z"
   }
 ]

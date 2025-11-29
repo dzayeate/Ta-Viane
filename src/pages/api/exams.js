@@ -43,7 +43,7 @@ export default function handler(req, res) {
     // POST: Create new exam
     if (req.method === 'POST') {
       // Accept both 'class' and 'classId' for flexibility
-      const { title, classId, duration, questions, teacher_nuptk, description, status } = req.body;
+      const { title, classId, className, classGrade, duration, questions, teacher_nuptk, teacher_name, description, status } = req.body;
       const examClass = classId || req.body.class; // Support both field names
 
       if (!title || !examClass || !teacher_nuptk) {
@@ -54,8 +54,9 @@ export default function handler(req, res) {
         return res.status(400).json({ message: 'Questions must be an array' });
       }
 
-      // Generate a human-readable exam code
-      const examCode = `EX-${examClass}-${Date.now().toString(36).toUpperCase()}`;
+      // Generate a human-readable exam code using class grade if available
+      const codePrefix = classGrade || examClass;
+      const examCode = `EX-${codePrefix}-${Date.now().toString(36).toUpperCase()}`;
 
       const newExam = {
         id: Date.now().toString(),
@@ -63,8 +64,11 @@ export default function handler(req, res) {
         title,
         description: description || '',
         classId: examClass,
-        class: examClass, // Keep both for compatibility
+        className: className || '',      // Store class name for display
+        classGrade: classGrade || '',    // Store grade level
+        class: examClass,                // Keep for backward compatibility
         teacher_nuptk,
+        teacher_name: teacher_name || '',
         duration: parseInt(duration) || 60, // Default 60 minutes
         questions: questions, // Snapshot of questions
         status: status || 'active', // Default to active

@@ -3,7 +3,7 @@ import { useTranslation } from 'next-i18next';
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
 import Sidebar from '@/components/sidebar';
 import { useRouter } from 'next/router';
-import { HiArrowLeft, HiCheckCircle, HiDocumentText } from 'react-icons/hi2';
+import { HiArrowLeft, HiCheckCircle, HiUserGroup, HiExclamationTriangle } from 'react-icons/hi2';
 import users from '@/mock/users/index.json';
 import Swal from 'sweetalert2';
 import Preview from '@/components/preview';
@@ -17,10 +17,14 @@ export default function CreateExam() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [user, setUser] = useState({ nama: '', nuptk: '' });
   
+  // Classes State
+  const [classes, setClasses] = useState([]);
+  const [isLoadingClasses, setIsLoadingClasses] = useState(true);
+  
   // Form State
   const [formData, setFormData] = useState({
     title: '',
-    class: '',
+    classId: '',    // Changed from 'class' to 'classId' for clarity
     duration: 60,
     status: 'active'
   });
@@ -49,9 +53,31 @@ export default function CreateExam() {
       setIsLoggedIn(true);
     }
 
-    // Fetch questions
+    // Fetch data
     fetchQuestions();
   }, []);
+
+  // Fetch classes when user is available
+  useEffect(() => {
+    if (user.nuptk) {
+      fetchClasses();
+    }
+  }, [user.nuptk]);
+
+  const fetchClasses = async () => {
+    setIsLoadingClasses(true);
+    try {
+      const response = await fetch(`/api/classes?teacher_nuptk=${user.nuptk}`);
+      if (response.ok) {
+        const data = await response.json();
+        setClasses(data);
+      }
+    } catch (error) {
+      console.error('Error fetching classes:', error);
+    } finally {
+      setIsLoadingClasses(false);
+    }
+  };
 
   const fetchQuestions = async () => {
     try {
@@ -87,6 +113,9 @@ export default function CreateExam() {
     });
   };
 
+  // Get selected class details for display
+  const selectedClass = classes.find(c => c.id === formData.classId);
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     
@@ -106,7 +135,12 @@ export default function CreateExam() {
       const selectedQuestions = availableQuestions.filter(q => selectedQuestionIds.includes(q.id));
       
       const payload = {
-        ...formData,
+        title: formData.title,
+        classId: formData.classId,           // Send classId
+        className: selectedClass?.name || '', // Also send class name for display
+        classGrade: selectedClass?.grade || '',
+        duration: formData.duration,
+        status: formData.status,
         questions: selectedQuestions,
         teacher_nuptk: user.nuptk,
         teacher_name: user.nama
@@ -129,8 +163,8 @@ export default function CreateExam() {
       Swal.fire({
         icon: 'success',
         title: 'Berhasil!',
-        text: `Ujian "${createdExam.title}" berhasil dibuat dengan kode: ${createdExam.code}`,
-        timer: 2500,
+        html: `Ujian "<b>${createdExam.title}</b>" berhasil dibuat.<br/>Kode Ujian: <code class="bg-neutral-100 px-2 py-1 rounded font-mono">${createdExam.code}</code>`,
+        timer: 3000,
         showConfirmButton: false,
         customClass: { popup: 'rounded-xl' }
       }).then(() => {
@@ -204,6 +238,7 @@ export default function CreateExam() {
           <form onSubmit={handleSubmit} className="animate-fade-in">
             {step === 1 && (
               <div className="bg-white p-8 rounded-2xl shadow-sm border border-neutral-200 space-y-6">
+                {/* Title */}
                 <div>
                   <label className="block text-sm font-semibold text-neutral-700 mb-2">
                     Judul Ujian <span className="text-red-500">*</span>
@@ -219,49 +254,116 @@ export default function CreateExam() {
                   />
                 </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  <div>
-                    <label className="block text-sm font-semibold text-neutral-700 mb-2">
-                      Kelas <span className="text-red-500">*</span>
-                    </label>
-                    <select
-                      name="class"
-                      value={formData.class}
-                      onChange={handleInputChange}
-                      className="input"
-                      required
-                    >
-                      <option value="">Pilih Kelas</option>
-                      <option value="X">Kelas X</option>
-                      <option value="XI">Kelas XI</option>
-                      <option value="XII">Kelas XII</option>
-                    </select>
-                  </div>
-                  <div>
-                    <label className="block text-sm font-semibold text-neutral-700 mb-2">
-                      Durasi (Menit) <span className="text-red-500">*</span>
-                    </label>
-                    <input
-                      type="number"
-                      name="duration"
-                      value={formData.duration}
-                      onChange={handleInputChange}
-                      className="input"
-                      min="1"
-                      required
-                    />
-                  </div>
+                {/* Class Selection - CRITICAL */}
+                <div>
+                  <label className="block text-sm font-semibold text-neutral-700 mb-2">
+                    Pilih Kelas <span className="text-red-500">*</span>
+                  </label>
+                  
+                  {isLoadingClasses ? (
+                    <div className="input flex items-center gap-2 text-neutral-400">
+                      <div className="animate-spin rounded-full h-4 w-4 border-2 border-brand-600 border-t-transparent"></div>
+                      Memuat daftar kelas...
+                    </div>
+                  ) : classes.length === 0 ? (
+                    <div className="bg-warning-50 border border-warning-200 rounded-xl p-4">
+                      <div className="flex items-start gap-3">
+                        <HiExclamationTriangle className="w-5 h-5 text-warning-600 flex-shrink-0 mt-0.5" />
+                        <div>
+                          <p className="text-sm font-medium text-warning-800">
+                            Anda belum memiliki kelas
+                          </p>
+                          <p className="text-sm text-warning-700 mt-1">
+                            Buat kelas terlebih dahulu untuk dapat membuat ujian.
+                          </p>
+                          <button
+                            type="button"
+                            onClick={() => router.push('/classes')}
+                            className="btn btn-sm bg-warning-600 hover:bg-warning-700 text-white mt-3"
+                          >
+                            Buat Kelas Baru
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                  ) : (
+                    <>
+                      <select
+                        name="classId"
+                        value={formData.classId}
+                        onChange={handleInputChange}
+                        className="input"
+                        required
+                      >
+                        <option value="">-- Pilih Kelas --</option>
+                        {classes.map((cls) => (
+                          <option key={cls.id} value={cls.id}>
+                            {cls.name} ({cls.grade}) - {cls.students?.length || 0} siswa
+                          </option>
+                        ))}
+                      </select>
+                      
+                      {/* Selected Class Info */}
+                      {selectedClass && (
+                        <div className="mt-3 bg-brand-50 border border-brand-200 rounded-xl p-4">
+                          <div className="flex items-center gap-3">
+                            <div className="w-10 h-10 rounded-lg bg-brand-100 flex items-center justify-center">
+                              <HiUserGroup className="w-5 h-5 text-brand-600" />
+                            </div>
+                            <div>
+                              <p className="font-semibold text-neutral-900">{selectedClass.name}</p>
+                              <p className="text-sm text-neutral-600">
+                                Kelas {selectedClass.grade} • {selectedClass.students?.length || 0} siswa terdaftar
+                              </p>
+                            </div>
+                          </div>
+                          <p className="text-xs text-brand-700 mt-3 bg-brand-100 px-3 py-1.5 rounded-lg inline-block">
+                            💡 Hanya siswa yang terdaftar di kelas ini yang dapat mengikuti ujian
+                          </p>
+                        </div>
+                      )}
+                    </>
+                  )}
+                </div>
+
+                {/* Duration */}
+                <div>
+                  <label className="block text-sm font-semibold text-neutral-700 mb-2">
+                    Durasi Ujian (Menit) <span className="text-red-500">*</span>
+                  </label>
+                  <input
+                    type="number"
+                    name="duration"
+                    value={formData.duration}
+                    onChange={handleInputChange}
+                    className="input"
+                    min="1"
+                    max="300"
+                    required
+                  />
+                  <p className="text-xs text-neutral-500 mt-1">
+                    Waktu yang diberikan kepada siswa untuk menyelesaikan ujian
+                  </p>
                 </div>
 
                 <div className="flex justify-end pt-4">
                   <button
                     type="button"
                     onClick={() => {
-                      if (!formData.title || !formData.class) {
+                      if (!formData.title) {
                         Swal.fire({
                           icon: 'warning',
-                          title: 'Lengkapi Data',
-                          text: 'Mohon isi Judul dan Kelas terlebih dahulu.',
+                          title: 'Judul Wajib Diisi',
+                          text: 'Mohon isi judul ujian terlebih dahulu.',
+                          customClass: { popup: 'rounded-xl' }
+                        });
+                        return;
+                      }
+                      if (!formData.classId) {
+                        Swal.fire({
+                          icon: 'warning',
+                          title: 'Pilih Kelas',
+                          text: 'Mohon pilih kelas untuk ujian ini.',
                           customClass: { popup: 'rounded-xl' }
                         });
                         return;
@@ -269,6 +371,7 @@ export default function CreateExam() {
                       setStep(2);
                     }}
                     className="btn btn-primary"
+                    disabled={classes.length === 0}
                   >
                     Lanjut: Pilih Soal
                   </button>
@@ -278,11 +381,11 @@ export default function CreateExam() {
 
             {step === 2 && (
               <div className="space-y-6">
-                <div className="bg-white p-6 rounded-2xl shadow-sm border border-neutral-200 flex justify-between items-center sticky top-0 z-10">
+                <div className="bg-white p-6 rounded-2xl shadow-sm border border-neutral-200 flex flex-col md:flex-row justify-between items-start md:items-center gap-4 sticky top-0 z-10">
                   <div>
                     <h3 className="font-bold text-lg text-neutral-900">Pilih Soal</h3>
                     <p className="text-sm text-neutral-500">
-                      {selectedQuestionIds.length} soal dipilih
+                      {selectedQuestionIds.length} soal dipilih untuk <span className="font-medium text-brand-600">{selectedClass?.name}</span>
                     </p>
                   </div>
                   <div className="flex gap-3">

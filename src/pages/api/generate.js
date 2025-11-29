@@ -1,4 +1,5 @@
 import { generatePrompt, callGemini } from "@/libs/Gemini";
+import { sanitizeQuestionText } from '@/utils/contentSanitizer';
 
 require('dotenv').config();
 
@@ -109,8 +110,11 @@ export default async function (req, res) {
 
             // Process each result (should be only 1, but handle multiple just in case)
             results.forEach((item) => {
-              const [questionPrompt, thisDifficulty, questionType] = item.split("|->").map(part => part.trim());
+              const [rawQuestionPrompt, thisDifficulty, questionType] = item.split("|->").map(part => part.trim());
               const settingDifficulty = difficulty === "Acak" ? thisDifficulty : difficulty;
+
+              // Sanitize the question prompt to remove metadata artifacts
+              const questionPrompt = sanitizeQuestionText(rawQuestionPrompt);
 
               const questionData = {
                 prompt: questionPrompt,

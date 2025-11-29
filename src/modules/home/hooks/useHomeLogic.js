@@ -4,6 +4,8 @@ import { useRouter } from 'next/router';
 import users from '@/mock/users/index.json';
 import { generateQuestionsStream } from '@/services/streamingService';
 import Swal from 'sweetalert2';
+import { sanitizeQuestionText } from '@/utils/contentSanitizer';
+import { parseGeneratedAnswer } from '@/utils/answerParser';
 
 export const useHomeLogic = () => {
   const { t, ready, i18n } = useTranslation('common');
@@ -555,9 +557,17 @@ export const useHomeLogic = () => {
             const response = await result.json();
             const data = response?.result || "";
 
-            const [title = "", description = "", answer = "", generatedTopic = ""] = data
+            const [rawTitle = "", rawDescription = "", rawAnswer = "", generatedTopic = ""] = data
               .split("|->")
               .map(item => item.trim());
+
+            // Sanitize content to remove AI metadata artifacts
+            const title = sanitizeQuestionText(rawTitle);
+            const description = sanitizeQuestionText(rawDescription);
+            
+            // Parse answer to separate key from explanation for auto-grading
+            const { key: correctAnswerKey, explanation } = parseGeneratedAnswer(rawAnswer);
+            const answer = rawAnswer; // Keep original for display/backward compatibility
 
             if ((title && description && answer) || retryCount >= maxRetries) {
               setQuestions((prevQuestions) => {
@@ -570,6 +580,8 @@ export const useHomeLogic = () => {
                   title,
                   description,
                   answer,
+                  explanation, // Steps/method for display
+                  correctAnswer: correctAnswerKey, // Clean answer key (A, B, C, D, E) for auto-grading
                   topic: finalTopic,
                 };
                 return newQuestions;

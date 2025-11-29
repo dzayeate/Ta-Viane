@@ -1,8 +1,12 @@
-import { HiUserGroup, HiAcademicCap, HiClipboardDocumentCheck } from 'react-icons/hi2';
+import { useRouter } from 'next/router';
+import { HiUserGroup, HiAcademicCap, HiClipboardDocumentCheck, HiArrowRight } from 'react-icons/hi2';
 import Swal from 'sweetalert2';
 
 export default function ClassCard({ data }) {
-  const copyToClipboard = () => {
+  const router = useRouter();
+
+  const copyToClipboard = (e) => {
+    e.stopPropagation();
     navigator.clipboard.writeText(data.classCode);
     Swal.fire({
       icon: 'success',
@@ -14,38 +18,67 @@ export default function ClassCard({ data }) {
     });
   };
 
+  const handleClick = () => {
+    router.push(`/classes/${data.id}`);
+  };
+
   return (
-    <div className="card p-6 hover:shadow-md transition-all border-l-4 border-l-brand-500">
+    <div 
+      onClick={handleClick}
+      className="card p-6 hover:shadow-lg transition-all border-l-4 border-l-brand-500 cursor-pointer group"
+    >
       <div className="flex justify-between items-start mb-4">
-        <div>
-          <h3 className="text-xl font-bold text-neutral-900">{data.name}</h3>
+        <div className="flex-1 min-w-0">
+          <h3 className="text-xl font-bold text-neutral-900 truncate group-hover:text-brand-600 transition-colors">
+            {data.name}
+          </h3>
           <p className="text-neutral-500 text-sm flex items-center gap-1 mt-1">
-            <HiAcademicCap className="w-4 h-4" />
-            {data.grade} {data.school ? `• ${data.school}` : ''}
+            <HiAcademicCap className="w-4 h-4 flex-shrink-0" />
+            <span className="truncate">Kelas {data.grade} {data.school ? `• ${data.school}` : ''}</span>
           </p>
         </div>
-        <div className="bg-brand-50 text-brand-700 px-3 py-1 rounded-lg text-xs font-bold uppercase tracking-wider">
-          Active
+        <div className="flex items-center gap-2 flex-shrink-0">
+          <span className="bg-success-50 text-success-700 px-2 py-0.5 rounded-md text-xs font-bold">
+            Aktif
+          </span>
+          <HiArrowRight className="w-5 h-5 text-neutral-300 group-hover:text-brand-500 group-hover:translate-x-1 transition-all" />
         </div>
       </div>
 
-      <div className="flex items-center justify-between mt-6 pt-4 border-t border-neutral-100">
+      {/* Stats */}
+      <div className="flex items-center gap-4 mb-4">
         <div className="flex items-center gap-2 text-neutral-600">
-          <HiUserGroup className="w-5 h-5 text-neutral-400" />
-          <span className="font-medium">{data.students?.length || 0} Siswa</span>
+          <div className="w-8 h-8 rounded-lg bg-brand-50 flex items-center justify-center">
+            <HiUserGroup className="w-4 h-4 text-brand-600" />
+          </div>
+          <div>
+            <p className="text-lg font-bold text-neutral-900">{data.students?.length || 0}</p>
+            <p className="text-xs text-neutral-500">Siswa</p>
+          </div>
         </div>
-        
-        <div className="flex flex-col items-end">
-          <span className="text-xs text-neutral-400 uppercase font-bold tracking-wider mb-1">Kode Kelas</span>
+      </div>
+
+      {/* Footer */}
+      <div className="flex items-center justify-between pt-4 border-t border-neutral-100">
+        <div className="flex flex-col">
+          <span className="text-[10px] text-neutral-400 uppercase font-bold tracking-wider">Kode Kelas</span>
           <button 
             onClick={copyToClipboard}
-            className="flex items-center gap-2 bg-neutral-100 hover:bg-neutral-200 px-3 py-1.5 rounded-lg transition-colors group"
-            title="Salin Kode"
+            className="flex items-center gap-2 mt-1 hover:bg-neutral-100 px-2 py-1 -mx-2 rounded-lg transition-colors group/copy"
+            title="Klik untuk menyalin"
           >
             <span className="font-mono font-bold text-lg text-neutral-800 tracking-widest">{data.classCode}</span>
-            <HiClipboardDocumentCheck className="w-5 h-5 text-neutral-400 group-hover:text-brand-600" />
+            <HiClipboardDocumentCheck className="w-4 h-4 text-neutral-400 group-hover/copy:text-brand-600" />
           </button>
         </div>
+        
+        <span className="text-xs text-neutral-400">
+          {new Date(data.createdAt).toLocaleDateString('id-ID', { 
+            day: 'numeric', 
+            month: 'short', 
+            year: 'numeric' 
+          })}
+        </span>
       </div>
     </div>
   );

@@ -124,6 +124,19 @@
     @apply bg-gradient-to-br from-brand-500 to-brand-600 text-white;
   }
 
+  /* Card padding utilities */
+  .card-body {
+    @apply px-6 py-5;
+  }
+
+  .card-header {
+    @apply px-6 py-4 border-b border-neutral-100 bg-neutral-50/50;
+  }
+
+  .card-footer {
+    @apply px-6 py-5 bg-neutral-50/50;
+  }
+
   /* NEW GLASSMORPHISM */
   .glass {
     @apply bg-white/80 backdrop-blur-md border border-white/40 shadow-sm;
@@ -158,6 +171,14 @@
     @apply bg-neutral-100 text-neutral-600 border border-neutral-200;
   }
 
+  .badge-lg {
+    @apply px-3 py-1 text-sm;
+  }
+
+  .badge-answer {
+    @apply bg-success-50 text-success-700 border border-success-200 px-4 py-2 rounded-xl text-base font-bold;
+  }
+
   /* NEW CONTAINER */
   .container-app {
     @apply max-w-7xl mx-auto px-4 sm:px-6 lg:px-8;
@@ -190,6 +211,27 @@
 
   .pb-safe {
     padding-bottom: env(safe-area-inset-bottom);
+  }
+
+  /* Typography hierarchy utilities */
+  .text-title {
+    @apply text-lg font-bold text-neutral-900;
+  }
+
+  .text-subtitle {
+    @apply text-base font-semibold text-neutral-800;
+  }
+
+  .text-body {
+    @apply text-base text-neutral-700;
+  }
+
+  .text-meta {
+    @apply text-sm text-neutral-500;
+  }
+
+  .text-caption {
+    @apply text-xs text-neutral-400;
   }
 
   /* Scrollbar Styling */

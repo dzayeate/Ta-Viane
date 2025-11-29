@@ -1,16 +1,51 @@
 import React, { useState } from 'react';
 import { useTranslation } from 'next-i18next';
-import { HiCheckCircle, HiPencil, HiXCircle, HiEye, HiEyeSlash } from 'react-icons/hi2';
+import { HiCheckCircle, HiPencil, HiXCircle, HiEye, HiEyeSlash, HiAcademicCap, HiLightBulb } from 'react-icons/hi2';
 import Preview from '@/components/preview';
+
+/**
+ * Badge component for difficulty/type tags
+ */
+const QuestionBadge = ({ type, children }) => {
+    const variants = {
+        difficulty: 'badge-primary',
+        type: 'badge-neutral',
+        topic: 'badge-success',
+    };
+    return (
+        <span className={`badge ${variants[type] || 'badge-neutral'} text-xs`}>
+            {children}
+        </span>
+    );
+};
+
+/**
+ * Answer Key Display - prominent badge for final answer
+ */
+const AnswerKeyBadge = ({ answer }) => {
+    if (!answer) return null;
+    
+    // Check if it's a simple letter answer (A-E)
+    const isLetterAnswer = /^[A-E]$/i.test(answer.trim());
+    
+    return (
+        <div className="inline-flex items-center gap-2 px-4 py-2 bg-success-50 border border-success-200 rounded-xl">
+            <HiCheckCircle className="w-5 h-5 text-success-600" />
+            <span className="text-sm font-medium text-success-700">Jawaban:</span>
+            <span className={`font-bold text-success-800 ${isLetterAnswer ? 'text-lg' : 'text-base'}`}>
+                {answer}
+            </span>
+        </div>
+    );
+};
 
 const QuestionReview = ({ questions = [], onSave, onModify, onCancel, metadata }) => {
     const { t } = useTranslation('common');
     const [expandedIndex, setExpandedIndex] = useState(null);
     const [selectedQuestions, setSelectedQuestions] = useState(
-        (questions || []).map(() => true) // Default semua terpilih
+        (questions || []).map(() => true)
     );
 
-    // Initialize selectedQuestions when questions change
     React.useEffect(() => {
         if (questions && questions.length > 0) {
             setSelectedQuestions(questions.map(() => true));
@@ -40,11 +75,6 @@ const QuestionReview = ({ questions = [], onSave, onModify, onCancel, metadata }
         const filteredQuestions = questions.filter((_, index) => selectedQuestions[index]);
         onModify(filteredQuestions, metadata);
     };
-
-    // Removed early return to allow empty state rendering
-    // if (!questions || questions.length === 0) {
-    //     return null;
-    // }
 
     return (
         <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-fade-in">
@@ -93,19 +123,19 @@ const QuestionReview = ({ questions = [], onSave, onModify, onCancel, metadata }
                 )}
 
                 {/* Questions List */}
-                <div className="flex-1 overflow-y-auto px-8 py-6 space-y-4">
+                <div className="flex-1 overflow-y-auto px-8 py-6 space-y-6">
                     {questions && questions.length > 0 ? (
                         questions.map((question, index) => (
                             <div
                                 key={index}
                                 className={`card transition-all duration-200 ${selectedQuestions[index]
-                                    ? 'border-brand-300 bg-brand-50/30'
-                                    : 'border-neutral-200 opacity-60'
+                                    ? 'border-brand-300 bg-white'
+                                    : 'border-neutral-200 opacity-60 bg-neutral-50'
                                     }`}
                             >
-                                <div className="p-6">
-                                    {/* Question Header */}
-                                    <div className="flex items-start justify-between mb-4">
+                                {/* Card Header */}
+                                <div className="px-6 py-4 border-b border-neutral-100 bg-neutral-50/50">
+                                    <div className="flex items-start justify-between">
                                         <div className="flex items-center gap-3">
                                             <input
                                                 type="checkbox"
@@ -114,28 +144,24 @@ const QuestionReview = ({ questions = [], onSave, onModify, onCancel, metadata }
                                                 className="w-5 h-5 text-brand-600 border-neutral-300 rounded focus:ring-brand-500"
                                             />
                                             <div>
-                                                <div className="flex items-center gap-2">
-                                                    <span className="font-bold text-neutral-900">Soal #{index + 1}</span>
+                                                <div className="flex items-center gap-2 flex-wrap">
+                                                    <span className="font-bold text-lg text-neutral-900">
+                                                        Soal #{index + 1}
+                                                    </span>
                                                     {question.difficulty && (
-                                                        <span className={`badge badge-primary text-xs`}>
+                                                        <QuestionBadge type="difficulty">
                                                             {t(`main.cognitive.${question.difficulty}`)}
-                                                        </span>
+                                                        </QuestionBadge>
                                                     )}
                                                     {question.type && (
-                                                        <span className="badge badge-neutral text-xs">
+                                                        <QuestionBadge type="type">
                                                             {question.type === 'essay' ? 'Essay' : 'Pilihan Ganda'}
-                                                        </span>
+                                                        </QuestionBadge>
                                                     )}
-                                                </div>
-                                                <div className="flex items-center gap-3 mt-1 text-sm text-neutral-500">
                                                     {question.topic && (
-                                                        <span>Topik: {question.topic}</span>
-                                                    )}
-                                                    {question.grade && (
-                                                        <>
-                                                            <span className="w-1 h-1 bg-neutral-300 rounded-full"></span>
-                                                            <span>Kelas: {question.grade}</span>
-                                                        </>
+                                                        <QuestionBadge type="topic">
+                                                            {question.topic}
+                                                        </QuestionBadge>
                                                     )}
                                                 </div>
                                             </div>
@@ -157,57 +183,71 @@ const QuestionReview = ({ questions = [], onSave, onModify, onCancel, metadata }
                                             )}
                                         </button>
                                     </div>
+                                </div>
 
-                                    {/* Question Title or Prompt */}
+                                {/* Card Body - Question Content */}
+                                <div className="px-6 py-5">
+                                    {/* Question Title */}
                                     {(question.title || question.prompt) && (
                                         <h3 className="font-semibold text-lg text-neutral-900 mb-3">
                                             {question.title || question.prompt}
                                         </h3>
                                     )}
 
-                                    {/* Question Description Preview */}
+                                    {/* Question Description */}
                                     {(question.description || question.prompt) && (
-                                        <div className="mb-4">
-                                            <div className="prose prose-sm max-w-none">
-                                                {expandedIndex === index ? (
-                                                    <div className="prose prose-sm max-w-none">
-                                                        <Preview className="h-auto min-h-[100px] max-h-[500px]">
-                                                            {question.description || question.prompt || "Tidak ada deskripsi."}
-                                                        </Preview>
-                                                    </div>
-                                                ) : (
-                                                    <div
-                                                        className="line-clamp-3 text-neutral-700"
-                                                        dangerouslySetInnerHTML={{
-                                                            __html: (question.description || question.prompt || '').substring(0, 200) + ((question.description || question.prompt || '').length > 200 ? '...' : '')
-                                                        }}
-                                                    />
-                                                )}
-                                            </div>
-                                        </div>
-                                    )}
-
-                                    {/* Expanded Details */}
-                                    {expandedIndex === index && (
-                                        <div className="mt-4 pt-4 border-t border-neutral-200 space-y-4 animate-slide-down">
-                                            {question.answer && (
-                                                <div>
-                                                    <label className="block text-sm font-semibold text-neutral-700 mb-2">
-                                                        Jawaban & Pembahasan:
-                                                    </label>
-                                                    <div className="prose prose-sm max-w-none">
-                                                        <Preview className="h-auto min-h-[100px] max-h-[500px]">
-                                                            {question.answer}
-                                                        </Preview>
-                                                    </div>
-                                                </div>
+                                        <div className="prose prose-sm max-w-none text-neutral-700">
+                                            {expandedIndex === index ? (
+                                                <Preview className="h-auto min-h-[80px] max-h-[400px]">
+                                                    {question.description || question.prompt || "Tidak ada deskripsi."}
+                                                </Preview>
+                                            ) : (
+                                                <div
+                                                    className="line-clamp-3"
+                                                    dangerouslySetInnerHTML={{
+                                                        __html: (question.description || question.prompt || '').substring(0, 250) + ((question.description || question.prompt || '').length > 250 ? '...' : '')
+                                                    }}
+                                                />
                                             )}
                                         </div>
                                     )}
                                 </div>
+
+                                {/* Card Divider */}
+                                {expandedIndex === index && <div className="divider mx-6" />}
+
+                                {/* Card Footer - Solution Section (Expanded) */}
+                                {expandedIndex === index && (
+                                    <div className="px-6 py-5 bg-neutral-50/50 space-y-5 animate-slide-down">
+                                        {/* Answer Key - Prominent Display */}
+                                        {(question.correctAnswer || question.finalAnswer) && (
+                                            <div>
+                                                <AnswerKeyBadge answer={question.correctAnswer || question.finalAnswer} />
+                                            </div>
+                                        )}
+
+                                        {/* Solution Method / Explanation */}
+                                        {(question.explanation || question.answer) && (
+                                            <div className="space-y-2">
+                                                <div className="flex items-center gap-2">
+                                                    <HiLightBulb className="w-4 h-4 text-warning-500" />
+                                                    <span className="text-sm font-semibold text-neutral-600">
+                                                        Metode Penyelesaian
+                                                    </span>
+                                                </div>
+                                                <div className="pl-6 prose prose-sm max-w-none text-neutral-600 bg-white rounded-xl p-4 border border-neutral-200">
+                                                    <Preview className="h-auto min-h-[60px] max-h-[300px]">
+                                                        {question.explanation || question.answer}
+                                                    </Preview>
+                                                </div>
+                                            </div>
+                                        )}
+                                    </div>
+                                )}
                             </div>
                         ))) : (
                         <div className="text-center py-12">
+                            <HiAcademicCap className="w-16 h-16 text-neutral-300 mx-auto mb-4" />
                             <p className="text-neutral-500">Tidak ada soal untuk direview.</p>
                         </div>
                     )}

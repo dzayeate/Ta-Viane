@@ -1,7 +1,19 @@
-import React, { useState, useEffect, useRef, useCallback } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 import Head from 'next/head';
 import { useRouter } from 'next/router';
-import { HiClock, HiUser, HiAcademicCap, HiCheckCircle, HiExclamationTriangle } from 'react-icons/hi2';
+import { 
+  HiClock, 
+  HiUser, 
+  HiAcademicCap, 
+  HiCheckCircle, 
+  HiExclamationTriangle,
+  HiChevronLeft,
+  HiChevronRight,
+  HiFlag,
+  HiPaperAirplane,
+  HiIdentification,
+  HiUserGroup
+} from 'react-icons/hi2';
 import Swal from 'sweetalert2';
 import Preview from '@/components/preview';
 
@@ -18,6 +30,13 @@ export default function StartExam() {
 
   // Student data (persisted in sessionStorage)
   const [studentData, setStudentData] = useState({ name: '', nisn: '', class: '' });
+  
+  // NISN input for validation
+  const [nisnInput, setNisnInput] = useState('');
+  const [isValidating, setIsValidating] = useState(false);
+
+  // Class roster data (fetched based on exam.classId)
+  const [classRoster, setClassRoster] = useState(null);
 
   // Exam data from API
   const [examData, setExamData] = useState(null);
@@ -26,6 +45,9 @@ export default function StartExam() {
 
   // Answers: { questionId: answer }
   const [answers, setAnswers] = useState({});
+  
+  // Flagged questions for review
+  const [flagged, setFlagged] = useState({});
 
   // Timer
   const [timeLeft, setTimeLeft] = useState(0);
@@ -48,6 +70,7 @@ export default function StartExam() {
         try {
           const parsed = JSON.parse(stored);
           setStudentData(parsed);
+          setNisnInput(parsed.nisn || '');
         } catch (e) {
           console.error('Failed to parse stored student data');
         }
@@ -78,11 +101,31 @@ export default function StartExam() {
 
       setExamData(data.exam);
       setTimeLeft(data.exam.duration * 60); // Convert minutes to seconds
+      
+      // Fetch class roster for NISN validation
+      if (data.exam.classId) {
+        fetchClassRoster(data.exam.classId);
+      }
     } catch (err) {
       console.error('Fetch exam error:', err);
       setError(err.message);
     } finally {
       setLoading(false);
+    }
+  };
+
+  // ============================================
+  // Fetch class roster for NISN validation
+  // ============================================
+  const fetchClassRoster = async (classId) => {
+    try {
+      const res = await fetch(`/api/classes?id=${classId}`);
+      if (res.ok) {
+        const data = await res.json();
+        setClassRoster(data);
+      }
+    } catch (err) {
+      console.error('Failed to fetch class roster:', err);
     }
   };
 
@@ -129,30 +172,83 @@ export default function StartExam() {
   // ============================================
   // Handlers
   // ============================================
-  const handleStudentLogin = (e) => {
+  const handleStudentLogin = async (e) => {
     e.preventDefault();
 
-    if (!studentData.name.trim() || !studentData.nisn.trim()) {
+    if (!nisnInput.trim()) {
       Swal.fire({
         icon: 'warning',
-        title: 'Data Tidak Lengkap',
-        text: 'Mohon isi Nama dan NISN Anda.',
+        title: 'NISN Diperlukan',
+        text: 'Mohon masukkan NISN Anda.',
         customClass: { popup: 'rounded-xl' }
       });
       return;
     }
 
-    // Save to sessionStorage
-    sessionStorage.setItem('exam_student', JSON.stringify(studentData));
+    setIsValidating(true);
 
-    // Move to exam step
-    setStep('exam');
+    // Validate NISN against class roster
+    if (classRoster && classRoster.students) {
+      const foundStudent = classRoster.students.find(
+        s => s.nisn === nisnInput.trim()
+      );
+
+      if (!foundStudent) {
+        setIsValidating(false);
+        Swal.fire({
+          icon: 'error',
+          title: 'NISN Tidak Terdaftar',
+          html: `NISN <b>${nisnInput}</b> tidak terdaftar di kelas <b>${classRoster.name || 'ini'}</b>.<br/><br/>Hubungi guru Anda jika Anda yakin ini adalah kesalahan.`,
+          customClass: { popup: 'rounded-xl' }
+        });
+        return;
+      }
+
+      // Found! Auto-fill student data
+      const validatedData = {
+        name: foundStudent.name,
+        nisn: foundStudent.nisn,
+        class: classRoster.name || ''
+      };
+
+      setStudentData(validatedData);
+      sessionStorage.setItem('exam_student', JSON.stringify(validatedData));
+
+      // Show welcome message
+      await Swal.fire({
+        icon: 'success',
+        title: 'Selamat Datang!',
+        html: `Halo, <b>${foundStudent.name}</b>!<br/>Anda akan memulai ujian.`,
+        timer: 2000,
+        showConfirmButton: false,
+        customClass: { popup: 'rounded-xl' }
+      });
+
+      setIsValidating(false);
+      setStep('exam');
+    } else {
+      // No class roster available - fallback to manual entry (shouldn't happen normally)
+      setIsValidating(false);
+      Swal.fire({
+        icon: 'warning',
+        title: 'Validasi Gagal',
+        text: 'Tidak dapat memvalidasi NISN. Hubungi guru Anda.',
+        customClass: { popup: 'rounded-xl' }
+      });
+    }
   };
 
   const handleAnswerChange = (questionId, value) => {
     setAnswers((prev) => ({
       ...prev,
       [questionId]: value
+    }));
+  };
+
+  const handleToggleFlag = (questionId) => {
+    setFlagged((prev) => ({
+      ...prev,
+      [questionId]: !prev[questionId]
     }));
   };
 
@@ -255,6 +351,19 @@ export default function StartExam() {
     return Object.keys(answers).filter((k) => answers[k] && answers[k].trim()).length;
   };
 
+  const getFlaggedCount = () => {
+    return Object.keys(flagged).filter((k) => flagged[k]).length;
+  };
+
+  const isMultipleChoice = (question) => {
+    const type = (question?.type || '').toLowerCase();
+    return type === 'multiplechoice' || 
+           type === 'multiple-choice' || 
+           type === 'pg' || 
+           type === 'pilihan ganda' ||
+           (question?.options && question.options.length > 0);
+  };
+
   // ============================================
   // Loading State
   // ============================================
@@ -296,7 +405,7 @@ export default function StartExam() {
   }
 
   // ============================================
-  // Step 1: Login View
+  // Step 1: Login View - NISN Only Validation
   // ============================================
   if (step === 'login') {
     return (
@@ -315,64 +424,76 @@ export default function StartExam() {
               {examData?.title}
             </h1>
             <p className="text-neutral-500">
-              {examData?.subject} • {examData?.totalQuestions} Soal • {examData?.duration} Menit
+              {examData?.totalQuestions} Soal • {examData?.duration} Menit
             </p>
+            
+            {/* Class Info Badge */}
+            {classRoster && (
+              <div className="mt-4 inline-flex items-center gap-2 bg-brand-50 text-brand-700 px-4 py-2 rounded-xl">
+                <HiUserGroup className="w-5 h-5" />
+                <span className="font-medium">{classRoster.name}</span>
+                <span className="text-brand-500">•</span>
+                <span className="text-sm">{classRoster.students?.length || 0} siswa</span>
+              </div>
+            )}
           </div>
 
-          {/* Form */}
-          <form onSubmit={handleStudentLogin} className="space-y-4">
+          {/* Form - NISN Only */}
+          <form onSubmit={handleStudentLogin} className="space-y-6">
             <div>
               <label className="block text-sm font-semibold text-neutral-700 mb-2">
-                Nama Lengkap <span className="text-red-500">*</span>
+                <HiIdentification className="w-4 h-4 inline mr-1" />
+                Masukkan NISN Anda
               </label>
               <input
                 type="text"
-                className="input"
-                placeholder="Masukkan nama lengkap"
-                value={studentData.name}
-                onChange={(e) => setStudentData((prev) => ({ ...prev, name: e.target.value }))}
+                className="input text-center text-lg font-mono tracking-wider"
+                placeholder="Contoh: 0012345678"
+                value={nisnInput}
+                onChange={(e) => setNisnInput(e.target.value.replace(/\D/g, ''))}
+                maxLength={10}
                 required
+                autoFocus
               />
+              <p className="text-xs text-neutral-500 mt-2 text-center">
+                NISN akan divalidasi dengan daftar siswa di kelas ini
+              </p>
             </div>
 
-            <div>
-              <label className="block text-sm font-semibold text-neutral-700 mb-2">
-                NISN <span className="text-red-500">*</span>
-              </label>
-              <input
-                type="text"
-                className="input"
-                placeholder="Masukkan NISN"
-                value={studentData.nisn}
-                onChange={(e) => setStudentData((prev) => ({ ...prev, nisn: e.target.value }))}
-                required
-              />
-            </div>
-
-            <div>
-              <label className="block text-sm font-semibold text-neutral-700 mb-2">
-                Kelas (Opsional)
-              </label>
-              <input
-                type="text"
-                className="input"
-                placeholder="Contoh: XII IPA 1"
-                value={studentData.class}
-                onChange={(e) => setStudentData((prev) => ({ ...prev, class: e.target.value }))}
-              />
-            </div>
-
-            <button type="submit" className="btn btn-primary w-full mt-6">
-              Mulai Ujian
+            <button 
+              type="submit" 
+              className="btn btn-primary w-full btn-lg gap-2"
+              disabled={isValidating || !nisnInput.trim()}
+            >
+              {isValidating ? (
+                <>
+                  <div className="animate-spin rounded-full h-5 w-5 border-2 border-white border-t-transparent"></div>
+                  Memvalidasi...
+                </>
+              ) : (
+                <>
+                  <HiCheckCircle className="w-5 h-5" />
+                  Validasi & Mulai Ujian
+                </>
+              )}
             </button>
           </form>
 
-          {/* Info */}
+          {/* Info Box */}
           <div className="mt-6 p-4 bg-amber-50 border border-amber-200 rounded-xl">
             <p className="text-sm text-amber-800">
-              <strong>Perhatian:</strong> Setelah memulai, waktu akan berjalan dan tidak dapat dihentikan.
+              <strong>⚠️ Perhatian:</strong> Pastikan NISN Anda sudah terdaftar di kelas. 
+              Hubungi guru jika mengalami kendala.
             </p>
           </div>
+
+          {/* Teacher Info (if available) */}
+          {examData?.teacher_name && (
+            <div className="mt-4 text-center text-sm text-neutral-500">
+              <span>Dibuat oleh: </span>
+              <span className="font-medium text-neutral-700">{examData.teacher_name}</span>
+            </div>
+          )}
         </div>
       </div>
     );
@@ -429,6 +550,7 @@ export default function StartExam() {
   const questions = examData?.questions || [];
   const currentQuestion = questions[currentIndex];
   const isTimeWarning = timeLeft < 300; // Less than 5 minutes
+  const isTimeCritical = timeLeft < 60; // Less than 1 minute
 
   return (
     <div className="min-h-screen bg-neutral-100 flex flex-col">
@@ -436,187 +558,329 @@ export default function StartExam() {
         <title>{examData?.title} - Ujian</title>
       </Head>
 
-      {/* Fixed Header */}
-      <header className="bg-white shadow-sm border-b border-neutral-200 sticky top-0 z-50">
-        <div className="max-w-6xl mx-auto px-4 py-3">
-          <div className="flex items-center justify-between">
-            {/* Left: Exam Info */}
-            <div className="flex items-center gap-4">
-              <div className="hidden md:flex items-center gap-2 text-neutral-600">
-                <HiUser className="w-5 h-5" />
-                <span className="font-medium">{studentData.name}</span>
-              </div>
-              <div className="text-sm text-neutral-500">
-                <span className="font-semibold text-neutral-900">{examData?.title}</span>
-              </div>
+      {/* Sticky Header with Timer */}
+      <header className="bg-white shadow-md border-b border-neutral-200 sticky top-0 z-50">
+        <div className="max-w-3xl mx-auto px-4 py-4">
+          {/* Top Row: Title and Timer */}
+          <div className="flex items-center justify-between mb-4">
+            {/* Left: Exam Title */}
+            <div>
+              <h1 className="font-bold text-lg text-neutral-900 line-clamp-1">
+                {examData?.title}
+              </h1>
+              <p className="text-sm text-neutral-500">
+                <HiUser className="w-4 h-4 inline mr-1" />
+                {studentData.name}
+              </p>
             </div>
 
-            {/* Right: Timer */}
+            {/* Right: Large Timer */}
             <div
-              className={`flex items-center gap-2 px-4 py-2 rounded-lg font-mono font-bold text-lg ${
-                isTimeWarning
-                  ? 'bg-red-100 text-red-600 animate-pulse'
-                  : 'bg-brand-50 text-brand-600'
+              className={`flex items-center gap-3 px-5 py-3 rounded-2xl font-mono transition-all ${
+                isTimeCritical
+                  ? 'bg-red-500 text-white animate-pulse shadow-lg shadow-red-200'
+                  : isTimeWarning
+                  ? 'bg-warning-100 text-warning-700 border-2 border-warning-300'
+                  : 'bg-brand-50 text-brand-700 border-2 border-brand-200'
               }`}
             >
-              <HiClock className="w-5 h-5" />
-              {formatTime(timeLeft)}
+              <HiClock className={`w-6 h-6 ${isTimeCritical ? 'animate-bounce' : ''}`} />
+              <span className="text-2xl font-bold tracking-wide">
+                {formatTime(timeLeft)}
+              </span>
             </div>
           </div>
 
           {/* Progress Bar */}
-          <div className="mt-3 flex items-center gap-4">
-            <div className="flex-1 bg-neutral-200 rounded-full h-2">
+          <div className="space-y-2">
+            <div className="flex items-center justify-between text-sm">
+              <span className="text-neutral-600">
+                Soal <span className="font-bold text-brand-600">{currentIndex + 1}</span> dari {questions.length}
+              </span>
+              <span className="text-neutral-600">
+                <span className="font-bold text-success-600">{getAnsweredCount()}</span> terjawab
+                {getFlaggedCount() > 0 && (
+                  <span className="ml-2 text-warning-600">
+                    • <HiFlag className="w-4 h-4 inline" /> {getFlaggedCount()} ditandai
+                  </span>
+                )}
+              </span>
+            </div>
+            <div className="relative bg-neutral-200 rounded-full h-3 overflow-hidden">
               <div
-                className="bg-brand-500 h-2 rounded-full transition-all duration-300"
+                className="absolute inset-y-0 left-0 bg-gradient-to-r from-brand-500 to-brand-600 rounded-full transition-all duration-500 ease-out"
                 style={{ width: `${(getAnsweredCount() / questions.length) * 100}%` }}
               />
+              {/* Current position indicator */}
+              <div 
+                className="absolute top-1/2 -translate-y-1/2 w-4 h-4 bg-white border-2 border-brand-600 rounded-full shadow-md transition-all duration-300"
+                style={{ left: `calc(${((currentIndex) / questions.length) * 100}% - 8px)` }}
+              />
             </div>
-            <span className="text-sm text-neutral-600 whitespace-nowrap">
-              {getAnsweredCount()}/{questions.length} terjawab
-            </span>
           </div>
         </div>
       </header>
 
-      {/* Main Content */}
-      <main className="flex-1 py-6 px-4">
-        <div className="max-w-4xl mx-auto">
+      {/* Main Content - Centered */}
+      <main className="flex-1 py-8 px-4">
+        <div className="max-w-3xl mx-auto">
           {/* Question Navigation Pills */}
-          <div className="mb-6 flex flex-wrap gap-2">
-            {questions.map((q, idx) => (
-              <button
-                key={q.id || idx}
-                onClick={() => setCurrentIndex(idx)}
-                className={`w-10 h-10 rounded-lg font-medium text-sm transition-all ${
-                  idx === currentIndex
-                    ? 'bg-brand-600 text-white shadow-md'
-                    : answers[q.id]
-                    ? 'bg-success-100 text-success-700 border border-success-300'
-                    : 'bg-white text-neutral-600 border border-neutral-200 hover:border-brand-300'
-                }`}
-              >
-                {idx + 1}
-              </button>
-            ))}
+          <div className="mb-6 p-4 bg-white rounded-2xl shadow-sm border border-neutral-200">
+            <p className="text-sm font-medium text-neutral-500 mb-3">Navigasi Soal:</p>
+            <div className="flex flex-wrap gap-2">
+              {questions.map((q, idx) => {
+                const isAnswered = answers[q.id] && answers[q.id].trim();
+                const isFlagged = flagged[q.id];
+                const isCurrent = idx === currentIndex;
+
+                return (
+                  <button
+                    key={q.id || idx}
+                    onClick={() => setCurrentIndex(idx)}
+                    className={`relative w-11 h-11 rounded-xl font-semibold text-sm transition-all duration-200 ${
+                      isCurrent
+                        ? 'bg-brand-600 text-white shadow-lg shadow-brand-200 scale-110'
+                        : isAnswered
+                        ? 'bg-success-100 text-success-700 border-2 border-success-300 hover:bg-success-200'
+                        : 'bg-white text-neutral-600 border-2 border-neutral-200 hover:border-brand-300 hover:bg-brand-50'
+                    }`}
+                  >
+                    {idx + 1}
+                    {isFlagged && (
+                      <span className="absolute -top-1 -right-1 w-4 h-4 bg-warning-400 rounded-full flex items-center justify-center">
+                        <HiFlag className="w-2.5 h-2.5 text-white" />
+                      </span>
+                    )}
+                  </button>
+                );
+              })}
+            </div>
           </div>
 
           {/* Question Card */}
           {currentQuestion && (
-            <div className="card p-6 md:p-8 animate-fade-in">
-              {/* Question Header */}
-              <div className="flex items-start justify-between mb-4">
-                <div>
-                  <span className="badge badge-primary mb-2">
-                    Soal {currentIndex + 1}
-                  </span>
-                  <span className="badge badge-neutral ml-2">
-                    {currentQuestion.type === 'multiple-choice' || currentQuestion.type === 'pg' || currentQuestion.type === 'Pilihan Ganda'
-                      ? 'Pilihan Ganda'
-                      : 'Essay'}
-                  </span>
+            <div className="card shadow-lg animate-fade-in">
+              {/* Card Header */}
+              <div className="px-6 py-4 md:px-8 md:py-5 border-b border-neutral-100 bg-neutral-50/50">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-3">
+                    <span className="inline-flex items-center justify-center w-10 h-10 bg-brand-100 text-brand-700 font-bold rounded-xl">
+                      {currentIndex + 1}
+                    </span>
+                    <div>
+                      <span className="badge badge-primary">
+                        {isMultipleChoice(currentQuestion) ? 'Pilihan Ganda' : 'Essay'}
+                      </span>
+                      {currentQuestion.topic && (
+                        <span className="badge badge-neutral ml-2">{currentQuestion.topic}</span>
+                      )}
+                    </div>
+                  </div>
+                  
+                  {/* Flag Button */}
+                  <button
+                    onClick={() => handleToggleFlag(currentQuestion.id)}
+                    className={`btn btn-sm transition-all ${
+                      flagged[currentQuestion.id]
+                        ? 'bg-warning-100 text-warning-700 border-warning-300 hover:bg-warning-200'
+                        : 'btn-ghost'
+                    }`}
+                    title={flagged[currentQuestion.id] ? 'Hapus tanda' : 'Tandai untuk review'}
+                  >
+                    <HiFlag className="w-4 h-4" />
+                    <span className="hidden sm:inline">
+                      {flagged[currentQuestion.id] ? 'Ditandai' : 'Ragu-ragu'}
+                    </span>
+                  </button>
                 </div>
               </div>
 
-              {/* Question Content */}
-              <div className="prose prose-neutral max-w-none mb-6">
+              {/* Card Body - Question Content */}
+              <div className="px-6 py-6 md:px-8 md:py-8">
+                {/* Question Title */}
                 {currentQuestion.title && (
-                  <h3 className="text-lg font-bold text-neutral-900 mb-2">
+                  <h2 className="text-xl font-bold text-neutral-900 mb-4">
                     {currentQuestion.title}
-                  </h3>
+                  </h2>
                 )}
-                <div className="text-neutral-700">
-                  <Preview>{currentQuestion.question}</Preview>
-                </div>
-              </div>
 
-              {/* Answer Input */}
-              <div className="mt-6">
-                {currentQuestion.type === 'multiple-choice' ||
-                currentQuestion.type === 'pg' ||
-                currentQuestion.type === 'Pilihan Ganda' ? (
-                  <div className="space-y-3">
-                    {(currentQuestion.options || []).map((option, idx) => {
-                      const optionLabel = String.fromCharCode(65 + idx); // A, B, C, D...
-                      const isSelected = answers[currentQuestion.id] === option;
+                {/* Question Text - Using Preview for LaTeX/Markdown */}
+                <div className="prose prose-lg max-w-none text-neutral-800 mb-8">
+                  <Preview className="min-h-[60px]">
+                    {currentQuestion.question || currentQuestion.description || 'Tidak ada pertanyaan.'}
+                  </Preview>
+                </div>
+
+                {/* Answer Options */}
+                <div className="space-y-3">
+                  {isMultipleChoice(currentQuestion) ? (
+                    // Multiple Choice - Card Style Options
+                    (currentQuestion.options || []).map((option, idx) => {
+                      const optionLabel = typeof option === 'object' ? option.label : String.fromCharCode(65 + idx);
+                      const optionText = typeof option === 'object' ? option.text : option;
+                      const optionValue = optionLabel;
+                      const isSelected = answers[currentQuestion.id] === optionValue;
 
                       return (
                         <label
                           key={idx}
-                          className={`flex items-center p-4 rounded-xl border-2 cursor-pointer transition-all ${
+                          className={`group flex items-start p-4 md:p-5 rounded-2xl border-2 cursor-pointer transition-all duration-200 ${
                             isSelected
-                              ? 'border-brand-500 bg-brand-50'
-                              : 'border-neutral-200 hover:border-brand-200 hover:bg-neutral-50'
+                              ? 'border-brand-500 bg-brand-50 shadow-md shadow-brand-100'
+                              : 'border-neutral-200 hover:border-brand-300 hover:bg-brand-50/50 hover:shadow-sm'
                           }`}
                         >
+                          {/* Custom Radio */}
+                          <div className={`flex-shrink-0 w-8 h-8 rounded-full border-2 flex items-center justify-center mr-4 transition-all ${
+                            isSelected
+                              ? 'border-brand-500 bg-brand-500'
+                              : 'border-neutral-300 group-hover:border-brand-400'
+                          }`}>
+                            {isSelected ? (
+                              <HiCheckCircle className="w-5 h-5 text-white" />
+                            ) : (
+                              <span className="text-sm font-bold text-neutral-400 group-hover:text-brand-500">
+                                {optionLabel}
+                              </span>
+                            )}
+                          </div>
                           <input
                             type="radio"
                             name={`q-${currentQuestion.id}`}
-                            value={option}
+                            value={optionValue}
                             checked={isSelected}
-                            onChange={() => handleAnswerChange(currentQuestion.id, option)}
-                            className="w-5 h-5 text-brand-600 border-neutral-300 focus:ring-brand-500"
+                            onChange={() => handleAnswerChange(currentQuestion.id, optionValue)}
+                            className="sr-only"
                           />
-                          <span className="ml-3 font-medium text-neutral-700">
-                            {optionLabel}. {option}
+                          <span className={`flex-1 text-base md:text-lg transition-colors ${
+                            isSelected ? 'text-brand-800 font-medium' : 'text-neutral-700'
+                          }`}>
+                            <Preview className="inline">{optionText}</Preview>
                           </span>
                         </label>
                       );
-                    })}
-                  </div>
-                ) : (
-                  <textarea
-                    rows={8}
-                    className="input resize-none"
-                    placeholder="Tulis jawaban Anda di sini..."
-                    value={answers[currentQuestion.id] || ''}
-                    onChange={(e) => handleAnswerChange(currentQuestion.id, e.target.value)}
-                  />
-                )}
+                    })
+                  ) : (
+                    // Essay - Text Area
+                    <div>
+                      <label className="block text-sm font-semibold text-neutral-600 mb-2">
+                        Jawaban Anda:
+                      </label>
+                      <textarea
+                        rows={10}
+                        className="input resize-none text-base"
+                        placeholder="Tulis jawaban Anda di sini dengan lengkap..."
+                        value={answers[currentQuestion.id] || ''}
+                        onChange={(e) => handleAnswerChange(currentQuestion.id, e.target.value)}
+                      />
+                      <p className="text-sm text-neutral-400 mt-2">
+                        {(answers[currentQuestion.id] || '').length} karakter
+                      </p>
+                    </div>
+                  )}
+                </div>
               </div>
 
-              {/* Navigation Buttons */}
-              <div className="mt-8 flex items-center justify-between border-t border-neutral-200 pt-6">
-                <button
-                  onClick={() => setCurrentIndex((prev) => Math.max(0, prev - 1))}
-                  disabled={currentIndex === 0}
-                  className="btn btn-ghost disabled:opacity-50"
-                >
-                  ← Sebelumnya
-                </button>
+              {/* Card Footer - Navigation */}
+              <div className="px-6 py-5 md:px-8 md:py-6 border-t border-neutral-200 bg-neutral-50/50">
+                <div className="flex items-center justify-between gap-4">
+                  {/* Previous Button */}
+                  <button
+                    onClick={() => setCurrentIndex((prev) => Math.max(0, prev - 1))}
+                    disabled={currentIndex === 0}
+                    className="btn btn-secondary btn-lg gap-2 disabled:opacity-40 disabled:cursor-not-allowed"
+                  >
+                    <HiChevronLeft className="w-5 h-5" />
+                    <span className="hidden sm:inline">Sebelumnya</span>
+                  </button>
 
-                {currentIndex < questions.length - 1 ? (
-                  <button
-                    onClick={() => setCurrentIndex((prev) => prev + 1)}
-                    className="btn btn-primary"
-                  >
-                    Selanjutnya →
-                  </button>
-                ) : (
-                  <button
-                    onClick={handleManualSubmit}
-                    disabled={submitting}
-                    className="btn btn-primary bg-success-600 hover:bg-success-700"
-                  >
-                    {submitting ? 'Mengirim...' : 'Kumpulkan Ujian'}
-                  </button>
-                )}
+                  {/* Question Counter (Mobile) */}
+                  <div className="sm:hidden text-sm font-medium text-neutral-500">
+                    {currentIndex + 1} / {questions.length}
+                  </div>
+
+                  {/* Next / Submit Button */}
+                  {currentIndex < questions.length - 1 ? (
+                    <button
+                      onClick={() => setCurrentIndex((prev) => prev + 1)}
+                      className="btn btn-primary btn-lg gap-2"
+                    >
+                      <span className="hidden sm:inline">Selanjutnya</span>
+                      <HiChevronRight className="w-5 h-5" />
+                    </button>
+                  ) : (
+                    <button
+                      onClick={handleManualSubmit}
+                      disabled={submitting}
+                      className="btn btn-lg gap-2 bg-success-600 hover:bg-success-700 text-white shadow-lg shadow-success-200"
+                    >
+                      <HiPaperAirplane className="w-5 h-5" />
+                      <span>{submitting ? 'Mengirim...' : 'Kumpulkan'}</span>
+                    </button>
+                  )}
+                </div>
               </div>
             </div>
           )}
+
+          {/* Submit Summary Card */}
+          <div className="mt-6 card p-5 bg-neutral-50 border-neutral-200">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="font-semibold text-neutral-700">
+                  Siap mengumpulkan?
+                </p>
+                <p className="text-sm text-neutral-500">
+                  {getAnsweredCount()} dari {questions.length} soal terjawab
+                  {getFlaggedCount() > 0 && ` • ${getFlaggedCount()} ditandai ragu-ragu`}
+                </p>
+              </div>
+              <button
+                onClick={handleManualSubmit}
+                disabled={submitting}
+                className="btn btn-primary gap-2"
+              >
+                <HiPaperAirplane className="w-4 h-4" />
+                Kumpulkan
+              </button>
+            </div>
+          </div>
         </div>
       </main>
 
       {/* Fixed Bottom Bar (Mobile) */}
-      <div className="md:hidden fixed bottom-0 left-0 right-0 bg-white border-t border-neutral-200 p-4 z-40">
-        <button
-          onClick={handleManualSubmit}
-          disabled={submitting}
-          className="btn btn-primary w-full"
-        >
-          {submitting ? 'Mengirim...' : `Kumpulkan (${getAnsweredCount()}/${questions.length})`}
-        </button>
+      <div className="md:hidden fixed bottom-0 left-0 right-0 bg-white border-t border-neutral-200 p-3 z-40 shadow-lg">
+        <div className="flex items-center gap-3">
+          <button
+            onClick={() => setCurrentIndex((prev) => Math.max(0, prev - 1))}
+            disabled={currentIndex === 0}
+            className="btn btn-secondary flex-1 disabled:opacity-40"
+          >
+            <HiChevronLeft className="w-5 h-5" />
+          </button>
+          
+          <button
+            onClick={handleManualSubmit}
+            disabled={submitting}
+            className="btn btn-primary flex-[2] gap-2"
+          >
+            <HiPaperAirplane className="w-4 h-4" />
+            {submitting ? 'Mengirim...' : `Kumpulkan (${getAnsweredCount()}/${questions.length})`}
+          </button>
+          
+          {currentIndex < questions.length - 1 && (
+            <button
+              onClick={() => setCurrentIndex((prev) => prev + 1)}
+              className="btn btn-secondary flex-1"
+            >
+              <HiChevronRight className="w-5 h-5" />
+            </button>
+          )}
+        </div>
       </div>
+      
+      {/* Bottom padding for mobile fixed bar */}
+      <div className="md:hidden h-20"></div>
     </div>
   );
 }

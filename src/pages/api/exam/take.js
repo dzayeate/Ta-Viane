@@ -1,5 +1,7 @@
 import fs from 'fs';
 import path from 'path';
+import { normalizeQuestion } from '@/utils/questionAdapter';
+import { extractAnswerKey, isAutoGradable } from '@/utils/gradingHelper';
 
 // File paths
 const examsFilePath = path.join(process.cwd(), 'src', 'mock', 'exams', 'index.json');
@@ -20,33 +22,55 @@ function ensureFileExists(dirPath, filePath, defaultContent = '[]') {
 
 /**
  * Sanitize questions to remove answers (prevent cheating)
+ * Also normalizes legacy MC questions to include structured options array
+ * 
+ * SECURITY: Strips ALL answer-related fields to prevent students from
+ * seeing them via browser DevTools/Network tab
  */
 function sanitizeQuestions(questions) {
   if (!Array.isArray(questions)) return [];
   
   return questions.map((q, index) => {
-    // Create a copy without sensitive fields
+    // Step 1: Normalize the question to extract options from description if needed
+    const normalized = normalizeQuestion(q) || q;
+    
+    // Step 2: Determine the question type (handle various formats)
+    const rawType = (normalized.type || q.type || 'essay').toLowerCase();
+    const isMultipleChoice = rawType === 'multiplechoice' || 
+                             rawType === 'multiple-choice' || 
+                             rawType === 'pg' || 
+                             rawType === 'pilihan ganda' ||
+                             (normalized.options && normalized.options.length > 0);
+    
+    // Step 3: Create sanitized question object
     const sanitized = {
       id: q.id || `q-${index}`,
       questionNumber: index + 1,
-      type: q.type || 'essay',
-      // Use 'question' field if available, otherwise fall back to other content fields
-      question: q.question || q.description || q.content || q.prompt || '',
+      type: isMultipleChoice ? 'multipleChoice' : 'essay',
+      // Prefer 'content' from normalization, fallback to other fields
+      question: normalized.content || normalized.question || q.question || q.description || q.prompt || '',
       title: q.title || '',
       topic: q.topic || '',
       difficulty: q.difficulty || '',
     };
 
-    // Include options for multiple choice questions
-    if (q.type === 'multiple-choice' || q.type === 'pg' || q.type === 'Pilihan Ganda') {
-      sanitized.options = q.options || [];
+    // Step 4: Include options for multiple choice questions
+    if (isMultipleChoice) {
+      // Use normalized options (structured array) or fallback to original
+      sanitized.options = normalized.options || q.options || [];
     }
 
-    // CRITICAL: Do NOT include these fields
-    // - correctAnswer
-    // - answer
-    // - solution
-    // - explanation (if it reveals the answer)
+    // =========================================================
+    // CRITICAL SECURITY: Do NOT include any of these fields!
+    // =========================================================
+    // - correctAnswer (the clean answer key, e.g., "B")
+    // - answer (legacy field, may contain explanation + key)
+    // - explanation (step-by-step solution)
+    // - solution (alternative name for explanation)
+    // - finalAnswer (alternative name for correctAnswer)
+    // 
+    // Students could see these in Network tab if included!
+    // =========================================================
     
     return sanitized;
   });
@@ -54,6 +78,10 @@ function sanitizeQuestions(questions) {
 
 /**
  * Calculate score by comparing student answers with correct answers
+ * 
+ * Grading Priority:
+ * 1. Use `question.correctAnswer` if available (new clean format)
+ * 2. Fall back to `extractAnswerKey(question.answer)` (legacy format)
  */
 function calculateScore(studentAnswers, originalQuestions) {
   if (!Array.isArray(studentAnswers) || !Array.isArray(originalQuestions)) {
@@ -67,28 +95,70 @@ function calculateScore(studentAnswers, originalQuestions) {
   originalQuestions.forEach((question, index) => {
     const studentAnswer = studentAnswers.find(a => a.questionId === question.id || a.questionIndex === index);
     const studentAnswerText = studentAnswer?.answer || '';
-    const correctAnswer = question.correctAnswer || question.answer || '';
 
-    // For multiple choice: exact match (case insensitive)
+    // For multiple choice: extract answer key and compare
     // For essay: we can't auto-grade, so mark as "pending review"
     let isCorrect = false;
     let needsReview = false;
+    let correctKey = null;
 
-    if (question.type === 'multiple-choice' || question.type === 'pg' || question.type === 'Pilihan Ganda') {
-      // Case-insensitive comparison for multiple choice
-      isCorrect = studentAnswerText.toLowerCase().trim() === correctAnswer.toLowerCase().trim();
+    if (isAutoGradable(question.type)) {
+      // ==============================================
+      // GRADING PRIORITY for answer key extraction
+      // ==============================================
+      // Priority 1: Use `correctAnswer` field (new clean format)
+      //             This is a simple key like "B" or "C"
+      // Priority 2: Extract from `answer` field (legacy format)
+      //             May contain verbose text like "Jawaban benar: C"
+      // ==============================================
+      
+      if (question.correctAnswer && question.correctAnswer.trim()) {
+        // New format: correctAnswer is clean (e.g., "B", "C", "10 m/s")
+        correctKey = question.correctAnswer.trim().toUpperCase();
+        
+        // If it's a single letter, use as-is
+        // If it's longer (e.g., numeric answer), keep for comparison
+        if (correctKey.length === 1 && /[A-E]/.test(correctKey)) {
+          // It's a letter answer - ready for comparison
+        } else {
+          // It might be a numeric or text answer, normalize it
+          correctKey = question.correctAnswer.trim();
+        }
+      } else if (question.answer) {
+        // Legacy format: extract key from verbose answer
+        correctKey = extractAnswerKey(question.answer);
+      }
+
+      // Normalize student answer for comparison
+      const studentKey = extractAnswerKey(studentAnswerText) || studentAnswerText.trim().toUpperCase();
+      
+      if (correctKey) {
+        // Compare normalized keys (case-insensitive for letters)
+        const normalizedCorrect = correctKey.toUpperCase();
+        const normalizedStudent = studentKey.toUpperCase();
+        isCorrect = normalizedStudent === normalizedCorrect;
+      } else {
+        // No key found - do direct comparison as fallback
+        const legacyAnswer = question.answer || '';
+        isCorrect = studentAnswerText.toLowerCase().trim() === legacyAnswer.toLowerCase().trim();
+      }
+      
       if (isCorrect) correctCount++;
     } else {
       // Essay questions need manual review
       needsReview = true;
     }
 
+    // Store the correct answer for results (prefer clean format)
+    const correctAnswerForResults = question.correctAnswer || question.answer || '';
+
     results.push({
       questionId: question.id,
       questionNumber: index + 1,
       type: question.type,
       studentAnswer: studentAnswerText,
-      correctAnswer: correctAnswer,
+      correctAnswer: correctAnswerForResults,
+      correctKey: correctKey, // The extracted/normalized key used for grading
       isCorrect: isCorrect,
       needsReview: needsReview,
     });
@@ -96,7 +166,7 @@ function calculateScore(studentAnswers, originalQuestions) {
 
   // Calculate percentage score (only for auto-gradable questions)
   const autoGradableQuestions = originalQuestions.filter(q => 
-    q.type === 'multiple-choice' || q.type === 'pg' || q.type === 'Pilihan Ganda'
+    isAutoGradable(q.type)
   ).length;
 
   const score = autoGradableQuestions > 0 
