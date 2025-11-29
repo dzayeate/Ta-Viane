@@ -95,17 +95,26 @@ export const useHomeLogic = () => {
           const config = JSON.parse(manualConfigStr);
           sessionStorage.removeItem('manual_create_config');
           
+          // Map type value - ensure consistency (handle both camelCase and lowercase)
+          const mappedType = config.type === 'multipleChoice' || config.type === 'multiplechoice' 
+            ? 'multipleChoice' 
+            : config.type || 'essay';
+          
+          // Map difficulty value - keep as-is (c1, c2, etc.)
+          const mappedDifficulty = config.difficulty || 'c1';
+          
           // Add new blank question with config
           setQuestions(prev => [...prev, {
             prompt: "",
-            difficulty: config.difficulty,
-            type: config.type,
+            difficulty: mappedDifficulty,
+            type: mappedType,
             title: "",
             description: "",
             answer: "",
-            topic: config.topic,
-            grade: config.grade,
-            isLoading: false
+            topic: config.topic || "",
+            grade: config.grade || "",
+            isLoading: false,
+            isManualCreate: true // Flag to prevent language effect from overwriting
           }]);
           setIsGenerating(prev => [...prev, false]);
           
@@ -116,33 +125,10 @@ export const useHomeLogic = () => {
     }
   }, [ready, isLoggedIn]);
 
-  // Handle language changes
-  useEffect(() => {
-    if (ready && questions.length > 0) {
-      setQuestions(prevQuestions => prevQuestions.map(q => ({
-        ...q,
-        difficulty: "c1",
-        type: "essay"
-      })));
-    }
-  }, [ready, t, i18n.language]); // Re-run when language changes
-
-  // Listen for custom language change events
-  useEffect(() => {
-    const handleLanguageChange = (event) => {
-      const { language } = event.detail;
-      if (language && ready) {
-        setQuestions(prevQuestions => prevQuestions.map(q => ({
-          ...q,
-          difficulty: "c1",
-          type: "essay"
-        })));
-      }
-    };
-
-    window.addEventListener('languageChanged', handleLanguageChange);
-    return () => window.removeEventListener('languageChanged', handleLanguageChange);
-  }, [ready, t]);
+  // Handle language changes - only reset questions that don't have explicit config
+  // NOTE: We should NOT reset type/difficulty on language change as that loses user selection
+  // Removing this effect as it causes bugs with manual question creation
+  // If translations are needed for display, they should be handled in the UI layer, not by mutating state
 
   // Listen for streaming events
   useEffect(() => {

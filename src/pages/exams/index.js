@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { useTranslation } from 'next-i18next';
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
 import Sidebar from '@/components/sidebar';
+import AuthGuard from '@/components/auth-guard';
 import { useRouter } from 'next/router';
 import { 
   HiPlus, 
@@ -24,27 +25,20 @@ export default function ExamDashboard() {
   const router = useRouter();
   const [exams, setExams] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [user, setUser] = useState({ nama: '', nuptk: '' });
 
   useEffect(() => {
-    // Check login
+    // Get user details from localStorage
     const nupkt = localStorage.getItem('nupkt');
     const password = localStorage.getItem('password');
 
-    if (!nupkt) {
-      router.push('/');
-      return;
-    }
-
-    // Get user details
-    const foundUser = users.find(u => u.NUPTK === nupkt && u.Password === password);
-    if (foundUser) {
-      setUser({ nama: foundUser.Nama, nuptk: foundUser.NUPTK });
-      setIsLoggedIn(true);
-    } else {
-      setUser({ nama: 'User', nuptk: nupkt });
-      setIsLoggedIn(true);
+    if (nupkt) {
+      const foundUser = users.find(u => u.NUPTK === nupkt && u.Password === password);
+      if (foundUser) {
+        setUser({ nama: foundUser.Nama, nuptk: foundUser.NUPTK });
+      } else {
+        setUser({ nama: 'User', nuptk: nupkt });
+      }
     }
 
     // Fetch exams
@@ -160,9 +154,8 @@ export default function ExamDashboard() {
       }
   };
 
-  if (!isLoggedIn) return null;
-
   return (
+    <AuthGuard>
     <div className="min-h-screen bg-neutral-50 flex">
       <Sidebar
         t={t}
@@ -383,6 +376,7 @@ export default function ExamDashboard() {
         </div>
       </main>
     </div>
+    </AuthGuard>
   );
 }
 

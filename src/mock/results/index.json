@@ -663,5 +663,63 @@
     "submittedAt": "2025-11-29T10:18:32.707Z",
     "status": "graded",
     "gradedAt": "2025-11-29T10:21:16.181Z"
+  },
+  {
+    "id": "result-1764415319754",
+    "examId": "1764415247243",
+    "examTitle": "Kuis Harian 01",
+    "studentIdentity": {
+      "name": "Dagus",
+      "nisn": "02",
+      "class": "X IPA 2"
+    },
+    "answers": [
+      {
+        "questionId": "1764415188643ydsi1c2a4",
+        "answer": "Wow",
+        "points": 100,
+        "isCorrect": true,
+        "isGraded": true
+      },
+      {
+        "questionId": "1764415188642mh9i9d2sd",
+        "answer": "D",
+        "points": 100
+      }
+    ],
+    "score": 200,
+    "correctCount": 2,
+    "totalQuestions": 2,
+    "autoGradableQuestions": 1,
+    "needsManualReview": false,
+    "details": [
+      {
+        "questionId": "1764415188643ydsi1c2a4",
+        "questionNumber": 1,
+        "type": "essay",
+        "studentAnswer": "Wow",
+        "correctAnswer": "Langkah-langkah solusi:\n1.  **Memahami Konsep Impuls**: Impuls ($J$) didefinisikan sebagai perubahan momentum suatu benda. Impuls juga merupakan hasil kali gaya rata-rata yang bekerja pada benda dengan selang waktu gaya tersebut bekerja. Secara matematis, teorema impuls-momentum menyatakan bahwa impuls yang bekerja pada suatu benda sama dengan perubahan momentum benda tersebut.\n    $$J = \\Delta p = p_{akhir} - p_{awal}$$\n    atau\n    $$J = F_{rata-rata} \\times \\Delta t$$\n    di mana $p = m \\times v$ adalah momentum.\n\n2.  **Mengidentifikasi Besaran yang Diketahui**:\n    *   Massa angkot ($m$) = $1200\\ \\text{kg}$\n    *   Kecepatan awal angkot ($v_{awal}$) = $15\\ \\text{m/s}$\n    *   Kecepatan akhir angkot ($v_{akhir}$) = $0\\ \\text{m/s}$ (karena berhenti)\n    *   Selang waktu pengereman ($\\Delta t$) = $3\\ \\text{s}$\n\n3.  **Menghitung Momentum Awal**:\n    Momentum awal angkot ($p_{awal}$) dihitung menggunakan rumus $p = m \\times v_{awal}$.\n    $$p_{awal} = 1200\\ \\text{kg} \\times 15\\ \\text{m/s} = 18000\\ \\text{kg m/s}$$\n\n4.  **Menghitung Momentum Akhir**:\n    Momentum akhir angkot ($p_{akhir}$) dihitung menggunakan rumus $p = m \\times v_{akhir}$.\n    $$p_{akhir} = 1200\\ \\text{kg} \\times 0\\ \\text{m/s} = 0\\ \\text{kg m/s}$$\n\n5.  **Menghitung Impuls**:\n    Impuls ($J$) dihitung sebagai perubahan momentum:\n    $$J = p_{akhir} - p_{awal}$$\n    $$J = 0\\ \\text{kg m/s} - 18000\\ \\text{kg m/s}$$\n    $$J = -18000\\ \\text{kg m/s}$$\n\n6.  **Analisis Arah Impuls**:\n    Nilai negatif pada impuls menunjukkan bahwa arah impuls berlawanan dengan arah gerak awal angkot. Jika kita mengasumsikan arah gerak awal angkot adalah positif (misalnya ke depan), maka impuls yang bekerja pada angkot memiliki arah negatif (yaitu ke belakang, atau berlawanan dengan arah gerak). Impuls negatif ini disebabkan oleh gaya pengereman (gaya gesek antara ban dan jalan, serta gaya internal rem) yang bekerja untuk mengurangi kecepatan angkot hingga berhenti. Gaya pengereman ini bekerja berlawanan arah dengan vektor kecepatan awal angkot.\n\n**Kesimpulan**:\nBesar impuls yang bekerja pada angkot selama pengereman adalah $18000\\ \\text{kg m/s}$. Arah impuls tersebut berlawanan dengan arah gerak awal angkot, yang mengindikasikan bahwa gaya pengereman bekerja untuk menghentikan angkot.",
+        "correctKey": null,
+        "isCorrect": true,
+        "needsReview": false,
+        "points": 100,
+        "isGraded": true
+      },
+      {
+        "questionId": "1764415188642mh9i9d2sd",
+        "questionNumber": 2,
+        "type": "multipleChoice",
+        "studentAnswer": "D",
+        "correctAnswer": "D",
+        "correctKey": "D",
+        "isCorrect": true,
+        "needsReview": false,
+        "points": 100
+      }
+    ],
+    "timeSpent": 23,
+    "submittedAt": "2025-11-29T11:21:59.754Z",
+    "status": "graded",
+    "gradedAt": "2025-11-29T11:22:25.427Z"
   }
 ]

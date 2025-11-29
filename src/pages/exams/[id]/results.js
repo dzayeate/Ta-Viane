@@ -134,10 +134,17 @@ export default function ExamResults() {
         const data = await res.json();
         setSelectedSubmission(data.result);
         
-        // Initialize graded scores from existing points
+        // Initialize graded scores - ONLY for Essay questions
+        // MCQ scores are auto-graded and should not be modified
         const initialScores = {};
-        (data.result.answers || []).forEach((ans, idx) => {
-          initialScores[idx] = ans.points || 0;
+        (data.result.details || data.result.answers || []).forEach((item, idx) => {
+          const questionType = item.type || 'Essay';
+          const isEssay = questionType.toLowerCase() === 'essay' || questionType.toLowerCase() === 'uraian';
+          
+          // Only include Essay questions in gradedScores
+          if (isEssay) {
+            initialScores[idx] = item.points || 0;
+          }
         });
         setGradedScores(initialScores);
         setIsModalOpen(true);
@@ -523,7 +530,23 @@ export default function ExamResults() {
             <div className="px-6 py-4 border-t border-neutral-200 bg-neutral-50 rounded-b-2xl flex items-center justify-between">
               <div className="text-sm text-neutral-500">
                 Total Nilai Baru: <span className="font-bold text-lg text-brand-600">
-                  {Object.values(gradedScores).reduce((sum, s) => sum + (s || 0), 0)}
+                  {(() => {
+                    // Calculate total: MCQ points (from existing data) + Essay points (from gradedScores)
+                    let total = 0;
+                    (selectedSubmission?.details || selectedSubmission?.answers || []).forEach((item, idx) => {
+                      const questionType = item.type || 'Essay';
+                      const isEssay = questionType.toLowerCase() === 'essay' || questionType.toLowerCase() === 'uraian';
+                      
+                      if (isEssay) {
+                        // Use graded score for Essay
+                        total += gradedScores[idx] || 0;
+                      } else {
+                        // Use existing points for MCQ (auto-graded)
+                        total += item.points ?? (item.isCorrect ? 100 : 0);
+                      }
+                    });
+                    return total;
+                  })()}
                 </span>
               </div>
               <div className="flex gap-3">

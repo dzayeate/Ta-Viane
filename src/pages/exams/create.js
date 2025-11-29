@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { useTranslation } from 'next-i18next';
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
 import Sidebar from '@/components/sidebar';
+import AuthGuard from '@/components/auth-guard';
 import { useRouter } from 'next/router';
 import { HiArrowLeft, HiCheckCircle, HiUserGroup, HiExclamationTriangle } from 'react-icons/hi2';
 import users from '@/mock/users/index.json';
@@ -14,7 +15,6 @@ export default function CreateExam() {
   const router = useRouter();
   const [step, setStep] = useState(1);
   const [isLoading, setIsLoading] = useState(false);
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [user, setUser] = useState({ nama: '', nuptk: '' });
   
   // Classes State
@@ -34,23 +34,17 @@ export default function CreateExam() {
   const [selectedQuestionIds, setSelectedQuestionIds] = useState([]);
 
   useEffect(() => {
-    // Check login
+    // Get user details from localStorage
     const nupkt = localStorage.getItem('nupkt');
     const password = localStorage.getItem('password');
 
-    if (!nupkt) {
-      router.push('/');
-      return;
-    }
-
-    // Get user details
-    const foundUser = users.find(u => u.NUPTK === nupkt && u.Password === password);
-    if (foundUser) {
-      setUser({ nama: foundUser.Nama, nuptk: foundUser.NUPTK });
-      setIsLoggedIn(true);
-    } else {
-      setUser({ nama: 'User', nuptk: nupkt });
-      setIsLoggedIn(true);
+    if (nupkt) {
+      const foundUser = users.find(u => u.NUPTK === nupkt && u.Password === password);
+      if (foundUser) {
+        setUser({ nama: foundUser.Nama, nuptk: foundUser.NUPTK });
+      } else {
+        setUser({ nama: 'User', nuptk: nupkt });
+      }
     }
 
     // Fetch data
@@ -183,9 +177,8 @@ export default function CreateExam() {
     }
   };
 
-  if (!isLoggedIn) return null;
-
   return (
+    <AuthGuard>
     <div className="min-h-screen bg-neutral-50 flex">
       <Sidebar
         t={t}
@@ -464,6 +457,7 @@ export default function CreateExam() {
         </div>
       </main>
     </div>
+    </AuthGuard>
   );
 }
 

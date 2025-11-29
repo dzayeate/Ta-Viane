@@ -4,6 +4,8 @@ import path from 'path';
 // File paths
 const resultsDir = path.join(process.cwd(), 'src', 'mock', 'results');
 const resultsFilePath = path.join(resultsDir, 'index.json');
+const examsDir = path.join(process.cwd(), 'src', 'mock', 'exams');
+const examsFilePath = path.join(examsDir, 'index.json');
 
 /**
  * Read JSON file safely
@@ -30,6 +32,15 @@ function writeJsonFile(filePath, data) {
     fs.mkdirSync(dir, { recursive: true });
   }
   fs.writeFileSync(filePath, JSON.stringify(data, null, 2), 'utf8');
+}
+
+/**
+ * Check if question type is Essay
+ */
+function isEssayType(type) {
+  if (!type) return true; // Default to Essay if no type
+  const t = type.toLowerCase();
+  return t === 'essay' || t === 'uraian';
 }
 
 export default function handler(req, res) {
@@ -87,47 +98,102 @@ export default function handler(req, res) {
 
       const result = results[resultIndex];
 
-      // Update scores for specific questions based on gradedAnswers
-      // gradedAnswers format: { "0": 10, "2": 15 } where key is question index
+      // Read exam data to get question types for accurate scoring
+      const exams = readJsonFile(examsFilePath, []);
+      const exam = exams.find(e => e.id === examId);
+      
+      // Create a map of questionId to question data
+      const questionMap = {};
+      if (exam?.questions) {
+        exam.questions.forEach(q => {
+          questionMap[q.id] = q;
+        });
+      }
+
+      // IMPORTANT: Preserve existing answers, only update graded ones
+      // Copy existing arrays to preserve all data
       const updatedAnswers = [...(result.answers || [])];
       const updatedDetails = [...(result.details || [])];
 
+      // Only update the specific questions that are being graded
       Object.entries(gradedAnswers).forEach(([indexStr, score]) => {
         const index = parseInt(indexStr, 10);
         const scoreValue = parseFloat(score) || 0;
 
-        // Update in answers array
-        if (updatedAnswers[index]) {
-          updatedAnswers[index] = {
-            ...updatedAnswers[index],
-            points: scoreValue,
-            isCorrect: scoreValue > 0,
-            isGraded: true
-          };
-        }
+        // Get question type from details or exam data
+        const detail = updatedDetails[index];
+        const answer = updatedAnswers[index];
+        const questionId = detail?.questionId || answer?.questionId;
+        const questionData = questionMap[questionId];
+        const questionType = detail?.type || questionData?.type || 'Essay';
 
-        // Update in details array if exists
-        if (updatedDetails[index]) {
-          updatedDetails[index] = {
-            ...updatedDetails[index],
-            points: scoreValue,
-            isCorrect: scoreValue > 0,
-            needsReview: false,
-            isGraded: true
-          };
+        // Only update if it's an Essay type (manual grading)
+        // Skip MCQ - they should keep their auto-graded scores
+        if (isEssayType(questionType)) {
+          // Update in answers array
+          if (updatedAnswers[index]) {
+            updatedAnswers[index] = {
+              ...updatedAnswers[index],
+              points: scoreValue,
+              isCorrect: scoreValue > 0,
+              isGraded: true
+            };
+          }
+
+          // Update in details array if exists
+          if (updatedDetails[index]) {
+            updatedDetails[index] = {
+              ...updatedDetails[index],
+              points: scoreValue,
+              isCorrect: scoreValue > 0,
+              needsReview: false,
+              isGraded: true
+            };
+          }
+        }
+        // For MCQ: Keep existing points (don't overwrite auto-graded score)
+      });
+
+      // Recalculate total score from ALL answers (both MCQ and Essay)
+      // First, make sure MCQ answers have their points set correctly
+      updatedDetails.forEach((detail, idx) => {
+        if (detail && !isEssayType(detail.type)) {
+          // MCQ: Ensure points are set based on correctness
+          const isCorrect = detail.isCorrect;
+          const existingPoints = detail.points;
+          
+          // If MCQ has no points set, calculate from correctness
+          if (existingPoints === undefined || existingPoints === null) {
+            // Default MCQ scoring: 100 per correct answer (or use exam weight if available)
+            const mcqPoints = isCorrect ? 100 : 0;
+            updatedDetails[idx] = {
+              ...detail,
+              points: mcqPoints
+            };
+            if (updatedAnswers[idx]) {
+              updatedAnswers[idx] = {
+                ...updatedAnswers[idx],
+                points: mcqPoints
+              };
+            }
+          }
         }
       });
 
-      // Recalculate total score
-      const totalScore = updatedAnswers.reduce((sum, ans) => {
-        return sum + (ans.points || 0);
+      // Calculate total score from all answers
+      const totalScore = updatedDetails.reduce((sum, detail, idx) => {
+        // Prefer detail.points, fallback to answer.points
+        const points = detail?.points ?? updatedAnswers[idx]?.points ?? 0;
+        return sum + points;
       }, 0);
 
       // Count correct answers
-      const correctCount = updatedAnswers.filter(ans => ans.isCorrect).length;
+      const correctCount = updatedDetails.filter(d => d?.isCorrect).length;
 
-      // Check if all questions needing review have been graded
-      const needsManualReview = updatedDetails.some(d => d.needsReview === true);
+      // Check if all Essay questions have been graded
+      const needsManualReview = updatedDetails.some(d => 
+        isEssayType(d?.type) && d?.needsReview === true
+      );
 
       // Update the result object
       results[resultIndex] = {

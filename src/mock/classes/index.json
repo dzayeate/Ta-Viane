@@ -45,9 +45,35 @@
         "nisn": "123",
         "email": "",
         "joinedAt": "2025-11-29T10:17:18.241Z"
+      },
+      {
+        "id": "student-1764414928753",
+        "name": "Asep",
+        "nisn": "01",
+        "email": "",
+        "joinedAt": "2025-11-29T11:15:28.753Z"
       }
     ],
     "createdAt": "2025-11-28T12:08:16.737Z",
-    "updatedAt": "2025-11-29T10:17:18.241Z"
+    "updatedAt": "2025-11-29T11:15:28.753Z"
+  },
+  {
+    "id": "1764415063512",
+    "name": "X IPA 2",
+    "grade": "X",
+    "school": "SMAN 1 Margahayu",
+    "teacher_nuptk": "vianepindhi@gmail.com",
+    "classCode": "L95S5I",
+    "students": [
+      {
+        "id": "student-1764415077704",
+        "name": "Dagus",
+        "nisn": "02",
+        "email": "",
+        "joinedAt": "2025-11-29T11:17:57.704Z"
+      }
+    ],
+    "createdAt": "2025-11-29T11:17:43.512Z",
+    "updatedAt": "2025-11-29T11:17:57.704Z"
   }
 ]
