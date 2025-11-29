@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { useTranslation } from 'next-i18next';
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
 import Sidebar from '@/components/sidebar';
@@ -11,6 +11,7 @@ import {
   HiTrash,
   HiClock,
   HiUsers,
+  HiUserGroup,
   HiDocumentText,
   HiPencilSquare,
   HiLink,
@@ -24,8 +25,30 @@ export default function ExamDashboard() {
   const { t } = useTranslation('common');
   const router = useRouter();
   const [exams, setExams] = useState([]);
+  const [classes, setClasses] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [user, setUser] = useState({ nama: '', nuptk: '' });
+
+  // Create class ID to name mapping
+  const classMap = useMemo(() => {
+    const map = {};
+    classes.forEach(cls => {
+      map[cls.id] = cls.name;
+    });
+    return map;
+  }, [classes]);
+
+  // Helper to get class name from ID
+  const getClassName = (exam) => {
+    // Try classId first, then class field
+    if (exam.classId && classMap[exam.classId]) {
+      return classMap[exam.classId];
+    }
+    if (exam.class) {
+      return exam.class;
+    }
+    return 'Kelas Tidak Ditemukan';
+  };
 
   useEffect(() => {
     // Get user details from localStorage
@@ -41,21 +64,28 @@ export default function ExamDashboard() {
       }
     }
 
-    // Fetch exams
-    fetchExams();
+    // Fetch exams and classes in parallel
+    fetchData();
   }, []);
 
-  const fetchExams = async () => {
+  const fetchData = async () => {
     try {
-      const response = await fetch('/api/exams');
-      if (response.ok) {
-        const data = await response.json();
-        setExams(data);
+      const [examsRes, classesRes] = await Promise.all([
+        fetch('/api/exams'),
+        fetch('/api/classes')
+      ]);
+
+      if (examsRes.ok) {
+        const examsData = await examsRes.json();
+        setExams(examsData);
+      }
+
+      if (classesRes.ok) {
+        const classesData = await classesRes.json();
+        setClasses(classesData);
       }
     } catch (error) {
-      console.error('Error fetching exams:', error);
-      // Mock data fallback if API fails or is empty (optional, but good for dev)
-      // setExams([]); 
+      console.error('Error fetching data:', error);
     } finally {
       setIsLoading(false);
     }
@@ -244,12 +274,11 @@ export default function ExamDashboard() {
                             </span>
                           )}
                           
-                          {/* Class Badge */}
-                          {(exam.class || exam.classId) && (
-                            <span className="badge badge-neutral">
-                              {exam.class || exam.classId}
-                            </span>
-                          )}
+                          {/* Class Badge - with readable name */}
+                          <span className="badge badge-neutral gap-1">
+                            <HiUserGroup className="w-3.5 h-3.5" />
+                            {getClassName(exam)}
+                          </span>
                         </div>
                         
                         {/* Exam Code */}
@@ -303,11 +332,11 @@ export default function ExamDashboard() {
                         {/* Grade/Class */}
                         <div className="flex items-center gap-3 p-3 bg-neutral-50 rounded-xl">
                           <div className="w-10 h-10 bg-warning-100 rounded-lg flex items-center justify-center flex-shrink-0">
-                            <HiUsers className="w-5 h-5 text-warning-600" />
+                            <HiUserGroup className="w-5 h-5 text-warning-600" />
                           </div>
                           <div>
                             <p className="text-xs text-neutral-500">Kelas</p>
-                            <p className="font-bold text-neutral-900">{exam.grade || exam.class || 'Umum'}</p>
+                            <p className="font-bold text-neutral-900">{getClassName(exam)}</p>
                           </div>
                         </div>
                       </div>

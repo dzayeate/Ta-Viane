@@ -2,9 +2,9 @@ import { useState, useEffect } from 'react';
 import Head from 'next/head';
 import { useRouter } from 'next/router';
 import Sidebar from '@/components/sidebar';
+import AuthGuard from '@/components/auth-guard';
 import { useTranslation } from 'next-i18next';
-import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
-import { HiChartBar, HiTrophy, HiUsers, HiChevronRight, HiXMark, HiCheck, HiXCircle, HiPencilSquare } from 'react-icons/hi2';
+import { HiChartBar, HiTrophy, HiUsers, HiXMark, HiCheck, HiXCircle, HiPencilSquare } from 'react-icons/hi2';
 import users from '@/mock/users/index.json';
 import Swal from 'sweetalert2';
 
@@ -13,7 +13,7 @@ export default function ExamResults() {
   const router = useRouter();
   const { id: examId } = router.query;
 
-  const [user, setUser] = useState(null);
+  const [user, setUser] = useState({ nama: '', nuptk: '' });
   const [exam, setExam] = useState(null);
   const [results, setResults] = useState([]);
   const [stats, setStats] = useState({ avg: 0, high: 0, total: 0 });
@@ -25,30 +25,27 @@ export default function ExamResults() {
   const [gradedScores, setGradedScores] = useState({});
   const [isSaving, setIsSaving] = useState(false);
 
-  // Auth check
+  // Get user from localStorage (auth already handled by AuthGuard)
   useEffect(() => {
     const nupkt = localStorage.getItem('nupkt');
     const password = localStorage.getItem('password');
 
-    if (!nupkt) {
-      router.push('/');
-      return;
+    if (nupkt) {
+      const foundUser = users.find(u => u.NUPTK === nupkt && u.Password === password);
+      if (foundUser) {
+        setUser({ nama: foundUser.Nama, nuptk: foundUser.NUPTK });
+      } else {
+        setUser({ nama: 'User', nuptk: nupkt });
+      }
     }
-
-    const foundUser = users.find(u => u.NUPTK === nupkt && u.Password === password);
-    if (foundUser) {
-      setUser({ nama: foundUser.Nama, nuptk: foundUser.NUPTK });
-    } else {
-      router.push('/');
-    }
-  }, [router]);
+  }, []);
 
   // Fetch data when examId is available
   useEffect(() => {
-    if (examId && user) {
+    if (examId) {
       fetchData();
     }
-  }, [examId, user]);
+  }, [examId]);
 
   const fetchData = async () => {
     try {
@@ -241,341 +238,344 @@ export default function ExamResults() {
     });
   };
 
-  if (loading) {
-    return (
-      <div className="min-h-screen bg-neutral-50 flex items-center justify-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-brand-600"></div>
-      </div>
-    );
-  }
-
   return (
-    <div className="min-h-screen bg-neutral-50 flex">
-      <Head>
-        <title>Hasil Ujian: {exam?.title || 'Loading'} - TAVIANEU</title>
-      </Head>
+    <AuthGuard>
+      <div className="min-h-screen bg-neutral-50 flex">
+        <Head>
+          <title>Hasil Ujian: {exam?.title || 'Loading'} - TAVIANEU</title>
+        </Head>
 
-      <Sidebar
-        t={t}
-        user={user}
-        onLogout={handleLogout}
-        onOpenModal={() => router.push('/')}
-        onAddQuestion={() => router.push('/')}
-        onOpenReview={() => router.push('/')}
-        questionCount={0}
-      />
+        <Sidebar
+          t={t}
+          user={user}
+          onLogout={handleLogout}
+          onOpenModal={() => router.push('/')}
+          onAddQuestion={() => router.push('/')}
+          onOpenReview={() => router.push('/')}
+          questionCount={0}
+        />
 
-      <main className="flex-1 pt-20 lg:pt-8 pb-12 px-4 lg:px-8 overflow-x-hidden h-screen overflow-y-auto">
-        {/* Background Pattern */}
-        <div className="fixed inset-0 -z-10 overflow-hidden pointer-events-none">
-          <div className="absolute top-0 left-0 w-full h-full bg-[linear-gradient(to_right,#80808012_1px,transparent_1px),linear-gradient(to_bottom,#80808012_1px,transparent_1px)] bg-[size:24px_24px]"></div>
-        </div>
-
-        <div className="max-w-6xl mx-auto">
-          {/* Header */}
-          <div className="mb-8">
-            <button
-              onClick={() => router.push('/exams')}
-              className="text-sm text-neutral-500 hover:text-neutral-700 mb-2 flex items-center gap-1 transition-colors"
-            >
-              ← Kembali ke Daftar Ujian
-            </button>
-            <h1 className="text-2xl font-display font-bold text-neutral-900">
-              {exam?.title || 'Hasil Ujian'}
-            </h1>
-            <p className="text-neutral-600">
-              Kelas: {exam?.class || '-'} • Dibuat: {formatDate(exam?.createdAt)}
-            </p>
+        <main className="flex-1 pt-20 lg:pt-8 pb-12 px-4 lg:px-8 overflow-x-hidden h-screen overflow-y-auto">
+          {/* Background Pattern */}
+          <div className="fixed inset-0 -z-10 overflow-hidden pointer-events-none">
+            <div className="absolute top-0 left-0 w-full h-full bg-[linear-gradient(to_right,#80808012_1px,transparent_1px),linear-gradient(to_bottom,#80808012_1px,transparent_1px)] bg-[size:24px_24px]"></div>
           </div>
 
-          {/* Stats Cards */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
-            {/* Rata-rata Nilai */}
-            <div className="card p-6">
-              <div className="flex items-center gap-3 mb-2">
-                <div className="p-2 bg-brand-50 rounded-lg text-brand-600">
-                  <HiChartBar className="text-xl" />
-                </div>
-                <span className="text-sm font-medium text-neutral-500">Rata-rata Nilai</span>
-              </div>
-              <p className="text-3xl font-bold text-neutral-900">{stats.avg}</p>
-            </div>
-
-            {/* Nilai Tertinggi */}
-            <div className="card p-6">
-              <div className="flex items-center gap-3 mb-2">
-                <div className="p-2 bg-success-50 rounded-lg text-success-600">
-                  <HiTrophy className="text-xl" />
-                </div>
-                <span className="text-sm font-medium text-neutral-500">Nilai Tertinggi</span>
-              </div>
-              <p className="text-3xl font-bold text-neutral-900">{stats.high}</p>
-            </div>
-
-            {/* Total Responden */}
-            <div className="card p-6">
-              <div className="flex items-center gap-3 mb-2">
-                <div className="p-2 bg-accent-50 rounded-lg text-accent-600">
-                  <HiUsers className="text-xl" />
-                </div>
-                <span className="text-sm font-medium text-neutral-500">Total Responden</span>
-              </div>
-              <p className="text-3xl font-bold text-neutral-900">{stats.total} <span className="text-base font-normal text-neutral-500">siswa</span></p>
-            </div>
-          </div>
-
-          {/* Results Table */}
-          <div className="card overflow-hidden">
-            <div className="px-6 py-4 border-b border-neutral-200 flex justify-between items-center">
-              <h2 className="font-semibold text-neutral-800">Daftar Nilai Siswa</h2>
-            </div>
-
-            <div className="overflow-x-auto">
-              <table className="w-full text-left text-sm">
-                <thead className="bg-neutral-50 text-neutral-600 font-medium border-b border-neutral-200">
-                  <tr>
-                    <th className="px-6 py-3 w-16">No</th>
-                    <th className="px-6 py-3">Nama Siswa</th>
-                    <th className="px-6 py-3">NISN</th>
-                    <th className="px-6 py-3 text-center">Nilai Akhir</th>
-                    <th className="px-6 py-3">Waktu Submit</th>
-                    <th className="px-6 py-3 w-16"></th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-neutral-100">
-                  {results.length === 0 ? (
-                    <tr>
-                      <td colSpan="6" className="px-6 py-12 text-center">
-                        <div className="flex flex-col items-center gap-2">
-                          <HiUsers className="w-12 h-12 text-neutral-300" />
-                          <p className="text-neutral-500 font-medium">Belum ada siswa yang mengumpulkan jawaban.</p>
-                          <p className="text-neutral-400 text-sm">Bagikan link ujian kepada siswa untuk memulai.</p>
-                        </div>
-                      </td>
-                    </tr>
-                  ) : (
-                    results.map((result, index) => (
-                      <tr
-                        key={result.id}
-                        className="hover:bg-neutral-50 transition-colors cursor-pointer"
-                        onClick={() => handleOpenGrading(result)}
-                      >
-                        <td className="px-6 py-4 font-medium text-neutral-500">{index + 1}</td>
-                        <td className="px-6 py-4">
-                          <div className="flex items-center gap-2">
-                            <span className="font-semibold text-neutral-900">{getStudentName(result)}</span>
-                            {result.needsManualReview && (
-                              <span className="badge badge-warning text-xs">Perlu Dinilai</span>
-                            )}
-                          </div>
-                        </td>
-                        <td className="px-6 py-4 text-neutral-600 font-mono">{getStudentNISN(result)}</td>
-                        <td className="px-6 py-4 text-center">
-                          <span className={`badge ${
-                            result.score >= 80 ? 'badge-success' :
-                            result.score >= 60 ? 'badge-warning' :
-                            'badge-danger'
-                          }`}>
-                            {result.score ?? 0}
-                          </span>
-                        </td>
-                        <td className="px-6 py-4 text-neutral-500">{formatDate(result.submittedAt)}</td>
-                        <td className="px-6 py-4 text-neutral-400">
-                          <HiPencilSquare className="w-5 h-5" />
-                        </td>
-                      </tr>
-                    ))
-                  )}
-                </tbody>
-              </table>
-            </div>
-          </div>
-        </div>
-      </main>
-
-      {/* Grading Modal */}
-      {isModalOpen && selectedSubmission && (
-        <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4 backdrop-blur-sm">
-          <div className="bg-white rounded-2xl shadow-xl w-full max-w-4xl max-h-[90vh] flex flex-col">
-            {/* Modal Header */}
-            <div className="px-6 py-4 border-b border-neutral-200 flex justify-between items-center">
-              <div>
-                <h3 className="text-lg font-bold text-neutral-900">
-                  {selectedSubmission.studentIdentity?.name || 'Siswa'}
-                </h3>
-                <p className="text-sm text-neutral-500">
-                  NISN: {selectedSubmission.studentIdentity?.nisn || '-'} • 
-                  Kelas: {selectedSubmission.studentIdentity?.class || '-'} • 
-                  Skor Saat Ini: <span className="font-bold text-brand-600">{selectedSubmission.score ?? 0}</span>
-                </p>
-              </div>
+          <div className="max-w-6xl mx-auto">
+            {/* Header */}
+            <div className="mb-8">
               <button
-                onClick={handleCloseModal}
-                className="p-2 hover:bg-neutral-100 rounded-full transition-colors"
+                onClick={() => router.push('/exams')}
+                className="text-sm text-neutral-500 hover:text-neutral-700 mb-2 flex items-center gap-1 transition-colors"
               >
-                <HiXMark className="text-xl text-neutral-500" />
+                ← Kembali ke Daftar Ujian
               </button>
+              <h1 className="text-2xl font-display font-bold text-neutral-900">
+                {exam?.title || 'Hasil Ujian'}
+              </h1>
+              <p className="text-neutral-600">
+                Kelas: {exam?.class || '-'} • Dibuat: {formatDate(exam?.createdAt)}
+              </p>
             </div>
 
-            {/* Modal Body - Questions List */}
-            <div className="p-6 overflow-y-auto flex-1 space-y-6">
-              {(selectedSubmission.details || selectedSubmission.answers || []).map((item, idx) => {
-                const questionId = item.questionId;
-                const isEssay = isEssayQuestion(questionId);
-                const studentAnswer = item.studentAnswer || item.answer || '(Tidak dijawab)';
-                const correctAnswer = item.correctAnswer || getCorrectAnswer(questionId);
-                const questionText = getQuestionText(questionId);
-                const questionType = item.type || getQuestionType(questionId);
-
-                return (
-                  <div key={idx} className="card p-4">
-                    {/* Question Header */}
-                    <div className="flex items-start justify-between mb-3">
-                      <div className="flex-1">
-                        <div className="flex items-center gap-2 mb-1">
-                          <span className="badge badge-neutral text-xs">Soal {idx + 1}</span>
-                          <span className={`badge text-xs ${isEssay ? 'badge-primary' : 'badge-neutral'}`}>
-                            {questionType}
-                          </span>
-                          {!isEssay && (
-                            <span className={`badge text-xs ${item.isCorrect ? 'badge-success' : 'badge-danger'}`}>
-                              {item.isCorrect ? 'Benar' : 'Salah'}
-                            </span>
-                          )}
-                        </div>
-                        <p className="font-medium text-neutral-800 text-sm leading-relaxed">
-                          {questionText}
-                        </p>
-                      </div>
-                    </div>
-
-                    {/* Answers Section */}
-                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 mb-4">
-                      {/* Student Answer */}
-                      <div className={`p-3 rounded-xl border ${
-                        isEssay 
-                          ? 'bg-neutral-50 border-neutral-200' 
-                          : item.isCorrect 
-                            ? 'bg-success-50 border-success-200' 
-                            : 'bg-danger-50 border-danger-200'
-                      }`}>
-                        <div className="flex items-center gap-2 mb-1">
-                          {!isEssay && (
-                            item.isCorrect 
-                              ? <HiCheck className="w-4 h-4 text-success-600" />
-                              : <HiXCircle className="w-4 h-4 text-danger-600" />
-                          )}
-                          <span className="text-xs font-semibold text-neutral-500">Jawaban Siswa:</span>
-                        </div>
-                        <p className={`text-sm font-medium whitespace-pre-wrap ${
-                          isEssay 
-                            ? 'text-neutral-700' 
-                            : item.isCorrect 
-                              ? 'text-success-700' 
-                              : 'text-danger-700'
-                        }`}>
-                          {studentAnswer}
-                        </p>
-                      </div>
-
-                      {/* Reference Answer */}
-                      <div className="p-3 rounded-xl bg-brand-50 border border-brand-200">
-                        <span className="block text-xs font-semibold text-neutral-500 mb-1">Kunci Jawaban:</span>
-                        <p className="text-sm text-brand-700 font-medium whitespace-pre-wrap line-clamp-6">
-                          {correctAnswer.length > 300 ? correctAnswer.substring(0, 300) + '...' : correctAnswer}
-                        </p>
-                      </div>
-                    </div>
-
-                    {/* Score Input Section */}
-                    <div className="flex items-center justify-between pt-3 border-t border-neutral-100">
-                      {isEssay ? (
-                        <div className="flex items-center gap-3">
-                          <label className="text-sm font-medium text-neutral-600">Nilai:</label>
-                          <input
-                            type="number"
-                            min="0"
-                            max="100"
-                            value={gradedScores[idx] || 0}
-                            onChange={(e) => handleScoreChange(idx, e.target.value)}
-                            className="input w-24 text-center font-bold"
-                            placeholder="0"
-                          />
-                          <span className="text-sm text-neutral-400">/ 100</span>
-                        </div>
-                      ) : (
-                        <div className="flex items-center gap-2">
-                          <span className="text-sm font-medium text-neutral-600">Nilai:</span>
-                          <span className={`font-bold ${item.isCorrect ? 'text-success-600' : 'text-danger-600'}`}>
-                            {item.points ?? (item.isCorrect ? 100 : 0)}
-                          </span>
-                          <span className="text-sm text-neutral-400">(Otomatis)</span>
-                        </div>
-                      )}
-                      
-                      {item.isGraded && (
-                        <span className="badge badge-success text-xs">Sudah Dinilai</span>
-                      )}
-                    </div>
-                  </div>
-                );
-              })}
-
-              {(!selectedSubmission.details?.length && !selectedSubmission.answers?.length) && (
-                <p className="text-center text-neutral-500 py-8">Tidak ada data jawaban.</p>
-              )}
-            </div>
-
-            {/* Modal Footer */}
-            <div className="px-6 py-4 border-t border-neutral-200 bg-neutral-50 rounded-b-2xl flex items-center justify-between">
-              <div className="text-sm text-neutral-500">
-                Total Nilai Baru: <span className="font-bold text-lg text-brand-600">
-                  {(() => {
-                    // Calculate total: MCQ points (from existing data) + Essay points (from gradedScores)
-                    let total = 0;
-                    (selectedSubmission?.details || selectedSubmission?.answers || []).forEach((item, idx) => {
-                      const questionType = item.type || 'Essay';
-                      const isEssay = questionType.toLowerCase() === 'essay' || questionType.toLowerCase() === 'uraian';
-                      
-                      if (isEssay) {
-                        // Use graded score for Essay
-                        total += gradedScores[idx] || 0;
-                      } else {
-                        // Use existing points for MCQ (auto-graded)
-                        total += item.points ?? (item.isCorrect ? 100 : 0);
-                      }
-                    });
-                    return total;
-                  })()}
-                </span>
+            {/* Loading State - inside layout */}
+            {loading ? (
+              <div className="flex justify-center py-12">
+                <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-brand-600"></div>
               </div>
-              <div className="flex gap-3">
+            ) : (
+              <>
+                {/* Stats Cards */}
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
+                  {/* Rata-rata Nilai */}
+                  <div className="card p-6">
+                    <div className="flex items-center gap-3 mb-2">
+                      <div className="p-2 bg-brand-50 rounded-lg text-brand-600">
+                        <HiChartBar className="text-xl" />
+                      </div>
+                      <span className="text-sm font-medium text-neutral-500">Rata-rata Nilai</span>
+                    </div>
+                    <p className="text-3xl font-bold text-neutral-900">{stats.avg}</p>
+                  </div>
+
+                  {/* Nilai Tertinggi */}
+                  <div className="card p-6">
+                    <div className="flex items-center gap-3 mb-2">
+                      <div className="p-2 bg-success-50 rounded-lg text-success-600">
+                        <HiTrophy className="text-xl" />
+                      </div>
+                      <span className="text-sm font-medium text-neutral-500">Nilai Tertinggi</span>
+                    </div>
+                    <p className="text-3xl font-bold text-neutral-900">{stats.high}</p>
+                  </div>
+
+                  {/* Total Responden */}
+                  <div className="card p-6">
+                    <div className="flex items-center gap-3 mb-2">
+                      <div className="p-2 bg-accent-50 rounded-lg text-accent-600">
+                        <HiUsers className="text-xl" />
+                      </div>
+                      <span className="text-sm font-medium text-neutral-500">Total Responden</span>
+                    </div>
+                    <p className="text-3xl font-bold text-neutral-900">{stats.total} <span className="text-base font-normal text-neutral-500">siswa</span></p>
+                  </div>
+                </div>
+
+                {/* Results Table */}
+                <div className="card overflow-hidden">
+                  <div className="px-6 py-4 border-b border-neutral-200 flex justify-between items-center">
+                    <h2 className="font-semibold text-neutral-800">Daftar Nilai Siswa</h2>
+                  </div>
+
+                  <div className="overflow-x-auto">
+                    <table className="w-full text-left text-sm">
+                      <thead className="bg-neutral-50 text-neutral-600 font-medium border-b border-neutral-200">
+                        <tr>
+                          <th className="px-6 py-3 w-16">No</th>
+                          <th className="px-6 py-3">Nama Siswa</th>
+                          <th className="px-6 py-3">NISN</th>
+                          <th className="px-6 py-3 text-center">Nilai Akhir</th>
+                          <th className="px-6 py-3">Waktu Submit</th>
+                          <th className="px-6 py-3 w-16"></th>
+                        </tr>
+                      </thead>
+                      <tbody className="divide-y divide-neutral-100">
+                        {results.length === 0 ? (
+                          <tr>
+                            <td colSpan="6" className="px-6 py-12 text-center">
+                              <div className="flex flex-col items-center gap-2">
+                                <HiUsers className="w-12 h-12 text-neutral-300" />
+                                <p className="text-neutral-500 font-medium">Belum ada siswa yang mengumpulkan jawaban.</p>
+                                <p className="text-neutral-400 text-sm">Bagikan link ujian kepada siswa untuk memulai.</p>
+                              </div>
+                            </td>
+                          </tr>
+                        ) : (
+                          results.map((result, index) => (
+                            <tr
+                              key={result.id}
+                              className="hover:bg-neutral-50 transition-colors cursor-pointer"
+                              onClick={() => handleOpenGrading(result)}
+                            >
+                              <td className="px-6 py-4 font-medium text-neutral-500">{index + 1}</td>
+                              <td className="px-6 py-4">
+                                <div className="flex items-center gap-2">
+                                  <span className="font-semibold text-neutral-900">{getStudentName(result)}</span>
+                                  {result.needsManualReview && (
+                                    <span className="badge badge-warning text-xs">Perlu Dinilai</span>
+                                  )}
+                                </div>
+                              </td>
+                              <td className="px-6 py-4 text-neutral-600 font-mono">{getStudentNISN(result)}</td>
+                              <td className="px-6 py-4 text-center">
+                                <span className={`badge ${
+                                  result.score >= 80 ? 'badge-success' :
+                                  result.score >= 60 ? 'badge-warning' :
+                                  'badge-danger'
+                                }`}>
+                                  {result.score ?? 0}
+                                </span>
+                              </td>
+                              <td className="px-6 py-4 text-neutral-500">{formatDate(result.submittedAt)}</td>
+                              <td className="px-6 py-4 text-neutral-400">
+                                <HiPencilSquare className="w-5 h-5" />
+                              </td>
+                            </tr>
+                          ))
+                        )}
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              </>
+            )}
+          </div>
+        </main>
+
+        {/* Grading Modal */}
+        {isModalOpen && selectedSubmission && (
+          <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4 backdrop-blur-sm">
+            <div className="bg-white rounded-2xl shadow-xl w-full max-w-4xl max-h-[90vh] flex flex-col">
+              {/* Modal Header */}
+              <div className="px-6 py-4 border-b border-neutral-200 flex justify-between items-center">
+                <div>
+                  <h3 className="text-lg font-bold text-neutral-900">
+                    {selectedSubmission.studentIdentity?.name || 'Siswa'}
+                  </h3>
+                  <p className="text-sm text-neutral-500">
+                    NISN: {selectedSubmission.studentIdentity?.nisn || '-'} • 
+                    Kelas: {selectedSubmission.studentIdentity?.class || '-'} • 
+                    Skor Saat Ini: <span className="font-bold text-brand-600">{selectedSubmission.score ?? 0}</span>
+                  </p>
+                </div>
                 <button
                   onClick={handleCloseModal}
-                  className="btn btn-secondary"
-                  disabled={isSaving}
+                  className="p-2 hover:bg-neutral-100 rounded-full transition-colors"
                 >
-                  Batal
+                  <HiXMark className="text-xl text-neutral-500" />
                 </button>
-                <button
-                  onClick={handleSaveGrades}
-                  className="btn btn-primary"
-                  disabled={isSaving}
-                >
-                  {isSaving ? (
-                    <>
-                      <span className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></span>
-                      Menyimpan...
-                    </>
-                  ) : (
-                    'Simpan & Update Nilai'
-                  )}
-                </button>
+              </div>
+
+              {/* Modal Body - Questions List */}
+              <div className="p-6 overflow-y-auto flex-1 space-y-6">
+                {(selectedSubmission.details || selectedSubmission.answers || []).map((item, idx) => {
+                  const questionId = item.questionId;
+                  const isEssay = isEssayQuestion(questionId);
+                  const studentAnswer = item.studentAnswer || item.answer || '(Tidak dijawab)';
+                  const correctAnswer = item.correctAnswer || getCorrectAnswer(questionId);
+                  const questionText = getQuestionText(questionId);
+                  const questionType = item.type || getQuestionType(questionId);
+
+                  return (
+                    <div key={idx} className="card p-4">
+                      {/* Question Header */}
+                      <div className="flex items-start justify-between mb-3">
+                        <div className="flex-1">
+                          <div className="flex items-center gap-2 mb-1">
+                            <span className="badge badge-neutral text-xs">Soal {idx + 1}</span>
+                            <span className={`badge text-xs ${isEssay ? 'badge-primary' : 'badge-neutral'}`}>
+                              {questionType}
+                            </span>
+                            {!isEssay && (
+                              <span className={`badge text-xs ${item.isCorrect ? 'badge-success' : 'badge-danger'}`}>
+                                {item.isCorrect ? 'Benar' : 'Salah'}
+                              </span>
+                            )}
+                          </div>
+                          <p className="font-medium text-neutral-800 text-sm leading-relaxed">
+                            {questionText}
+                          </p>
+                        </div>
+                      </div>
+
+                      {/* Answers Section */}
+                      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 mb-4">
+                        {/* Student Answer */}
+                        <div className={`p-3 rounded-xl border ${
+                          isEssay 
+                            ? 'bg-neutral-50 border-neutral-200' 
+                            : item.isCorrect 
+                              ? 'bg-success-50 border-success-200' 
+                              : 'bg-danger-50 border-danger-200'
+                        }`}>
+                          <div className="flex items-center gap-2 mb-1">
+                            {!isEssay && (
+                              item.isCorrect 
+                                ? <HiCheck className="w-4 h-4 text-success-600" />
+                                : <HiXCircle className="w-4 h-4 text-danger-600" />
+                            )}
+                            <span className="text-xs font-semibold text-neutral-500">Jawaban Siswa:</span>
+                          </div>
+                          <p className={`text-sm font-medium whitespace-pre-wrap ${
+                            isEssay 
+                              ? 'text-neutral-700' 
+                              : item.isCorrect 
+                                ? 'text-success-700' 
+                                : 'text-danger-700'
+                          }`}>
+                            {studentAnswer}
+                          </p>
+                        </div>
+
+                        {/* Reference Answer */}
+                        <div className="p-3 rounded-xl bg-brand-50 border border-brand-200">
+                          <span className="block text-xs font-semibold text-neutral-500 mb-1">Kunci Jawaban:</span>
+                          <p className="text-sm text-brand-700 font-medium whitespace-pre-wrap line-clamp-6">
+                            {correctAnswer.length > 300 ? correctAnswer.substring(0, 300) + '...' : correctAnswer}
+                          </p>
+                        </div>
+                      </div>
+
+                      {/* Score Input Section */}
+                      <div className="flex items-center justify-between pt-3 border-t border-neutral-100">
+                        {isEssay ? (
+                          <div className="flex items-center gap-3">
+                            <label className="text-sm font-medium text-neutral-600">Nilai:</label>
+                            <input
+                              type="number"
+                              min="0"
+                              max="100"
+                              value={gradedScores[idx] || 0}
+                              onChange={(e) => handleScoreChange(idx, e.target.value)}
+                              className="input w-24 text-center font-bold"
+                              placeholder="0"
+                            />
+                            <span className="text-sm text-neutral-400">/ 100</span>
+                          </div>
+                        ) : (
+                          <div className="flex items-center gap-2">
+                            <span className="text-sm font-medium text-neutral-600">Nilai:</span>
+                            <span className={`font-bold ${item.isCorrect ? 'text-success-600' : 'text-danger-600'}`}>
+                              {item.points ?? (item.isCorrect ? 100 : 0)}
+                            </span>
+                            <span className="text-sm text-neutral-400">(Otomatis)</span>
+                          </div>
+                        )}
+                        
+                        {item.isGraded && (
+                          <span className="badge badge-success text-xs">Sudah Dinilai</span>
+                        )}
+                      </div>
+                    </div>
+                  );
+                })}
+
+                {(!selectedSubmission.details?.length && !selectedSubmission.answers?.length) && (
+                  <p className="text-center text-neutral-500 py-8">Tidak ada data jawaban.</p>
+                )}
+              </div>
+
+              {/* Modal Footer */}
+              <div className="px-6 py-4 border-t border-neutral-200 bg-neutral-50 rounded-b-2xl flex items-center justify-between">
+                <div className="text-sm text-neutral-500">
+                  Total Nilai Baru: <span className="font-bold text-lg text-brand-600">
+                    {(() => {
+                      // Calculate total: MCQ points (from existing data) + Essay points (from gradedScores)
+                      let total = 0;
+                      (selectedSubmission?.details || selectedSubmission?.answers || []).forEach((item, idx) => {
+                        const questionType = item.type || 'Essay';
+                        const isEssay = questionType.toLowerCase() === 'essay' || questionType.toLowerCase() === 'uraian';
+                        
+                        if (isEssay) {
+                          // Use graded score for Essay
+                          total += gradedScores[idx] || 0;
+                        } else {
+                          // Use existing points for MCQ (auto-graded)
+                          total += item.points ?? (item.isCorrect ? 100 : 0);
+                        }
+                      });
+                      return total;
+                    })()}
+                  </span>
+                </div>
+                <div className="flex gap-3">
+                  <button
+                    onClick={handleCloseModal}
+                    className="btn btn-secondary"
+                    disabled={isSaving}
+                  >
+                    Batal
+                  </button>
+                  <button
+                    onClick={handleSaveGrades}
+                    className="btn btn-primary"
+                    disabled={isSaving}
+                  >
+                    {isSaving ? (
+                      <>
+                        <span className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></span>
+                        Menyimpan...
+                      </>
+                    ) : (
+                      'Simpan & Update Nilai'
+                    )}
+                  </button>
+                </div>
               </div>
             </div>
           </div>
-        </div>
-      )}
-    </div>
+        )}
+      </div>
+    </AuthGuard>
   );
 }
