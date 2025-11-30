@@ -834,5 +834,63 @@
     "submittedAt": "2025-11-29T14:08:20.443Z",
     "status": "graded",
     "gradedAt": "2025-11-29T14:08:38.204Z"
+  },
+  {
+    "id": "result-1764426551003",
+    "examId": "1764426510567",
+    "examTitle": "Test",
+    "studentIdentity": {
+      "name": "Dodol",
+      "nisn": "666",
+      "class": "X IPA 2"
+    },
+    "answers": [
+      {
+        "questionId": "17644251830208q7rb2z4t",
+        "answer": "C",
+        "points": 100
+      },
+      {
+        "questionId": "1764425183020f4eefx3g6",
+        "answer": "lol",
+        "points": 100,
+        "isCorrect": true,
+        "isGraded": true
+      }
+    ],
+    "score": 200,
+    "correctCount": 2,
+    "totalQuestions": 2,
+    "autoGradableQuestions": 1,
+    "needsManualReview": false,
+    "details": [
+      {
+        "questionId": "17644251830208q7rb2z4t",
+        "questionNumber": 1,
+        "type": "multipleChoice",
+        "studentAnswer": "C",
+        "correctAnswer": "C",
+        "correctKey": "C",
+        "isCorrect": true,
+        "needsReview": false,
+        "points": 100
+      },
+      {
+        "questionId": "1764425183020f4eefx3g6",
+        "questionNumber": 2,
+        "type": "Essay",
+        "studentAnswer": "lol",
+        "correctAnswer": "**Pendahuluan**\nKonstelasi satelit kecil untuk pemantauan bencana alam di Indonesia adalah inisiatif strategis yang memerlukan pemilihan parameter orbit yang cermat. Tujuan utama misi ini adalah kunjungan ulang yang sering dan pencitraan resolusi tinggi, yang harus diseimbangkan dengan tantangan peluruhan orbit dan potensi sampah antariksa. Evaluasi ini akan fokus pada ketinggian dan inklinasi orbit yang paling sesuai berdasarkan prinsip fisika gerak satelit.\n\n**Evaluasi Ketinggian Orbit (Altitude)**\n\n*   **Tujuan Misi:** Pencitraan resolusi tinggi dan kunjungan ulang yang sering mengindikasikan bahwa konstelasi harus beroperasi di **Orbit Bumi Rendah (LEO)**, umumnya antara 300 km hingga 1000 km. Semakin rendah ketinggian, semakin tinggi resolusi gambar yang dapat diperoleh karena jarak sensor ke target lebih dekat.\n*   **Justifikasi Fisika:**\n    *   **Resolusi Citra:** Resolusi optik berbanding terbalik dengan jarak satelit ke permukaan Bumi. Satelit pada ketinggian yang lebih rendah akan menghasilkan citra yang lebih detail.\n    *   **Waktu Kunjungan Ulang:** Satelit di LEO memiliki periode orbit yang lebih pendek. Berdasarkan Hukum Kepler Ketiga, $$T^2 \\propto r^3$$ di mana $T$ adalah periode orbit dan $r$ adalah jari-jari orbit (jarak dari pusat Bumi). Semakin rendah $r$, semakin pendek $T$, sehingga satelit dapat menyelesaikan satu orbit lebih cepat. Dengan sebuah konstelasi, ini memungkinkan frekuensi kunjungan ulang yang tinggi di area target.\n    *   **Seretan Atmosfer (Atmospheric Drag):** Ketinggian yang sangat rendah (di bawah 400 km) akan mengalami seretan atmosfer yang signifikan, meskipun atmosfer di ketinggian tersebut sangat tipis. Gaya seretan ($$F_D = \\frac{1}{2} \\rho v^2 C_D A$$) sangat bergantung pada kerapatan atmosfer ($\\rho$), yang berkurang secara eksponensial dengan ketinggian. Seretan ini akan menyebabkan satelit kehilangan energi, kecepatan, dan secara bertahap meluruh orbitnya, sehingga memerlukan pendorongan ulang (reboost) secara berkala atau memiliki umur operasional yang lebih pendek.\n*   **Rekomendasi Ketinggian:** Ketinggian optimal untuk konstelasi ini kemungkinan berada di kisaran **500 km hingga 800 km**. Ketinggian ini menawarkan kompromi yang baik antara resolusi citra yang memadai, periode orbit yang relatif singkat untuk kunjungan ulang yang sering, dan seretan atmosfer yang cukup rendah untuk memastikan umur operasional yang layak tanpa terlalu sering melakukan reboost.\n\n**Evaluasi Inklinasi Orbit (Inclination)**\n\n*   **Tujuan Misi:** Pemantauan bencana alam di Indonesia (Kalimantan di ekuator, potensi tsunami yang bisa terjadi di berbagai lintang).\n*   **Justifikasi Fisika:**\n    *   **Cakupan Geografis:** Inklinasi orbit menentukan rentang lintang yang dapat dicakup oleh satelit.\n        *   **Orbit Ekuatorial (inklinasi rendah, mendekati 0°):** Ideal untuk pemantauan daerah ekuator (seperti Kalimantan) dengan frekuensi kunjungan ulang yang sangat tinggi. Namun, cakupannya terbatas pada daerah lintang rendah dan tidak akan efektif untuk seluruh wilayah Indonesia yang membentang dari sekitar 6° LU hingga 11° LS, apalagi untuk pemantauan tsunami yang mungkin memerlukan cakupan lebih luas.\n        *   **Orbit Polar (inklinasi mendekati 90°):** Memberikan cakupan global, melewati kedua kutub. Ini memungkinkan satelit untuk memindai seluruh permukaan Bumi seiring rotasi Bumi di bawah bidang orbit.\n        *   **Orbit Sinkron Matahari (Sun-Synchronous Orbit - SSO, inklinasi tinggi, ~97-98°):** Ini adalah jenis orbit polar khusus di mana bidang orbit berpresesi dengan laju yang sama dengan laju revolusi Bumi mengelilingi Matahari. Akibatnya, satelit akan selalu melewati titik yang sama di permukaan Bumi pada waktu matahari lokal yang sama setiap hari. Ini sangat menguntungkan untuk pencitraan karena kondisi pencahayaan akan konsisten, yang krusial untuk perbandingan citra dari waktu ke waktu (misalnya, untuk mendeteksi perubahan akibat kebakaran hutan atau banjir).\n*   **Rekomendasi Inklinasi:** Orbit **Sun-Synchronous Orbit (SSO)** pada inklinasi tinggi (sekitar 97-98 derajat) adalah pilihan terbaik. Meskipun Kalimantan berada di ekuator, SSO akan memberikan cakupan yang konsisten dan berulang untuk seluruh wilayah Indonesia, termasuk daerah rawan tsunami di pesisir, dengan kondisi pencahayaan yang optimal untuk analisis citra. Konstelasi dengan beberapa satelit yang tersebar di beberapa bidang SSO akan memastikan frekuensi kunjungan ulang yang tinggi.\n\n**Tantangan Peluruhan Orbit dan Sampah Antariksa**\n\n*   **Peluruhan Orbit:** Seperti dijelaskan di atas, seretan atmosfer menyebabkan peluruhan orbit. Di LEO, ini adalah masalah yang konstan. Konstelasi satelit kecil, dengan massa yang relatif rendah, dapat lebih rentan terhadap efek seretan.\n*   **Sampah Antariksa:** LEO adalah lingkungan yang padat dengan banyak satelit operasional dan puing-puing antariksa. Risiko tabrakan (Kessler Syndrome) adalah ancaman serius. Jika satelit meluruh secara tidak terkontrol, ia dapat menambah jumlah sampah antariksa.\n*   **Justifikasi Fisika:** Hukum Kekekalan Energi dan Momentum. Tabrakan antara objek di orbit dapat menghasilkan ribuan pecahan, masing-masing menjadi ancaman tabrakan baru.\n\n**Saran Perbaikan Teknis atau Operasional**\n\n1.  **Sistem Propulsi Miniatur:** Setiap satelit harus dilengkapi dengan sistem propulsi yang efisien (misalnya, pendorong listrik atau pendorong ion) untuk:\n    *   **Orbital Maintenance:** Melakukan reboost secara berkala untuk melawan seretan atmosfer dan mempertahankan ketinggian orbit yang diinginkan.\n    *   **Collision Avoidance:** Melakukan manuver penghindaran tabrakan jika ada peringatan dari jaringan pelacakan sampah antariksa.\n    *   **Deorbiting Aktif:** Pada akhir masa operasional, satelit harus mampu melakukan manuver deorbiting terkontrol untuk membakar habis di atmosfer atau jatuh ke area yang aman (misalnya, Point Nemo), sesuai dengan pedoman mitigasi sampah antariksa.\n2.  **Mekanisme Deorbiting Pasif:** Selain propulsi aktif, pertimbangkan penggunaan mekanisme deorbiting pasif seperti \"drag sail\" atau \"tether\" yang dapat dikerahkan di akhir masa pakai untuk secara signifikan meningkatkan seretan atmosfer dan mempercepat peluruhan orbit.\n3.  **Desain Konstelasi yang Optimal:** Memanfaatkan simulasi astrodinamika untuk mengoptimalkan jumlah satelit, jumlah bidang orbit, dan fase antar satelit dalam satu bidang. Ini akan memastikan cakupan dan frekuensi kunjungan ulang yang diperlukan dengan jumlah satelit seminimal mungkin, mengurangi biaya dan risiko sampah antariksa.\n4.  **Sensor Resolusi Tinggi dan Ringan:** Mengintegrasikan teknologi sensor pencitraan terbaru yang mampu memberikan resolusi tinggi dengan ukuran dan massa yang minimal, serta hemat daya.\n5.  **Jaringan Stasiun Bumi yang Robust:** Membangun atau mengoptimalkan jaringan stasiun bumi di Indonesia untuk memastikan penerimaan data yang cepat dan andal dari konstelasi, mengingat kebutuhan akan informasi real-time dalam penanganan bencana.\n6.  **Kolaborasi Internasional:** Berpartisipasi dalam inisiatif manajemen lalu lintas antariksa global untuk berbagi data pelacakan objek antariksa dan mengoordinasikan manuver penghindaran tabrakan.\n\n**Kesimpulan**\nUntuk konstelasi satelit pemantau bencana Indonesia, ketinggian orbit di LEO (sekitar 500-800 km) dan inklinasi Sun-Synchronous Orbit (SSO) adalah pilihan yang paling tepat. Kombinasi ini menawarkan resolusi tinggi, cakupan luas seluruh Indonesia dengan kondisi pencahayaan konsisten, dan potensi kunjungan ulang yang sering. Namun, tantangan peluruhan orbit dan sampah antariksa harus diatasi dengan sistem propulsi yang canggih, mekanisme deorbiting, dan desain konstelasi yang terencana dengan baik. Dengan implementasi teknis dan operasional yang matang, konstelasi ini dapat menjadi aset vital bagi mitigasi dan penanggulangan bencana di Indonesia.",
+        "correctKey": null,
+        "isCorrect": true,
+        "needsReview": false,
+        "points": 100,
+        "isGraded": true
+      }
+    ],
+    "timeSpent": 19,
+    "submittedAt": "2025-11-29T14:29:11.003Z",
+    "status": "graded",
+    "gradedAt": "2025-11-29T14:29:38.340Z"
   }
 ]
